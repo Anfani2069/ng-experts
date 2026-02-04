@@ -1,0 +1,133 @@
+// Dashboard Layout component styles using design system colors
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// Override Tailwind primary color to match design system
+:host ::ng-deep {
+  .bg-primary {
+    background-color: #E91E63; // Angular pink from design system
+  }
+  
+  .text-primary {
+    color: #E91E63;
+  }
+  
+  .border-primary {
+    border-color: #E91E63;
+  }
+  
+  .ring-primary\/20 {
+    --tw-ring-color: rgb(233 30 99 / 0.2);
+  }
+  
+  .bg-primary\/10 {
+    background-color: rgb(233 30 99 / 0.1);
+  }
+  
+  .bg-primary\/20 {
+    background-color: rgb(233 30 99 / 0.2);
+  }
+  
+  .hover\:bg-primary-dark:hover {
+    background-color: #C2185B;
+  }
+  
+  .hover\:text-primary-dark:hover {
+    color: #C2185B;
+  }
+
+  // Accent color (Angular purple)
+  .bg-accent {
+    background-color: #9C27B0;
+  }
+  
+  .text-accent {
+    color: #9C27B0;
+  }
+
+  // Font heading class
+  .font-heading {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+}
+
+// Navigation hover effects
+.nav-item {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #f1f5f9;
+  }
+  
+  &.active {
+    background-color: rgba(233, 30, 99, 0.1);
+    color: #E91E63;
+    font-weight: 500;
+  }
+}
+
+// Profile panel entrance animation
+.profile-panel-enter {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 50;
+    
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+  
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+// Focus states for accessibility
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 2px solid #E91E63;
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .bg-primary {
+    background-color: #C2185B !important;
+  }
+  
+  .text-primary {
+    color: #C2185B !important;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

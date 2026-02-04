@@ -1,8 +1,12 @@
-<!-- Layout principal avec Navbar et Footer -->
-<app-navbar></app-navbar>
+<!-- Layout principal avec Navbar et Footer conditionnels -->
+@if (shouldShowNavigation()) {
+  <app-navbar></app-navbar>
+}
 
 <main class="min-h-screen">
   <router-outlet />
 </main>
 
-<app-footer></app-footer>
+@if (shouldShowNavigation()) {
+  <app-footer></app-footer>
+}

@@ -14,6 +14,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.Register)
   },
   {
+    path: 'dashboard',
+    loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.Dashboard)
+  },
+  {
+    path: 'profile-edit',
+    loadComponent: () => import('./features/profile-edit/profile-edit.component').then(m => m.ProfileEdit)
+  },
+  {
     path: 'profile/:id',
     loadComponent: () => import('./features/profile/profile.component').then(m => m.Profile)
   },
