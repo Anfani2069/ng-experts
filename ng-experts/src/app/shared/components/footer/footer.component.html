@@ -1,0 +1,80 @@
+<footer id="contact" class="bg-secondary text-white py-16">
+  <div class="container mx-auto px-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+      <div class="lg:col-span-2">
+        <h3 class="text-2xl font-heading font-bold mb-4">
+          Reach your Recruitment Goals<br>
+          Right on Schedule.
+        </h3>
+        <p class="text-gray-400 text-sm mb-6">
+          Onboard your own talent pool to Ng-Expert, invite them to projects, kick off the projects.
+        </p>
+        <button 
+          (click)="onGetStarted()"
+          class="flex items-center gap-2 border border-white/30 rounded-full px-5 py-2 text-sm font-bold hover:bg-white/10 transition">
+          Get Started 
+          <span class="w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs">
+            <i class="fa-solid fa-arrow-right"></i>
+          </span>
+        </button>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">Navigation</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a (click)="onNavigate('home')" class="hover:text-white transition cursor-pointer">Home</a></li>
+          <li><a (click)="onNavigate('experts')" class="hover:text-white transition cursor-pointer">Annuaires</a></li>
+          <li><a (click)="onNavigate('About')" class="hover:text-white transition cursor-pointer">About us</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">Services</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a (click)="onApplyAsExpert()" class="hover:text-white transition cursor-pointer">Apply as Expert</a></li>
+          <li><a (click)="onHireExpert()" class="hover:text-white transition cursor-pointer">Hire an Expert</a></li>
+          <li><a (click)="onNavigate('freelance')" class="hover:text-white transition cursor-pointer">Freelance</a></li>
+          <li><a (click)="onNavigate('cdi')" class="hover:text-white transition cursor-pointer">CDI</a></li>
+          <li><a (click)="onNavigate('mentoring')" class="hover:text-white transition cursor-pointer">Mentoring</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-bold mb-4">Resources</h4>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a (click)="onNavigate('blog')" class="hover:text-white transition cursor-pointer">Blog</a></li>
+          <li><a (click)="onNavigate('careers')" class="hover:text-white transition cursor-pointer">Careers</a></li>
+          <li><a (click)="onNavigate('privacy-policy')" class="hover:text-white transition cursor-pointer">Privacy policy</a></li>
+          <li><a (click)="onNavigate('terms')" class="hover:text-white transition cursor-pointer">Terms of Service</a></li>
+          <li><a (click)="onNavigate('contact')" class="hover:text-white transition cursor-pointer">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-800 pt-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-2">
+          <img src="/img/ng-expert-logo.png" alt="Ng-Expert Logo" class="w-8 h-8 rounded-full object-cover">
+          <span class="text-xl font-heading font-bold">Ng-Expert</span>
+        </div>
+
+        <div class="flex gap-4">
+          <a (click)="onSocialClick('facebook')" class="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-opacity-80 transition cursor-pointer">
+            <i class="fa-brands fa-facebook-f"></i>
+          </a>
+          <a (click)="onSocialClick('instagram')" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition cursor-pointer">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a (click)="onSocialClick('twitter')" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition cursor-pointer">
+            <i class="fa-brands fa-twitter"></i>
+          </a>
+          <a (click)="onSocialClick('pinterest')" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-white/20 transition cursor-pointer">
+            <i class="fa-brands fa-pinterest"></i>
+          </a>
+        </div>
+
+        <p class="text-sm text-gray-400">Copyright @{{ currentYear }} All Rights Reserved by Ng-Expert</p>
+      </div>
+    </div>
+  </div>
+</footer>

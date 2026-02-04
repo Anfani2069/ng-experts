@@ -1,0 +1,137 @@
+<section id="experts" class="relative py-20" style="background: linear-gradient(180deg, #FFFFFF 0%, #FFF5F7 50%, #FFFFFF 100%);">
+  <div class="container mx-auto px-6">
+    <div class="mb-12">
+      <h2 class="text-4xl font-heading font-bold mb-8">Nos Experts Angular</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">VILLE</label>
+          <input 
+            type="text" 
+            placeholder="Paris, Lyon..." 
+            [value]="cityFilter()"
+            (input)="onCityFilterChange($event)"
+            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+          >
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">TECHNOLOGIE</label>
+          <input 
+            type="text" 
+            placeholder="Vue.js, Python..." 
+            [value]="techFilter()"
+            (input)="onTechFilterChange($event)"
+            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+          >
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">DISPONIBLE POUR</label>
+          <select 
+            [value]="availabilityFilter()"
+            (change)="onAvailabilityChange($event)"
+            class="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm">
+            <option>Tous</option>
+            <option>Freelance</option>
+            <option>CDI</option>
+            <option>Mentoring</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-8">
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">Conférence</button>
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">Mentoring</button>
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">Freelance</button>
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">CDI</button>
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">Coffee chat</button>
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">Pair programming</button>
+        <button class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm hover:border-primary hover:text-primary transition">Relecture CV</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto px-4 md:px-0">
+      @for (expert of experts; track expert.id) {
+        <div class="relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-primary/20 group overflow-hidden">
+          <!-- Badge Verified Expert -->
+          @if (expert.isVerified) {
+            <div class="absolute top-4 right-4 text-green-600 text-xs font-bold flex items-center gap-1">
+              <i class="fa-solid fa-award"></i>
+              Verified Expert
+            </div>
+          }
+          
+          <!-- Badge Speakeuse -->
+          @if (expert.isSpeaker) {
+            <div class="absolute top-16 right-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+              SPEAKEUSE
+            </div>
+          }
+          
+          <!-- Decorative gradient overlay -->
+          <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
+          
+          <div class="flex items-start gap-4 mb-4">
+            <div class="relative">
+              <img [src]="expert.avatar" class="w-16 h-16 rounded-xl border-2 border-white shadow-lg" [alt]="expert.name">
+              <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+              </div>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-bold text-lg mb-1 text-gray-900 group-hover:text-primary transition-colors">{{ expert.name }}</h3>
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fa-solid fa-location-dot text-gray-400 text-sm"></i>
+                <p class="text-sm text-gray-600 font-medium">{{ expert.location }}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="flex text-yellow-400">
+                  @for (star of [1,2,3,4,5]; track star) {
+                    <i class="fa-solid fa-star text-xs"></i>
+                  }
+                </div>
+                <span class="text-sm text-gray-600 font-semibold">{{ expert.rating }}</span>
+                <span class="text-xs text-gray-400">({{ expert.reviews }} avis)</span>
+              </div>
+            </div>
+          </div>
+          
+          <p class="text-gray-700 mb-4 leading-relaxed text-sm">
+            {{ expert.description }}
+          </p>
+          
+          <div class="flex flex-wrap gap-2 mb-4">
+            @for (skill of expert.skills; track skill) {
+              <span class="px-3 py-1 bg-gradient-to-r from-primary/10 to-accent/10 text-primary text-xs rounded-lg font-semibold border border-primary/20">{{ skill }}</span>
+            }
+            @if (expert.skills.length > 3) {
+              <span class="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">+{{ expert.skills.length - 3 }}</span>
+            }
+          </div>
+          
+          <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div class="flex flex-wrap gap-3 text-sm text-gray-600">
+              @for (availability of expert.availability; track availability) {
+                <span class="flex items-center gap-1">
+                  @if (availability === 'Freelance') {
+                    <i class="fa-solid fa-laptop-code text-primary"></i>
+                  } @else {
+                    <i class="fa-solid fa-briefcase text-primary"></i>
+                  }
+                  {{ availability }}
+                </span>
+              }
+            </div>
+            <button 
+              (click)="onHireExpert(expert.id)"
+              class="flex items-center gap-2 border border-gray-300 rounded-full px-4 py-1.5 text-sm font-bold hover:border-primary hover:text-primary transition bg-white min-w-[7rem] flex-shrink-0">
+              Hire Me
+              <span class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center text-xs transform -rotate-45">
+                <i class="fa-solid fa-arrow-right"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,237 @@
+<!-- Profile Header -->
+<div class="bg-white border-b border-gray-200">
+  <div class="container mx-auto px-6 py-8">
+    <div class="flex items-start justify-between">
+      <div class="flex items-start gap-6">
+        <div class="relative">
+          <img [src]="profile().avatar" [alt]="profile().name" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
+          <div class="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white border-2 border-white">
+            <i class="fa-solid fa-plus text-sm"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-3 mb-2">
+            <h1 class="text-3xl font-heading font-bold">{{ profile().name }}</h1>
+            <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-semibold">{{ profile().role }}</span>
+          </div>
+          <p class="text-gray-600 mb-2">{{ profile().description }}</p>
+          <div class="flex items-center gap-2">
+            <div [class]="'w-2 h-2 rounded-full ' + (profile().status === 'active' ? 'bg-green-500' : 'bg-gray-400')"></div>
+            <span [class]="'text-sm font-medium ' + (profile().status === 'active' ? 'text-green-600' : 'text-gray-500')">
+              {{ profile().status === 'active' ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <button (click)="onEditProfile()" class="text-white font-semibold px-6 py-3 rounded-xl transition hover:opacity-90" style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
+        Edit Profile
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs Navigation -->
+<div class="bg-white border-b border-gray-200">
+  <div class="container mx-auto px-6">
+    <div class="flex gap-8">
+      <button 
+        (click)="onTabChange('profile')"
+        [class]="'py-4 px-2 border-b-2 font-semibold text-sm flex items-center gap-2 ' + (activeTab() === 'profile' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary font-medium')"
+      >
+        <i class="fa-solid fa-user"></i>
+        My Profile
+      </button>
+      <button 
+        (click)="onTabChange('teams')"
+        [class]="'py-4 px-2 border-b-2 font-medium text-sm flex items-center gap-2 ' + (activeTab() === 'teams' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary')"
+      >
+        <i class="fa-solid fa-users"></i>
+        Teams
+      </button>
+      <button 
+        (click)="onTabChange('projects')"
+        [class]="'py-4 px-2 border-b-2 font-medium text-sm flex items-center gap-2 ' + (activeTab() === 'projects' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary')"
+      >
+        <i class="fa-solid fa-folder"></i>
+        Projects
+      </button>
+      <button 
+        (click)="onTabChange('connection')"
+        [class]="'py-4 px-2 border-b-2 font-medium text-sm flex items-center gap-2 ' + (activeTab() === 'connection' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary')"
+      >
+        <i class="fa-solid fa-link"></i>
+        Connection
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container mx-auto px-6 py-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    
+    <!-- Left Sidebar -->
+    <div class="space-y-6">
+      <!-- About Me -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold mb-4">About me</h2>
+        <p class="text-sm text-gray-600 leading-relaxed">
+          Hello, I'm {{ profile().name }}. I'm a professional who designs, develops, tests, and maintains Angular applications and systems. Passionate about creating exceptional user experiences.
+        </p>
+      </div>
+
+      <!-- Contact -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold mb-4">Contact</h2>
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-phone text-red-500"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Call</p>
+              <p class="text-sm font-medium">{{ profile().phone }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-envelope text-green-500"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Email</p>
+              <p class="text-sm font-medium">{{ profile().email }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+              <i class="fa-brands fa-skype text-blue-500"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Skype</p>
+              <p class="text-sm font-medium">{{ profile().skype }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold mb-4">Other</h2>
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-location-dot text-yellow-500"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Location</p>
+              <p class="text-sm font-medium">{{ profile().location }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-graduation-cap text-teal-500"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Education</p>
+              <p class="text-sm font-medium">{{ profile().education }}</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-language text-purple-500"></i>
+            </div>
+            <div>
+              <p class="text-xs text-gray-500">Language</p>
+              <p class="text-sm font-medium">{{ profile().language }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="lg:col-span-2 space-y-6">
+      
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-users text-primary text-xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">680</p>
+              <p class="text-sm text-gray-500">{{ profile().stats.members }} members</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-folder text-green-500 text-xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">{{ profile().stats.projects }}</p>
+              <p class="text-sm text-gray-500">Projects</p>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-dollar-sign text-red-500 text-xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold">${{ profile().stats.sales }}</p>
+              <p class="text-sm text-gray-500">Sales</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post Creation -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <textarea 
+          [value]="postContent()"
+          (input)="onPostContentChange($event)"
+          placeholder="Share your thoughts" 
+          class="w-full h-32 p-4 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition resize-none text-sm"
+        ></textarea>
+        <div class="flex items-center justify-between mt-4">
+          <div class="flex gap-2">
+            <button (click)="onAddPhoto()" class="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition text-sm font-medium hover:opacity-90" style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
+              <i class="fa-solid fa-image"></i>
+              Photo / Video
+            </button>
+            <button (click)="onAddArticle()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
+              <i class="fa-solid fa-file-alt"></i>
+              Article
+            </button>
+          </div>
+          <button (click)="onPost()" class="text-white font-semibold px-6 py-2 rounded-lg transition hover:opacity-90" style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
+            Post
+          </button>
+        </div>
+      </div>
+
+      <!-- Post Example -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <div class="flex items-start gap-4 mb-4">
+          <img [src]="profile().avatar" [alt]="profile().name" class="w-12 h-12 rounded-full">
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <h3 class="font-bold">{{ profile().name }}</h3>
+              <span class="text-xs text-gray-500">• 15 min ago</span>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+              Excited to share my latest Angular project! Working with the new standalone components and signals has been an amazing experience. The developer experience is so much better now. 🚀
+            </p>
+            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop" alt="Post image" class="w-full rounded-xl">
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="bg-white py-16 overflow-hidden">
+  <div class="container mx-auto px-6">
+    <div class="text-center mb-8">
+      <p class="text-sm font-semibold text-gray-500 mb-2">Plus de 650 000 clients et 350 000 freelances utilisent Ng-Expert pour leur projet depuis 2006</p>
+    </div>
+    
+    <div class="relative">
+      <div class="flex animate-scroll">
+        <!-- Premier set de logos -->
+        <div class="flex items-center gap-12 px-6 flex-shrink-0">
+          @for (company of companies; track company.name) {
+            <div class="flex items-center gap-3 text-gray-400 hover:text-gray-600 transition">
+              <i [class]="company.icon + ' text-3xl'"></i>
+              <span class="text-xl font-bold font-heading">{{ company.name }}</span>
+            </div>
+          }
+        </div>
+        
+        <!-- Duplication pour l'effet infini -->
+        <div class="flex items-center gap-12 px-6 flex-shrink-0">
+          @for (company of companies; track company.name) {
+            <div class="flex items-center gap-3 text-gray-400 hover:text-gray-600 transition">
+              <i [class]="company.icon + ' text-3xl'"></i>
+              <span class="text-xl font-bold font-heading">{{ company.name }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

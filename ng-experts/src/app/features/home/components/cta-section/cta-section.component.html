@@ -1,0 +1,33 @@
+<section class="py-20 relative overflow-hidden" style="background: linear-gradient(135deg, #FEFCFD 0%, #FEF9FB 50%, #FEF9FC 100%);">
+  <div class="container mx-auto px-6">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-4xl md:text-5xl font-heading font-bold mb-6" style="color: #1E293B;">
+        Vous êtes développeur Angular ?<br>
+        <span class="text-primary">Ajoutez votre profil !</span>
+      </h2>
+      
+      <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+        Rejoignez notre réseau d'experts Angular et recevez des opportunités de missions adaptées à vos compétences.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+        <button 
+          (click)="onCreateProfile()"
+          class="text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105 hover:opacity-90 flex items-center gap-2" 
+          style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
+          <i class="fa-solid fa-user-plus"></i>
+          Créer mon profil
+        </button>
+        <button 
+          (click)="onLearnMore()"
+          class="border-2 border-gray-300 hover:border-primary text-gray-700 hover:text-primary font-semibold px-8 py-4 rounded-xl transition-all bg-white">
+          En savoir plus
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Decorative elements -->
+  <div class="absolute top-10 left-10 w-20 h-20 bg-primary/10 rounded-full blur-2xl"></div>
+  <div class="absolute bottom-10 right-10 w-32 h-32 bg-accent/10 rounded-full blur-2xl"></div>
+</section>

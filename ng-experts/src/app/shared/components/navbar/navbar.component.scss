@@ -1,0 +1,12 @@
+// Styles spécifiques au composant Navbar
+// Les styles globaux sont gérés par TailwindCSS
+
+.navbar-container {
+  // Styles personnalisés si nécessaire
+}
+
+// Animation pour le scroll
+.navbar-scrolled {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
