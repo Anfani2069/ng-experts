@@ -1,0 +1,65 @@
+/* Expert Details Component Styles */
+
+.expert-details {
+  /* Custom styles for expert details if needed */
+}
+
+/* Custom animations and transitions */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effects for cards */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Skill level indicators */
+.skill-level-expert {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.skill-level-advanced {
+  background: linear-gradient(90deg, #3B82F6 0%, #1D4ED8 100%);
+}
+
+.skill-level-intermediate {
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+}
+
+/* Contact button animations */
+.contact-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.contact-btn:hover::before {
+  left: 100%;
+}

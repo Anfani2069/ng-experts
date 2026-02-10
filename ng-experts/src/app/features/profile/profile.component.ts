@@ -1,94 +1,69 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
-
-interface ExpertProfile {
-  id: string;
-  name: string;
-  title: string;
-  description: string;
-  avatar: string;
-  status: 'active' | 'inactive';
-  role: string;
-  phone: string;
-  email: string;
-  skype: string;
-  location: string;
-  education: string;
-  language: string;
-  stats: {
-    members: number;
-    projects: number;
-    sales: number;
-  };
-}
+import { ActivatedRoute, Router } from '@angular/router';
+import { Expert } from '@core/models/user.model';
+import { Auth } from '@core/services/auth.service';
+import { DashboardLayout } from '@shared/components/dashboard-layout/dashboard-layout.component';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule]
+  imports: [CommonModule, DashboardLayout]
 })
 export class Profile {
-  protected readonly activeTab = signal('profile');
-  protected readonly postContent = signal('');
+  private auth = inject(Auth);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
   
-  protected readonly profile = signal<ExpertProfile>({
-    id: '1',
-    name: 'Mike Nielsen',
-    title: 'Senior Angular Developer',
-    description: 'Dream big. Think different. Do great!',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    status: 'active',
-    role: 'Expert',
-    phone: '(123) 456-7890',
-    email: 'mike.nielsen@ng-expert.com',
-    skype: 'mike.nielsen',
-    location: 'Paris, France - 75001',
-    education: 'École Polytechnique',
-    language: 'French, English',
-    stats: {
-      members: 120,
-      projects: 42,
-      sales: 780
-    }
+  // Utilisateur expert actuel ou depuis les paramètres de route
+  protected readonly currentUser = this.auth.getCurrentUser();
+  
+  // Profil expert calculé depuis l'utilisateur connecté  
+  protected readonly expertProfile = computed(() => {
+    const user = this.currentUser();
+    if (!user || user.role !== 'expert') return null;
+    return user as Expert;
   });
 
-  constructor(private route: ActivatedRoute) {
-    // TODO: Load profile from route params
-    // const profileId = this.route.snapshot.paramMap.get('id');
-  }
+  // Avatar avec fallback
+  protected readonly userAvatar = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+  });
 
-  protected onTabChange(tab: string): void {
-    this.activeTab.set(tab);
-  }
+  // Nom complet
+  protected readonly fullName = computed(() => {
+    const expert = this.expertProfile();
+    return expert ? `${expert.firstName} ${expert.lastName}` : 'Expert Angular';
+  });
 
-  protected onPostContentChange(event: Event): void {
-    const target = event.target as HTMLTextAreaElement;
-    this.postContent.set(target.value);
-  }
+  // Localisation complète
+  protected readonly fullLocation = computed(() => {
+    const expert = this.expertProfile();
+    return expert ? `${expert.city}, ${expert.location}` : 'France';
+  });
 
+  // Statistiques calculées depuis les données expert
+  protected readonly stats = computed(() => {
+    const expert = this.expertProfile();
+    return {
+      projects: expert?.projectsCompleted || 0,
+      certifications: expert?.certifications?.length || 0,
+      skills: expert?.skills?.length || 0,
+      rating: expert?.rating || 0
+    };
+  });
+
+  // Statut de disponibilité
+  protected readonly availabilityStatus = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.isAvailable ? 'Disponible' : 'Non disponible';
+  });
+
+  // Navigation vers l'édition de profil
   protected onEditProfile(): void {
-    // TODO: Navigate to edit profile page
-    console.log('Edit profile');
-  }
-
-  protected onAddPhoto(): void {
-    // TODO: Implement photo upload
-    console.log('Add photo');
-  }
-
-  protected onAddArticle(): void {
-    // TODO: Implement article creation
-    console.log('Add article');
-  }
-
-  protected onPost(): void {
-    if (this.postContent().trim()) {
-      // TODO: Implement post creation
-      console.log('Post:', this.postContent());
-      this.postContent.set('');
-    }
+    this.router.navigate(['/profile-edit']);
   }
 }

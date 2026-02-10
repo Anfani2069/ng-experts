@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardLayout } from '@shared/components';
+import { Auth } from '@core/services/auth.service';
 
 export interface DashboardStats {
   profileViews: number;
@@ -44,6 +45,17 @@ export interface Message {
   imports: [CommonModule, RouterModule, DashboardLayout]
 })
 export class Dashboard {
+  private auth = inject(Auth);
+  
+  // Utilisateur connecté
+  protected readonly currentUser = this.auth.getCurrentUser();
+  
+  // Nom d'utilisateur pour affichage
+  protected readonly userName = computed(() => {
+    const user = this.currentUser();
+    return user ? user.firstName : 'Expert';
+  });
+  
   // Profile completion signal
   protected readonly profileCompletion = signal(85);
   

@@ -25,9 +25,10 @@ export class App {
     { initialValue: { url: this.router.url } as NavigationEnd }
   );
   
-  // Computed to check if we should show navbar/footer
+  // Computed to check if we should show navbar/footer - Sur pages publiques ET pages experts (pour recruteurs)
   protected readonly shouldShowNavigation = computed(() => {
     const url = this.currentUrl()?.url || this.router.url;
-    return !url.includes('/dashboard') && !url.includes('/profile-edit');
+    // Afficher navbar/footer sur pages publiques + pages experts (pour recruteurs)
+    return url === '/' || url.includes('/login') || url.includes('/register') || url.includes('/expert/');
   });
 }

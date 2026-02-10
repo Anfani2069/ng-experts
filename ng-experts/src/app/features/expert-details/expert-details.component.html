@@ -1,0 +1,183 @@
+<!-- Page Expert Details - Design Simple -->
+<div class="min-h-screen bg-gray-50">
+
+  <!-- Header Simple -->
+  <div class="bg-white border-b">
+    <div class="container mx-auto px-6 py-8">
+      <!-- Back Button -->
+      <button (click)="goBack()" class="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Retour à la liste</span>
+      </button>
+
+      <div class="flex items-start gap-6">
+        <!-- Avatar Simple -->
+        <img [src]="userAvatar()" [alt]="fullName()" class="w-20 h-20 object-cover border border-gray-300">
+        
+        <!-- Expert Info -->
+        <div class="flex-1">
+          <h1 class="text-2xl font-bold text-gray-900 mb-2">
+            {{ fullName() }}
+          </h1>
+          <p class="text-gray-600 mb-3">
+            {{ expertData()?.bio || 'Expert Angular certifié.' }}
+          </p>
+          <div class="flex items-center gap-4 text-sm text-gray-500">
+            <span>📍 {{ fullLocation() }}</span>
+            <span>{{ availabilityStatus() }}</span>
+            <span>{{ expertData()?.experience?.length || 0 }} projets</span>
+          </div>
+        </div>
+        
+        <!-- Action Buttons Simple -->
+        <div class="flex gap-3">
+          <button (click)="onContact()" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700">
+            Contacter
+          </button>
+          <button (click)="onHire()" class="px-4 py-2 bg-green-600 text-white hover:bg-green-700">
+            Embaucher
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="container mx-auto px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Left Column - Info -->
+      <div class="lg:col-span-1 space-y-6">
+        
+        <!-- Contact Info -->
+        <div class="bg-white border p-4">
+          <h3 class="font-semibold text-gray-900 mb-3">Contact</h3>
+          <div class="space-y-2 text-sm">
+            <div>
+              <span class="text-gray-600">Email:</span> {{ expertData()?.email }}
+            </div>
+            @if (expertData()?.phone) {
+              <div>
+                <span class="text-gray-600">Téléphone:</span> {{ expertData()?.phone }}
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="bg-white border p-4">
+          <h3 class="font-semibold text-gray-900 mb-3">Disponibilité</h3>
+          @if (expertData()?.availability) {
+            <div class="space-y-2 text-sm">
+              <div>
+                <span class="text-gray-600">Types:</span>
+                @for (type of expertData()?.availability?.types; track type) {
+                  <span class="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs mr-1">{{ type }}</span>
+                }
+              </div>
+              <div>
+                <span class="text-gray-600">Tarif journalier:</span> {{ expertData()?.availability?.dailyRate }}
+              </div>
+              <div>
+                <span class="text-gray-600">Préférence:</span> {{ expertData()?.availability?.workPreference }}
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Stats -->
+        <div class="bg-white border p-4">
+          <h3 class="font-semibold text-gray-900 mb-3">Statistiques</h3>
+          <div class="space-y-2 text-sm">
+            <div>
+              <span class="text-gray-600">Projets réalisés:</span> {{ expertData()?.projectsCompleted || 0 }}
+            </div>
+            <div>
+              <span class="text-gray-600">Note moyenne:</span> {{ expertData()?.rating || 5.0 }}/5
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Main Content -->
+      <div class="lg:col-span-2 space-y-6">
+          
+          <!-- Skills Section -->
+          <div class="bg-white border p-4">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Compétences Techniques</h2>
+            @if (hasSkills()) {
+              <div class="space-y-3">
+                @for (skill of expertData()?.skills || []; track skill.id) {
+                  <div class="flex items-center justify-between p-3 border-b border-gray-100">
+                    <div>
+                      <span class="font-medium text-gray-900">{{ skill.name }}</span>
+                      <span class="text-sm text-gray-500 ml-2">{{ skill.level }} - {{ skill.yearsOfExperience }} ans</span>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Experience Section -->
+          @if (hasExperience()) {
+            <div class="bg-white border p-4">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Expérience Professionnelle</h2>
+              <div class="space-y-4">
+                @for (exp of expertData()?.experience || []; track exp.id) {
+                  <div class="border-b border-gray-100 pb-4">
+                    <div class="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 class="font-semibold text-gray-900">{{ exp.title }}</h3>
+                        <div class="text-sm text-gray-600">
+                          <span>{{ exp.company }}</span> • 
+                          <span>{{ exp.location }}</span> • 
+                          <span>{{ exp.startDate | date:'MM/yyyy' }} - {{ exp.endDate ? (exp.endDate | date:'MM/yyyy') : 'Présent' }}</span>
+                        </div>
+                      </div>
+                      @if (exp.isCurrent) {
+                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs">
+                          En cours
+                        </span>
+                      }
+                    </div>
+                    
+                    <p class="text-gray-700 text-sm mb-2">{{ exp.description }}</p>
+                    
+                    @if (exp.technologies && exp.technologies.length > 0) {
+                      <div class="flex flex-wrap gap-1">
+                        @for (tech of exp.technologies; track tech) {
+                          <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs">
+                            {{ tech }}
+                          </span>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Certifications Section -->
+          @if (hasCertifications()) {
+            <div class="bg-white border p-4">
+              <h2 class="text-lg font-semibold text-gray-900 mb-4">Certifications</h2>
+              <div class="space-y-3">
+                @for (cert of expertData()?.certifications || []; track cert.id) {
+                  <div class="border-b border-gray-100 pb-3">
+                    <h4 class="font-medium text-gray-900">{{ cert.name }}</h4>
+                    <p class="text-sm text-gray-600">{{ cert.issuer }}</p>
+                    <p class="text-sm text-gray-500">{{ cert.dateObtained | date:'dd/MM/yyyy' }}</p>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+      </div>
+    </div>
+  </div>
+
+</div>

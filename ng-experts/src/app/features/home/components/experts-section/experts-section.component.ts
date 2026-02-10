@@ -1,19 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-interface Expert {
-  id: number;
-  name: string;
-  location: string;
-  avatar: string;
-  rating: number;
-  reviews: number;
-  description: string;
-  skills: string[];
-  availability: string[];
-  isVerified: boolean;
-  isSpeaker?: boolean;
-}
+import { Router } from '@angular/router';
+import { Expert } from '@core/models/user.model';
+import { ExpertService } from '@core/services/expert.service';
 
 @Component({
   selector: 'app-experts-section',

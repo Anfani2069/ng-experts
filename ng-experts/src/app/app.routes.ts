@@ -18,12 +18,36 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.Dashboard)
   },
   {
+    path: 'missions',
+    loadComponent: () => import('./features/missions/missions.component').then(m => m.Missions)
+  },
+  {
+    path: 'messages',
+    loadComponent: () => import('./features/messages/messages.component').then(m => m.Messages)
+  },
+  {
+    path: 'notifications',
+    loadComponent: () => import('./features/notifications/notifications.component').then(m => m.Notifications)
+  },
+  {
     path: 'profile-edit',
     loadComponent: () => import('./features/profile-edit/profile-edit.component').then(m => m.ProfileEdit)
   },
   {
+    path: 'profile-test',
+    loadComponent: () => import('./features/profile-test/profile-test.component').then(m => m.ProfileTest)
+  },
+  {
+    path: 'test-firebase',
+    loadComponent: () => import('./features/test/firebase-test.component').then(m => m.FirebaseTest)
+  },
+  {
     path: 'profile/:id',
     loadComponent: () => import('./features/profile/profile.component').then(m => m.Profile)
+  },
+  {
+    path: 'expert/:id',
+    loadComponent: () => import('./features/expert-details/expert-details.component').then(m => m.ExpertDetails)
   },
   {
     path: '**',

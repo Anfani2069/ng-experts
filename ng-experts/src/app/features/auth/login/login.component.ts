@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Auth } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,9 +12,16 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule]
 })
 export class Login {
+  private auth = inject(Auth);
+
   protected readonly email = signal('');
   protected readonly password = signal('');
   protected readonly rememberMe = signal(false);
+  
+  // États du formulaire
+  protected readonly isLoading = signal(false);
+  protected readonly error = signal<string | null>(null);
+  protected readonly success = signal<string | null>(null);
 
   constructor(private router: Router) {}
 
@@ -32,18 +40,92 @@ export class Login {
     this.rememberMe.set(target.checked);
   }
 
-  protected onSubmit(): void {
-    // TODO: Implement login logic
-    console.log('Login:', {
-      email: this.email(),
-      password: this.password(),
-      rememberMe: this.rememberMe()
-    });
+  protected async onSubmit(): Promise<void> {
+    if (this.isLoading()) return;
+
+    // Validation de base
+    if (!this.isFormValid()) {
+      this.error.set('Veuillez remplir tous les champs requis');
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.success.set(null);
+
+    try {
+      const result = await this.auth.login(this.email(), this.password());
+
+      if (result.success) {
+        this.success.set('Connexion réussie ! Redirection...');
+        
+        // Redirection basée sur le rôle utilisateur
+        setTimeout(() => {
+          const user = this.auth.getCurrentUser()();
+          if (user?.role === 'expert') {
+            this.router.navigate(['/dashboard']);
+          } else if (user?.role === 'recruiter') {
+            this.router.navigate(['/recruiter/dashboard']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+        }, 1500);
+      } else {
+        this.error.set(result.message);
+      }
+
+    } catch (error) {
+      this.error.set('Une erreur inattendue s\'est produite. Veuillez réessayer.');
+      console.error('Erreur connexion:', error);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
-  protected onGoogleLogin(): void {
-    // TODO: Implement Google OAuth
-    console.log('Google login');
+  /**
+   * Valider le formulaire
+   */
+  private isFormValid(): boolean {
+    return this.email().trim().length > 0 && 
+           this.password().length > 0 &&
+           this.isValidEmail(this.email());
+  }
+
+  /**
+   * Valider l'email
+   */
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  protected async onGoogleLogin(): Promise<void> {
+    if (this.isLoading()) return;
+
+    try {
+      // On utilise 'expert' par défaut pour le login, 
+      // l'utilisateur existe déjà donc le type sera détecté automatiquement
+      const result = await this.auth.signInWithGoogle('expert');
+
+      if (result.success) {
+        this.success.set(result.message);
+        setTimeout(() => {
+          const user = this.auth.getCurrentUser()();
+          if (user?.role === 'expert') {
+            this.router.navigate(['/dashboard']);
+          } else if (user?.role === 'recruiter') {
+            this.router.navigate(['/recruiter/dashboard']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+        }, 1000);
+      } else {
+        this.error.set(result.message);
+      }
+    } catch (error) {
+      this.error.set('Erreur lors de la connexion Google. Veuillez réessayer.');
+      console.error('Erreur Google OAuth:', error);
+    }
   }
 
   protected onGithubLogin(): void {
@@ -57,7 +139,6 @@ export class Login {
   }
 
   protected onRegister(): void {
-    // TODO: Navigate to register page
     this.router.navigate(['/register']);
   }
 }

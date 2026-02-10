@@ -1,237 +1,376 @@
-<!-- Profile Header -->
-<div class="bg-white border-b border-gray-200">
-  <div class="container mx-auto px-6 py-8">
-    <div class="flex items-start justify-between">
-      <div class="flex items-start gap-6">
-        <div class="relative">
-          <img [src]="profile().avatar" [alt]="profile().name" class="w-24 h-24 rounded-full border-4 border-white shadow-lg">
-          <div class="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white border-2 border-white">
-            <i class="fa-solid fa-plus text-sm"></i>
-          </div>
-        </div>
-        <div>
-          <div class="flex items-center gap-3 mb-2">
-            <h1 class="text-3xl font-heading font-bold">{{ profile().name }}</h1>
-            <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full font-semibold">{{ profile().role }}</span>
-          </div>
-          <p class="text-gray-600 mb-2">{{ profile().description }}</p>
-          <div class="flex items-center gap-2">
-            <div [class]="'w-2 h-2 rounded-full ' + (profile().status === 'active' ? 'bg-green-500' : 'bg-gray-400')"></div>
-            <span [class]="'text-sm font-medium ' + (profile().status === 'active' ? 'text-green-600' : 'text-gray-500')">
-              {{ profile().status === 'active' ? 'Active' : 'Inactive' }}
-            </span>
-          </div>
-        </div>
-      </div>
-      <button (click)="onEditProfile()" class="text-white font-semibold px-6 py-3 rounded-xl transition hover:opacity-90" style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
-        Edit Profile
-      </button>
+<app-dashboard-layout>
+  
+  <!-- Profile Header avec gradient premium -->
+  <div class="relative bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-hidden">
+    <!-- Effet de particules -->
+    <div class="absolute inset-0 opacity-20">
+      <div class="w-full h-full" style="background-image: url('data:image/svg+xml;charset=utf8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%239C92AC%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"></div>
     </div>
-  </div>
-</div>
-
-<!-- Tabs Navigation -->
-<div class="bg-white border-b border-gray-200">
-  <div class="container mx-auto px-6">
-    <div class="flex gap-8">
-      <button 
-        (click)="onTabChange('profile')"
-        [class]="'py-4 px-2 border-b-2 font-semibold text-sm flex items-center gap-2 ' + (activeTab() === 'profile' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary font-medium')"
-      >
-        <i class="fa-solid fa-user"></i>
-        My Profile
-      </button>
-      <button 
-        (click)="onTabChange('teams')"
-        [class]="'py-4 px-2 border-b-2 font-medium text-sm flex items-center gap-2 ' + (activeTab() === 'teams' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary')"
-      >
-        <i class="fa-solid fa-users"></i>
-        Teams
-      </button>
-      <button 
-        (click)="onTabChange('projects')"
-        [class]="'py-4 px-2 border-b-2 font-medium text-sm flex items-center gap-2 ' + (activeTab() === 'projects' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary')"
-      >
-        <i class="fa-solid fa-folder"></i>
-        Projects
-      </button>
-      <button 
-        (click)="onTabChange('connection')"
-        [class]="'py-4 px-2 border-b-2 font-medium text-sm flex items-center gap-2 ' + (activeTab() === 'connection' ? 'border-primary text-primary' : 'border-transparent text-gray-600 hover:text-primary')"
-      >
-        <i class="fa-solid fa-link"></i>
-        Connection
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Main Content -->
-<div class="container mx-auto px-6 py-8">
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     
-    <!-- Left Sidebar -->
-    <div class="space-y-6">
-      <!-- About Me -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <h2 class="text-lg font-bold mb-4">About me</h2>
-        <p class="text-sm text-gray-600 leading-relaxed">
-          Hello, I'm {{ profile().name }}. I'm a professional who designs, develops, tests, and maintains Angular applications and systems. Passionate about creating exceptional user experiences.
-        </p>
-      </div>
-
-      <!-- Contact -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <h2 class="text-lg font-bold mb-4">Contact</h2>
-        <div class="space-y-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-phone text-red-500"></i>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Call</p>
-              <p class="text-sm font-medium">{{ profile().phone }}</p>
+    <div class="relative container mx-auto px-6 py-12">
+      <div class="flex items-start justify-between">
+        <div class="flex items-start gap-8">
+          <!-- Avatar avec effet premium -->
+          <div class="relative group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-full blur opacity-60 group-hover:opacity-75 transition duration-300"></div>
+            <img [src]="userAvatar()" [alt]="fullName()" class="relative w-32 h-32 rounded-full object-cover border-4 border-white shadow-2xl">
+            <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center shadow-lg" 
+                 [title]="availabilityStatus()">
+              <i class="fa-solid fa-check text-white text-xs"></i>
             </div>
           </div>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-envelope text-green-500"></i>
+          
+          <!-- Info expert -->
+          <div class="text-white">
+            <div class="flex items-center gap-4 mb-3">
+              <h1 class="text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+                {{ fullName() }}
+              </h1>
+              <div class="flex items-center gap-2">
+                <span class="px-4 py-2 bg-gradient-to-r from-primary to-purple-600 text-white text-sm rounded-full font-bold shadow-lg">
+                  <i class="fa-solid fa-star mr-1"></i>Expert Vérifié
+                </span>
+                <div class="flex items-center gap-1">
+                  @for (star of [1,2,3,4,5]; track star) {
+                    <i class="fa-solid fa-star text-yellow-400 text-sm"></i>
+                  }
+                  <span class="text-gray-300 text-sm ml-2">({{ stats().rating || 5.0 }})</span>
+                </div>
+              </div>
             </div>
-            <div>
-              <p class="text-xs text-gray-500">Email</p>
-              <p class="text-sm font-medium">{{ profile().email }}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-              <i class="fa-brands fa-skype text-blue-500"></i>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Skype</p>
-              <p class="text-sm font-medium">{{ profile().skype }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Other -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <h2 class="text-lg font-bold mb-4">Other</h2>
-        <div class="space-y-4">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-yellow-50 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-location-dot text-yellow-500"></i>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Location</p>
-              <p class="text-sm font-medium">{{ profile().location }}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-teal-50 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-graduation-cap text-teal-500"></i>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Education</p>
-              <p class="text-sm font-medium">{{ profile().education }}</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-              <i class="fa-solid fa-language text-purple-500"></i>
-            </div>
-            <div>
-              <p class="text-xs text-gray-500">Language</p>
-              <p class="text-sm font-medium">{{ profile().language }}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Main Content Area -->
-    <div class="lg:col-span-2 space-y-6">
-      
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white rounded-2xl p-6 shadow-sm">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-users text-primary text-xl"></i>
-            </div>
-            <div>
-              <p class="text-2xl font-bold">680</p>
-              <p class="text-sm text-gray-500">{{ profile().stats.members }} members</p>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl p-6 shadow-sm">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-folder text-green-500 text-xl"></i>
-            </div>
-            <div>
-              <p class="text-2xl font-bold">{{ profile().stats.projects }}</p>
-              <p class="text-sm text-gray-500">Projects</p>
-            </div>
-          </div>
-        </div>
-        <div class="bg-white rounded-2xl p-6 shadow-sm">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center">
-              <i class="fa-solid fa-dollar-sign text-red-500 text-xl"></i>
-            </div>
-            <div>
-              <p class="text-2xl font-bold">${{ profile().stats.sales }}</p>
-              <p class="text-sm text-gray-500">Sales</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Post Creation -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <textarea 
-          [value]="postContent()"
-          (input)="onPostContentChange($event)"
-          placeholder="Share your thoughts" 
-          class="w-full h-32 p-4 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition resize-none text-sm"
-        ></textarea>
-        <div class="flex items-center justify-between mt-4">
-          <div class="flex gap-2">
-            <button (click)="onAddPhoto()" class="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition text-sm font-medium hover:opacity-90" style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
-              <i class="fa-solid fa-image"></i>
-              Photo / Video
-            </button>
-            <button (click)="onAddArticle()" class="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-sm font-medium">
-              <i class="fa-solid fa-file-alt"></i>
-              Article
-            </button>
-          </div>
-          <button (click)="onPost()" class="text-white font-semibold px-6 py-2 rounded-lg transition hover:opacity-90" style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
-            Post
-          </button>
-        </div>
-      </div>
-
-      <!-- Post Example -->
-      <div class="bg-white rounded-2xl p-6 shadow-sm">
-        <div class="flex items-start gap-4 mb-4">
-          <img [src]="profile().avatar" [alt]="profile().name" class="w-12 h-12 rounded-full">
-          <div class="flex-1">
-            <div class="flex items-center gap-2 mb-1">
-              <h3 class="font-bold">{{ profile().name }}</h3>
-              <span class="text-xs text-gray-500">• 15 min ago</span>
-            </div>
-            <p class="text-sm text-gray-600 leading-relaxed mb-4">
-              Excited to share my latest Angular project! Working with the new standalone components and signals has been an amazing experience. The developer experience is so much better now. 🚀
+            
+            <p class="text-xl text-gray-200 mb-4 leading-relaxed max-w-2xl">
+              {{ expertProfile()?.bio || 'Expert Angular certifié avec une expertise approfondie en développement d\'applications web modernes et performantes.' }}
             </p>
-            <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=400&fit=crop" alt="Post image" class="w-full rounded-xl">
+            
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded-full bg-green-400 animate-pulse"></div>
+                <span class="text-green-300 font-semibold">{{ availabilityStatus() }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-gray-300">
+                <i class="fa-solid fa-location-dot text-blue-400"></i>
+                <span>{{ fullLocation() }}</span>
+              </div>
+              @if (expertProfile()?.company) {
+                <div class="flex items-center gap-2 text-gray-300">
+                  <i class="fa-solid fa-building text-purple-400"></i>
+                  <span>{{ expertProfile()?.company }}</span>
+                </div>
+              }
+            </div>
           </div>
         </div>
+        
+        <!-- Bouton d'action premium -->
+        <button (click)="onEditProfile()" class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:from-pink-600 hover:via-purple-600 hover:to-indigo-600 text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-pink-500/25 transform hover:-translate-y-1">
+          <i class="fa-solid fa-edit mr-2"></i>Éditer le Profil
+        </button>
       </div>
-
     </div>
-
   </div>
-</div>
+
+  <!-- Main Content -->
+  <div class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-6 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        
+        <!-- Left Sidebar -->
+        <div class="lg:col-span-1 space-y-6">
+          <!-- About Me avec design premium -->
+          <div class="bg-gradient-to-br from-white to-blue-50 rounded-3xl p-8 shadow-xl border border-blue-100">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-user text-white"></i>
+              </div>
+              <h2 class="text-xl font-bold text-gray-800">À propos de moi</h2>
+            </div>
+            <p class="text-gray-700 leading-relaxed">
+              {{ expertProfile()?.bio || 'Expert Angular certifié avec une expertise approfondie en développement d\'applications web modernes et performantes. Passionné par les technologies de pointe et l\'innovation.' }}
+            </p>
+          </div>
+
+          <!-- Contact avec design premium -->
+          <div class="bg-gradient-to-br from-white to-green-50 rounded-3xl p-8 shadow-xl border border-green-100">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-address-book text-white"></i>
+              </div>
+              <h2 class="text-xl font-bold text-gray-800">Contact</h2>
+            </div>
+            <div class="space-y-6">
+              @if (expertProfile()?.phone) {
+                <div class="flex items-center gap-4 p-4 bg-white/70 rounded-2xl hover:bg-white/90 transition-all">
+                  <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-phone text-white"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Téléphone</p>
+                    <p class="text-sm font-bold text-gray-800">{{ expertProfile()?.phone }}</p>
+                  </div>
+                </div>
+              }
+              <div class="flex items-center gap-4 p-4 bg-white/70 rounded-2xl hover:bg-white/90 transition-all">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                  <i class="fa-solid fa-envelope text-white"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Email</p>
+                  <p class="text-sm font-bold text-gray-800">{{ expertProfile()?.email }}</p>
+                </div>
+              </div>
+              @if (expertProfile()?.company) {
+                <div class="flex items-center gap-4 p-4 bg-white/70 rounded-2xl hover:bg-white/90 transition-all">
+                  <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-building text-white"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Entreprise</p>
+                    <p class="text-sm font-bold text-gray-800">{{ expertProfile()?.company }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Localisation et statut -->
+          <div class="bg-gradient-to-br from-white to-amber-50 rounded-3xl p-8 shadow-xl border border-amber-100">
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-map-location-dot text-white"></i>
+              </div>
+              <h2 class="text-xl font-bold text-gray-800">Localisation & Statut</h2>
+            </div>
+            <div class="space-y-6">
+              <div class="flex items-center gap-4 p-4 bg-white/70 rounded-2xl hover:bg-white/90 transition-all">
+                <div class="w-12 h-12 bg-gradient-to-r from-amber-500 to-yellow-500 rounded-xl flex items-center justify-center">
+                  <i class="fa-solid fa-location-dot text-white"></i>
+                </div>
+                <div>
+                  <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Localisation</p>
+                  <p class="text-sm font-bold text-gray-800">{{ fullLocation() }}</p>
+                </div>
+              </div>
+              @if (expertProfile()?.verificationStatus) {
+                <div class="flex items-center gap-4 p-4 bg-white/70 rounded-2xl hover:bg-white/90 transition-all">
+                  <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+                    <i class="fa-solid fa-shield-check text-white"></i>
+                  </div>
+                  <div>
+                    <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Statut</p>
+                    <p class="text-sm font-bold text-gray-800 capitalize">{{ expertProfile()?.verificationStatus }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="lg:col-span-3 space-y-8">
+      
+          <!-- Stats Cards Premium -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl p-8 shadow-2xl text-white hover:scale-105 transition-all duration-300">
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <i class="fa-solid fa-code text-white text-2xl"></i>
+                </div>
+                <div class="text-right">
+                  <p class="text-4xl font-bold mb-1">{{ stats().skills }}</p>
+                  <p class="text-purple-100 text-sm font-medium">Compétences</p>
+                </div>
+              </div>
+              <div class="h-1 bg-white/30 rounded-full overflow-hidden">
+                <div class="h-full bg-white rounded-full" style="width: 85%;"></div>
+              </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-3xl p-8 shadow-2xl text-white hover:scale-105 transition-all duration-300">
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <i class="fa-solid fa-briefcase text-white text-2xl"></i>
+                </div>
+                <div class="text-right">
+                  <p class="text-4xl font-bold mb-1">{{ stats().projects }}</p>
+                  <p class="text-emerald-100 text-sm font-medium">Projets réalisés</p>
+                </div>
+              </div>
+              <div class="h-1 bg-white/30 rounded-full overflow-hidden">
+                <div class="h-full bg-white rounded-full" style="width: 92%;"></div>
+              </div>
+            </div>
+            
+            <div class="bg-gradient-to-br from-blue-500 to-indigo-500 rounded-3xl p-8 shadow-2xl text-white hover:scale-105 transition-all duration-300">
+              <div class="flex items-center justify-between mb-4">
+                <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <i class="fa-solid fa-award text-white text-2xl"></i>
+                </div>
+                <div class="text-right">
+                  <p class="text-4xl font-bold mb-1">{{ stats().certifications }}</p>
+                  <p class="text-blue-100 text-sm font-medium">Certifications</p>
+                </div>
+              </div>
+              <div class="h-1 bg-white/30 rounded-full overflow-hidden">
+                <div class="h-full bg-white rounded-full" style="width: 78%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compétences Techniques Premium -->
+          <div class="bg-gradient-to-br from-white via-blue-50 to-purple-50 rounded-3xl p-8 shadow-2xl border border-blue-100">
+            <div class="flex items-center gap-4 mb-8">
+              <div class="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-code text-white text-xl"></i>
+              </div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-800">Compétences Techniques</h2>
+                <p class="text-gray-600">Technologies maîtrisées</p>
+              </div>
+            </div>
+            @if (expertProfile()?.skills && expertProfile()!.skills.length > 0) {
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                @for (skill of expertProfile()!.skills; track skill.id) {
+                  <div class="group bg-white/80 hover:bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 bg-gradient-to-r from-primary to-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-bolt text-white text-sm"></i>
+                      </div>
+                      <div>
+                        <h3 class="font-bold text-gray-800 text-sm">{{ skill.name }}</h3>
+                        <p class="text-xs text-gray-500">{{ skill.level || 'Expert' }}</p>
+                      </div>
+                    </div>
+                    <div class="mt-3 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div class="h-full bg-gradient-to-r from-primary to-purple-600 rounded-full" [style.width]="(skill.level === 'expert' ? '95' : skill.level === 'advanced' ? '80' : '65') + '%'"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="text-center py-12">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <i class="fa-solid fa-code text-gray-400 text-2xl"></i>
+                </div>
+                <p class="text-gray-500">Aucune compétence renseignée</p>
+              </div>
+            }
+          </div>
+
+          <!-- Certifications Premium -->
+          @if (expertProfile()?.certifications && expertProfile()!.certifications.length > 0) {
+            <div class="bg-gradient-to-br from-white via-indigo-50 to-blue-50 rounded-3xl p-8 shadow-2xl border border-indigo-100">
+              <div class="flex items-center gap-4 mb-8">
+                <div class="w-14 h-14 bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl flex items-center justify-center">
+                  <i class="fa-solid fa-award text-white text-xl"></i>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-800">Certifications</h2>
+                  <p class="text-gray-600">Validations professionnelles</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @for (cert of expertProfile()!.certifications; track cert.id) {
+                  <div class="group bg-white/90 hover:bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-indigo-200">
+                    <div class="flex items-start gap-4">
+                      <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-certificate text-white"></i>
+                      </div>
+                      <div class="flex-1">
+                        <h4 class="font-bold text-gray-900 text-lg mb-2">{{ cert.name }}</h4>
+                        <div class="flex items-center gap-2 mb-3">
+                          <div class="w-6 h-6 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-building text-white text-xs"></i>
+                          </div>
+                          <p class="text-gray-600 font-medium">{{ cert.issuer }}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                            <i class="fa-solid fa-calendar text-white text-xs"></i>
+                          </div>
+                          <p class="text-gray-500 text-sm">{{ cert.dateObtained | date:'dd/MM/yyyy' }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Expériences Professionnelles Premium -->
+          @if (expertProfile()?.experience && expertProfile()!.experience.length > 0) {
+            <div class="bg-gradient-to-br from-white via-emerald-50 to-teal-50 rounded-3xl p-8 shadow-2xl border border-emerald-100">
+              <div class="flex items-center gap-4 mb-8">
+                <div class="w-14 h-14 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center">
+                  <i class="fa-solid fa-briefcase text-white text-xl"></i>
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-800">Expériences Professionnelles</h2>
+                  <p class="text-gray-600">Parcours professionnel</p>
+                </div>
+              </div>
+              <div class="space-y-6">
+                @for (exp of expertProfile()!.experience; track exp.id) {
+                  <div class="group relative bg-white/90 hover:bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-emerald-200 overflow-hidden">
+                    <!-- Gradient accent -->
+                    <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-emerald-500 to-teal-500"></div>
+                    
+                    <div class="flex items-start gap-6">
+                      <div class="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-lg">
+                        <i class="fa-solid fa-building text-white text-xl"></i>
+                      </div>
+                      
+                      <div class="flex-1">
+                        <div class="flex items-start justify-between mb-4">
+                          <div>
+                            <h4 class="text-2xl font-bold text-gray-900 mb-2">{{ exp.title }}</h4>
+                            <div class="flex items-center gap-3 mb-3">
+                              <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                                  <i class="fa-solid fa-building text-white text-xs"></i>
+                                </div>
+                                <p class="text-lg text-gray-700 font-semibold">{{ exp.company }}</p>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+                                  <i class="fa-solid fa-calendar text-white text-xs"></i>
+                                </div>
+                                <p class="text-sm text-gray-600 font-medium">
+                                  {{ exp.startDate | date:'MM/yyyy' }} - {{ exp.endDate ? (exp.endDate | date:'MM/yyyy') : 'Présent' }}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          @if (exp.isCurrent) {
+                            <span class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white text-xs rounded-full font-bold shadow-lg">
+                              <i class="fa-solid fa-clock mr-1"></i>En cours
+                            </span>
+                          }
+                        </div>
+                        
+                        <p class="text-gray-700 leading-relaxed mb-6 text-lg">{{ exp.description }}</p>
+                        
+                        @if (exp.technologies && exp.technologies.length > 0) {
+                          <div class="flex flex-wrap gap-3">
+                            @for (tech of exp.technologies; track tech) {
+                              <span class="px-4 py-2 bg-gradient-to-r from-gray-100 to-gray-200 hover:from-emerald-100 hover:to-teal-100 text-gray-700 hover:text-emerald-700 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
+                                {{ tech }}
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</app-dashboard-layout>

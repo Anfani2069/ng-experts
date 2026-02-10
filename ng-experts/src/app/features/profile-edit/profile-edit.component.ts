@@ -1,50 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DashboardLayout } from '@shared/components';
-
-export interface UserProfile {
-  name: string;
-  company: string;
-  location: string;
-  city: string;
-  email: string;
-  phone: string;
-  address: string;
-  bio: string;
-  avatar: string;
-  role: string;
-}
-
-export interface Skill {
-  id: string;
-  name: string;
-}
-
-export interface Certification {
-  id: string;
-  title: string;
-  organization: string;
-  date: string;
-}
-
-export interface Experience {
-  id: string;
-  title: string;
-  company: string;
-  period: string;
-  description: string;
-  technologies: string[];
-}
-
-export interface Availability {
-  types: string[];
-  startDate: string;
-  dailyRate: string;
-  workPreference: string;
-  missionDuration: string;
-}
+import { Auth } from '@core/services/auth.service';
+import { Expert, Skill, Experience, Certification, Availability } from '@core/models/user.model';
 
 @Component({
   selector: 'app-profile-edit',
@@ -53,73 +13,71 @@ export interface Availability {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, ReactiveFormsModule, DashboardLayout]
 })
-export class ProfileEdit {
+export class ProfileEdit implements OnInit {
+  private auth = inject(Auth);
   
-  // Profile form
+  // User reactive forms
   protected profileForm!: FormGroup;
   protected passwordForm!: FormGroup;
 
-  // User data signals
-  protected readonly currentUser = signal<UserProfile>({
-    name: 'Mike Nielsen',
-    company: 'Maxima Studio',
-    location: 'France',
-    city: 'Paris',
-    email: 'info@ng-expert.com',
-    phone: '+971 2345 65478',
-    address: '123 Rue de la Paix, 75002 Paris, France',
-    bio: 'Développeur Angular passionné avec 8 ans d\'expérience. Spécialisé dans les applications web modernes et scalables.',
-    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-    role: 'Développeur'
+  // Signals for add forms management selon bonnes pratiques
+  protected readonly isAddingSkill = signal(false);
+  protected readonly isAddingCertification = signal(false);
+  protected readonly isAddingExperience = signal(false);
+  protected readonly newSkillName = signal('');
+  protected readonly newCertification = signal({ name: '', issuer: '', dateObtained: '' });
+  protected readonly newExperience = signal({ title: '', company: '', description: '', technologies: [] });
+
+  // État du composant
+  protected readonly isLoading = signal(false);
+  protected readonly error = signal<string | null>(null);
+  protected readonly success = signal<string | null>(null);
+
+  // Utilisateur connecté depuis Firebase
+  protected readonly currentUser = this.auth.getCurrentUser();
+  
+  // Données expertes calculées depuis l'utilisateur connecté
+  protected readonly expertProfile = computed(() => {
+    const user = this.currentUser();
+    if (!user || user.role !== 'expert') return null;
+    
+    return user as Expert;
   });
 
-  protected readonly skills = signal<Skill[]>([
-    { id: '1', name: 'Angular 17' },
-    { id: '2', name: 'TypeScript' },
-    { id: '3', name: 'RxJS' },
-    { id: '4', name: 'NgRx' }
-  ]);
+  // Avatar de l'utilisateur pour l'affichage
+  protected readonly userAvatar = computed(() => {
+    const user = this.currentUser();
+    return user?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+  });
 
-  protected readonly certifications = signal<Certification[]>([
-    {
-      id: '1',
-      title: 'Angular Certified Developer',
-      organization: 'Google',
-      date: 'Janvier 2024'
-    },
-    {
-      id: '2',
-      title: 'TypeScript Advanced Patterns',
-      organization: 'Microsoft',
-      date: 'Mars 2023'
-    }
-  ]);
+  // Skills depuis le profil expert ou valeurs par défaut
+  protected readonly skills = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.skills || [];
+  });
 
-  protected readonly experiences = signal<Experience[]>([
-    {
-      id: '1',
-      title: 'Plateforme E-commerce Angular 17',
-      company: 'Maxima Studio',
-      period: 'Sept 2023 - Déc 2023',
-      description: 'Développement d\'une plateforme e-commerce complète avec Angular 17, NgRx pour la gestion d\'état, et intégration de paiements Stripe. Plus de 50,000 utilisateurs actifs.',
-      technologies: ['Angular 17', 'NgRx', 'Stripe API', 'TailwindCSS']
-    },
-    {
-      id: '2',
-      title: 'Application Mobile Ionic + Angular',
-      company: 'TechCorp',
-      period: 'Jan 2023 - Juin 2023',
-      description: 'Création d\'une application mobile hybride pour la gestion de projets avec synchronisation offline et notifications push.',
-      technologies: ['Ionic', 'Angular', 'Capacitor', 'Firebase']
-    }
-  ]);
+  // Certifications depuis le profil expert ou valeurs par défaut
+  protected readonly certifications = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.certifications || [];
+  });
 
-  protected readonly availability = signal<Availability>({
-    types: ['freelance', 'mentoring'],
-    startDate: '2024-02-01',
-    dailyRate: '500-600',
-    workPreference: 'Remote uniquement',
-    missionDuration: '3-6 mois'
+  // Expériences depuis le profil expert ou valeurs par défaut  
+  protected readonly experiences = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.experience || [];
+  });
+
+  // Disponibilité depuis le profil expert ou valeurs par défaut
+  protected readonly availability = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.availability || {
+      types: [],
+      startDate: '',
+      dailyRate: '',
+      workPreference: 'remote',
+      missionDuration: ''
+    };
   });
 
 
@@ -132,22 +90,24 @@ export class ProfileEdit {
   ]);
   protected readonly missionDurations = signal(['3-6 mois', '6-12 mois', '12+ mois', 'Flexible']);
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
     this.initializeForms();
   }
 
   private initializeForms(): void {
-    const user = this.currentUser();
+    const expert = this.expertProfile();
     
     this.profileForm = this.fb.group({
-      name: [user.name, [Validators.required]],
-      company: [user.company, [Validators.required]],
-      location: [user.location, [Validators.required]],
-      city: [user.city, [Validators.required]],
-      email: [user.email, [Validators.required, Validators.email]],
-      phone: [user.phone, [Validators.required]],
-      address: [user.address],
-      bio: [user.bio]
+      firstName: [expert?.firstName || '', [Validators.required]],
+      lastName: [expert?.lastName || '', [Validators.required]],
+      company: [expert?.company || ''],
+      location: [expert?.location || 'France', [Validators.required]],
+      city: [expert?.city || 'Paris', [Validators.required]],
+      email: [expert?.email || '', [Validators.required, Validators.email]],
+      phone: [expert?.phone || ''],
+      bio: [expert?.bio || '']
     });
 
     this.passwordForm = this.fb.group({
@@ -164,38 +124,136 @@ export class ProfileEdit {
   }
 
   // Methods for skills management
-  protected addSkill(skillName: string): void {
-    if (skillName.trim()) {
-      const newSkill: Skill = {
-        id: Date.now().toString(),
-        name: skillName.trim()
-      };
-      this.skills.update(skills => [...skills, newSkill]);
+  protected toggleAddSkill(): void {
+    this.isAddingSkill.update(current => !current);
+    if (!this.isAddingSkill()) {
+      this.newSkillName.set('');
     }
   }
 
-  protected removeSkill(skillId: string): void {
-    this.skills.update(skills => skills.filter(skill => skill.id !== skillId));
+  protected updateNewSkillName(name: string): void {
+    this.newSkillName.set(name);
+  }
+
+  protected async confirmAddSkill(): Promise<void> {
+    const skillName = this.newSkillName().trim();
+    if (!skillName) return;
+
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const newSkill: Skill = {
+      id: Date.now().toString(),
+      name: skillName,
+      category: 'frontend',
+      level: 'intermediate',
+      yearsOfExperience: 2
+    };
+
+    const updatedSkills = [...(expert.skills || []), newSkill];
+    
+    await this.auth.updateExpertProfile({ skills: updatedSkills });
+    this.isAddingSkill.set(false);
+    this.newSkillName.set('');
+  }
+
+  protected async removeSkill(skillName: string): Promise<void> {
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const updatedSkills = expert.skills?.filter(skill => skill.name !== skillName) || [];
+    
+    await this.auth.updateExpertProfile({ skills: updatedSkills });
   }
 
   // Methods for certifications management
-  protected addCertification(): void {
-    // TODO: Open modal or form to add certification
-    console.log('Add certification');
+  protected toggleAddCertification(): void {
+    this.isAddingCertification.update(current => !current);
+    if (!this.isAddingCertification()) {
+      this.newCertification.set({ name: '', issuer: '', dateObtained: '' });
+    }
   }
 
-  protected removeCertification(certId: string): void {
-    this.certifications.update(certs => certs.filter(cert => cert.id !== certId));
+  protected updateNewCertification(field: string, value: string): void {
+    this.newCertification.update(current => ({ ...current, [field]: value }));
+  }
+
+  protected async confirmAddCertification(): Promise<void> {
+    const cert = this.newCertification();
+    if (!cert.name.trim() || !cert.issuer.trim() || !cert.dateObtained) return;
+
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const newCertification: Certification = {
+      id: Date.now().toString(),
+      name: cert.name.trim(),
+      issuer: cert.issuer.trim(),
+      dateObtained: new Date(cert.dateObtained),
+      credentialId: '',
+      credentialUrl: ''
+    };
+
+    const updatedCertifications = [...(expert.certifications || []), newCertification];
+    
+    await this.auth.updateExpertProfile({ certifications: updatedCertifications });
+    this.isAddingCertification.set(false);
+    this.newCertification.set({ name: '', issuer: '', dateObtained: '' });
+  }
+
+  protected async removeCertification(certId: string): Promise<void> {
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const updatedCertifications = expert.certifications?.filter(cert => cert.id !== certId) || [];
+    
+    await this.auth.updateExpertProfile({ certifications: updatedCertifications });
   }
 
   // Methods for experience management
-  protected addExperience(): void {
-    // TODO: Open modal or form to add experience
-    console.log('Add experience');
+  protected toggleAddExperience(): void {
+    this.isAddingExperience.update(current => !current);
+    if (!this.isAddingExperience()) {
+      this.newExperience.set({ title: '', company: '', description: '', technologies: [] });
+    }
   }
 
-  protected removeExperience(expId: string): void {
-    this.experiences.update(exps => exps.filter(exp => exp.id !== expId));
+  protected updateNewExperience(field: string, value: string | string[]): void {
+    this.newExperience.update(current => ({ ...current, [field]: value }));
+  }
+
+  protected async confirmAddExperience(): Promise<void> {
+    const exp = this.newExperience();
+    if (!exp.title.trim() || !exp.company.trim() || !exp.description.trim()) return;
+
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const newExperience: Experience = {
+      id: Date.now().toString(),
+      title: exp.title.trim(),
+      company: exp.company.trim(),
+      location: 'Remote', // Default value
+      startDate: new Date(), // Default to today
+      description: exp.description.trim(),
+      technologies: exp.technologies,
+      isCurrent: true
+    };
+
+    const updatedExperience = [...(expert.experience || []), newExperience];
+    
+    await this.auth.updateExpertProfile({ experience: updatedExperience });
+    this.isAddingExperience.set(false);
+    this.newExperience.set({ title: '', company: '', description: '', technologies: [] });
+  }
+
+  protected async removeExperience(expId: string): Promise<void> {
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const updatedExperience = expert.experience?.filter(exp => exp.id !== expId) || [];
+    
+    await this.auth.updateExpertProfile({ experience: updatedExperience });
   }
 
   // Avatar management
@@ -204,26 +262,53 @@ export class ProfileEdit {
     console.log('Upload avatar');
   }
 
-  protected onAvatarReset(): void {
+  protected async onAvatarReset(): Promise<void> {
     const defaultAvatar = 'https://randomuser.me/api/portraits/men/32.jpg';
-    this.currentUser.update(user => ({ ...user, avatar: defaultAvatar }));
+    
+    await this.auth.updateExpertProfile({ avatar: defaultAvatar });
   }
 
   // Form submissions
-  protected onSaveProfile(): void {
-    if (this.profileForm.valid) {
-      const formData = this.profileForm.value;
-      this.currentUser.update(user => ({ ...user, ...formData }));
-      console.log('Profile saved:', formData);
-      // TODO: API call to save profile
-    } else {
-      console.log('Form is invalid');
+  protected async onSaveProfile(): Promise<void> {
+    if (!this.profileForm.valid) {
       Object.keys(this.profileForm.controls).forEach(key => {
         const control = this.profileForm.get(key);
         if (control?.invalid) {
           control.markAsTouched();
         }
       });
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.error.set(null);
+    this.success.set(null);
+
+    try {
+      const formData = this.profileForm.value;
+      const expertUpdate: Partial<Expert> = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        company: formData.company,
+        location: formData.location,
+        city: formData.city,
+        phone: formData.phone,
+        bio: formData.bio
+      };
+
+      const result = await this.auth.updateExpertProfile(expertUpdate);
+      
+      if (result.success) {
+        this.success.set(result.message);
+      } else {
+        this.error.set(result.message);
+      }
+
+    } catch (error) {
+      this.error.set('Erreur lors de la sauvegarde du profil');
+      console.error('Erreur sauvegarde profil:', error);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 
@@ -244,17 +329,32 @@ export class ProfileEdit {
   }
 
   // Availability management
-  protected onContractTypeChange(type: string, checked: boolean): void {
-    this.availability.update(avail => {
-      const types = checked 
-        ? [...avail.types, type]
-        : avail.types.filter(t => t !== type);
-      return { ...avail, types };
-    });
+  protected async onContractTypeChange(type: string, checked: boolean): Promise<void> {
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const currentAvailability = expert.availability || {
+      types: [] as ('freelance' | 'mentoring' | 'consulting')[],
+      startDate: '',
+      dailyRate: '',
+      workPreference: 'remote' as const,
+      missionDuration: ''
+    };
+
+    const validType = type as 'freelance' | 'mentoring' | 'consulting';
+    const types = checked 
+      ? [...currentAvailability.types, validType]
+      : currentAvailability.types.filter(t => t !== validType);
+
+    const updatedAvailability: Availability = { ...currentAvailability, types };
+    
+    await this.auth.updateExpertProfile({ availability: updatedAvailability });
   }
 
   protected isContractTypeSelected(type: string): boolean {
-    return this.availability().types.includes(type);
+    const availability = this.availability();
+    const validType = type as 'freelance' | 'mentoring' | 'consulting';
+    return availability.types.some(t => t === validType);
   }
 
 
