@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardLayout } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
+import { ExpertService } from '@core/services/expert.service';
 
 export interface DashboardStats {
   profileViews: number;
@@ -46,19 +47,19 @@ export interface Message {
 })
 export class Dashboard {
   private auth = inject(Auth);
-  
+
   // Utilisateur connecté
   protected readonly currentUser = this.auth.getCurrentUser();
-  
+
   // Nom d'utilisateur pour affichage
   protected readonly userName = computed(() => {
     const user = this.currentUser();
     return user ? user.firstName : 'Expert';
   });
-  
+
   // Profile completion signal
   protected readonly profileCompletion = signal(85);
-  
+
   // Dashboard stats
   protected readonly dashboardStats = signal<DashboardStats>({
     profileViews: 1248,
@@ -147,6 +148,19 @@ export class Dashboard {
       isUnread: false
     }
   ]);
+
+  // Proposals
+  protected readonly proposals = signal<import('@core/models/user.model').Proposal[]>([]);
+  private expertService = inject(ExpertService);
+
+  async ngOnInit() {
+    // Charger les propositions si c'est un expert
+    const user = this.currentUser();
+    if (user && user.role === 'expert') {
+      const proposals = await this.expertService.getProposalsForExpert(user.id);
+      this.proposals.set(proposals);
+    }
+  }
 
   // Revenue chart data (simplified for display)
   protected readonly revenueData = signal([45, 60, 55, 75, 85, 100]);

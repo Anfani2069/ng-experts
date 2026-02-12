@@ -59,6 +59,66 @@ export class ExpertDetails implements OnInit {
     return expert ? `${expert.city}, ${expert.location}` : 'France';
   });
 
+  protected readonly memberSince = computed(() => {
+    const expert = this.expertData();
+    if (!expert?.createdAt) return '2024';
+    const date = new Date(expert.createdAt);
+    return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  });
+
+  protected readonly jobTitle = computed(() => {
+    const expert = this.expertData();
+    // Générer un titre basé sur les certifs ou compétences principales
+    const mainSkill = expert?.skills?.[0]?.name || 'Angular';
+    return `Expert ${mainSkill} & Développement Web`;
+  });
+
+  protected readonly totalExperience = computed(() => {
+    const expert = this.expertData();
+    // Calcul approximatif ou mocked, idéalement ferait la somme des expériences
+    const firstExp = expert?.experience?.[expert.experience.length - 1];
+    if (firstExp?.startDate) {
+      const start = new Date(firstExp.startDate).getFullYear();
+      const now = new Date().getFullYear();
+      return `${now - start} ans`;
+    }
+    return '5 ans'; // Fallback
+  });
+
+  protected readonly responseRate = computed(() => {
+    const expert = this.expertData();
+    return expert?.responseRate ? `${expert.responseRate}%` : '100%';
+  });
+
+  protected readonly responseTime = computed(() => {
+    const expert = this.expertData();
+    return expert?.responseTime || '1h';
+  });
+
+  protected readonly recommendationsCount = computed(() => {
+    const expert = this.expertData();
+    return expert?.recommendationsCount || 0;
+  });
+
+  protected readonly languages = computed(() => {
+    const expert = this.expertData();
+    return expert?.languages?.join(', ') || 'Français';
+  });
+
+  protected readonly workPreferenceLabel = computed(() => {
+    const expert = this.expertData();
+    switch (expert?.availability?.workPreference) {
+      case 'remote': return 'Remote Only';
+      case 'hybrid': return 'Remote & Onsite';
+      case 'onsite': return 'Onsite Only';
+      default: return 'Flexible';
+    }
+  });
+
+  // Rating safe accessor
+  protected readonly rating = computed(() => this.expertData()?.rating || 5.0);
+  protected readonly reviewsCount = computed(() => this.expertData()?.reviewsCount || 0);
+
   protected readonly hasSkills = computed(() => {
     const expert = this.expertData();
     return expert?.skills && expert.skills.length > 0;
@@ -91,10 +151,10 @@ export class ExpertDetails implements OnInit {
   private async loadExpertData(expertId: string): Promise<void> {
     try {
       this.isLoading.set(true);
-      
+
       // Tenter de récupérer depuis Firebase
       const expertFromFirebase = await this.expertService.getExpertById(expertId);
-      
+
       if (expertFromFirebase) {
         console.log('✅ Données récupérées depuis Firebase:', expertFromFirebase);
         this.currentExpert.set(expertFromFirebase);
@@ -114,6 +174,19 @@ export class ExpertDetails implements OnInit {
     }
   }
 
+  // Proposal Modal State
+  protected showProposalModal = signal<boolean>(false);
+  protected isSubmitting = signal<boolean>(false);
+  protected proposalSent = signal<boolean>(false);
+
+  protected proposalForm = signal({
+    title: '',
+    description: '',
+    budget: '',
+    email: '',
+    startDate: ''
+  });
+
   // Actions
   protected onContact(): void {
     console.log('Contacting expert:', this.expertData()?.id);
@@ -121,11 +194,78 @@ export class ExpertDetails implements OnInit {
   }
 
   protected onHire(): void {
-    console.log('Hiring expert:', this.expertData()?.id);
-    // Logique pour embaucher l'expert
+    this.openProposalModal();
+  }
+
+  protected openProposalModal(): void {
+    this.showProposalModal.set(true);
+    this.proposalSent.set(false);
+    // Reset form
+    this.proposalForm.set({
+      title: '',
+      description: '',
+      budget: '',
+      email: '',
+      startDate: ''
+    });
+  }
+
+  protected closeProposalModal(): void {
+    this.showProposalModal.set(false);
+  }
+
+  protected updateForm(field: string, value: string): void {
+    this.proposalForm.update(form => ({ ...form, [field]: value }));
+  }
+
+  protected async submitProposal(): Promise<void> {
+    if (this.isSubmitting()) return;
+
+    // Validation basique
+    const form = this.proposalForm();
+    if (!form.title || !form.email) {
+      alert('Veuillez remplir au moins le titre et votre email.');
+      return;
+    }
+
+    this.isSubmitting.set(true);
+
+    try {
+      const expert = this.expertData();
+      if (!expert) throw new Error('Expert non trouvé');
+
+      const currentUser = this.auth.getCurrentUser()();
+      const proposal: Omit<import('@core/models/user.model').Proposal, 'id'> = {
+        expertId: expert.id,
+        clientEmail: form.email,
+        title: form.title,
+        description: form.description,
+        budget: form.budget,
+        startDate: form.startDate,
+        status: 'pending',
+        createdAt: new Date(),
+        ...(currentUser?.id ? { clientId: currentUser.id } : {})
+      };
+
+      await this.expertService.addProposal(proposal);
+
+      console.log('Proposal submitted successfully');
+      this.isSubmitting.set(false);
+      this.proposalSent.set(true);
+
+      // Fermeture automatique après succès
+      setTimeout(() => {
+        this.closeProposalModal();
+      }, 2000);
+
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de la proposition:', error);
+      this.isSubmitting.set(false);
+      alert('Une erreur est survenue lors de l\'envoi de la proposition.');
+    }
   }
 
   protected goBack(): void {
-    this.router.navigate(['/dashboard']);
+    this.router.navigate(['/']);
   }
 }

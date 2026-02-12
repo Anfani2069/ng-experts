@@ -1,222 +1,247 @@
 <app-dashboard-layout [showSearch]="true">
 
-    <!-- Dashboard Content -->
-    <div class="px-8 py-6">
-      <!-- Welcome Card -->
-      <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
-        <div class="relative z-10">
-          <h1 class="text-3xl font-heading font-bold mb-2">Bienvenue {{ userName() }} ! 👋</h1>
-          <p class="text-white/90 mb-6">Vous avez complété {{ profileCompletion() }}% de votre profil</p>
-          
-          <div class="grid grid-cols-3 gap-6 max-w-2xl">
-            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div class="flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-briefcase"></i>
-                <span class="text-sm">Nouvelles missions</span>
-              </div>
-              <p class="text-2xl font-bold">{{ quickStats().newMissions }}</p>
-              <p class="text-xs text-white/70">En attente</p>
-            </div>
-            
-            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div class="flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-check-circle"></i>
-                <span class="text-sm">Missions actives</span>
-              </div>
-              <p class="text-2xl font-bold">{{ quickStats().activeMissions }}</p>
-              <p class="text-xs text-white/70">En cours</p>
-            </div>
-            
-            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-              <div class="flex items-center gap-2 mb-2">
-                <i class="fa-solid fa-star"></i>
-                <span class="text-sm">Évaluations</span>
-              </div>
-              <p class="text-2xl font-bold">{{ quickStats().averageRating }}</p>
-              <p class="text-xs text-white/70">Note moyenne</p>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Decorative illustration -->
-        <div class="absolute right-8 bottom-0 opacity-20">
-          <i class="fa-solid fa-code text-9xl"></i>
-        </div>
-      </div>
+  <!-- Dashboard Content -->
+  <div class="px-8 py-6">
+    <!-- Welcome Card -->
+    <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
+      <div class="relative z-10">
+        <h1 class="text-3xl font-heading font-bold mb-2">Bienvenue {{ userName() }} ! 👋</h1>
+        <p class="text-white/90 mb-6">Vous avez complété {{ profileCompletion() }}% de votre profil</p>
 
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
-              <i class="fa-solid fa-eye text-primary text-xl"></i>
+        <div class="grid grid-cols-3 gap-6 max-w-2xl">
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-briefcase"></i>
+              <span class="text-sm">Nouvelles missions</span>
             </div>
-            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{ dashboardStats().profileViewsChange }}</span>
+            <p class="text-2xl font-bold">{{ quickStats().newMissions }}</p>
+            <p class="text-xs text-white/70">En attente</p>
           </div>
-          <p class="text-gray-600 text-sm mb-1">Vues du profil</p>
-          <p class="text-2xl font-bold">{{ formatNumber(dashboardStats().profileViews) }}</p>
-          <p class="text-xs text-gray-500 mt-1">7 derniers jours</p>
-        </div>
 
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
-              <i class="fa-solid fa-euro-sign text-green-600 text-xl"></i>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-check-circle"></i>
+              <span class="text-sm">Missions actives</span>
             </div>
-            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{ dashboardStats().revenueChange }}</span>
+            <p class="text-2xl font-bold">{{ quickStats().activeMissions }}</p>
+            <p class="text-xs text-white/70">En cours</p>
           </div>
-          <p class="text-gray-600 text-sm mb-1">Revenus</p>
-          <p class="text-2xl font-bold">{{ formatCurrency(dashboardStats().revenue) }}</p>
-          <p class="text-xs text-gray-500 mt-1">Ce mois</p>
-        </div>
 
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
-              <i class="fa-solid fa-users text-purple-600 text-xl"></i>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <i class="fa-solid fa-star"></i>
+              <span class="text-sm">Évaluations</span>
             </div>
-            <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{ dashboardStats().clientsChange }}</span>
-          </div>
-          <p class="text-gray-600 text-sm mb-1">Clients</p>
-          <p class="text-2xl font-bold">{{ dashboardStats().clients }}</p>
-          <p class="text-xs text-gray-500 mt-1">Total</p>
-        </div>
-
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
-              <i class="fa-solid fa-clock text-orange-600 text-xl"></i>
-            </div>
-            <span class="text-xs font-semibold text-gray-600 bg-gray-50 px-2 py-1 rounded-full">{{ dashboardStats().hoursWorkedChange }}</span>
-          </div>
-          <p class="text-gray-600 text-sm mb-1">Heures travaillées</p>
-          <p class="text-2xl font-bold">{{ dashboardStats().hoursWorked }}h</p>
-          <p class="text-xs text-gray-500 mt-1">Ce mois</p>
-        </div>
-      </div>
-
-      <!-- Charts Row -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Revenue Chart -->
-        <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <h3 class="font-bold text-lg">Revenus mensuels</h3>
-              <p class="text-sm text-gray-500">Évolution sur les 6 derniers mois</p>
-            </div>
-            <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm">
-              <option>6 mois</option>
-              <option>3 mois</option>
-              <option>1 an</option>
-            </select>
-          </div>
-          
-          <!-- Simple chart representation -->
-          <div class="h-64 flex items-end justify-between gap-2">
-            @for (value of revenueData(); track $index) {
-              <div class="flex-1 rounded-t-lg transition-all duration-300 hover:opacity-80"
-                   [class]="'bg-primary/' + (20 + ($index + 1) * 15)"
-                   [style.height.%]="value">
-              </div>
-            }
-          </div>
-          
-          <div class="flex justify-between mt-4 text-xs text-gray-500">
-            @for (month of chartMonths(); track month) {
-              <span>{{ month }}</span>
-            }
-          </div>
-        </div>
-
-        <!-- Top Skills -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <h3 class="font-bold text-lg mb-6">Compétences recherchées</h3>
-          
-          <div class="space-y-4">
-            @for (skill of skills(); track skill.name) {
-              <div>
-                <div class="flex items-center justify-between mb-2">
-                  <span class="text-sm font-medium">{{ skill.name }}</span>
-                  <span class="text-sm text-gray-500">{{ skill.percentage }}%</span>
-                </div>
-                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-500"
-                       [class]="skill.color"
-                       [style.width.%]="skill.percentage">
-                  </div>
-                </div>
-              </div>
-            }
+            <p class="text-2xl font-bold">{{ quickStats().averageRating }}</p>
+            <p class="text-xs text-white/70">Note moyenne</p>
           </div>
         </div>
       </div>
 
-      <!-- Recent Activity & Missions -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Recent Missions -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="font-bold text-lg">Missions récentes</h3>
-            <a href="#" class="text-sm text-primary hover:text-primary-dark font-semibold">Voir tout</a>
+      <!-- Decorative illustration -->
+      <div class="absolute right-8 bottom-0 opacity-20">
+        <i class="fa-solid fa-code text-9xl"></i>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+            <i class="fa-solid fa-eye text-primary text-xl"></i>
           </div>
-          
-          <div class="space-y-4">
-            @for (mission of recentMissions(); track mission.id) {
-              <div class="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0"
-                     [class]="mission.iconColor === 'text-primary' ? 'bg-blue-50' : 
-                             mission.iconColor === 'text-purple-600' ? 'bg-purple-50' : 'bg-green-50'">
-                  <i [class]="mission.icon + ' ' + mission.iconColor"></i>
-                </div>
-                <div class="flex-1">
-                  <h4 class="font-semibold mb-1">{{ mission.title }}</h4>
-                  <p class="text-sm text-gray-500 mb-2">{{ mission.description }}</p>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs px-2 py-1 rounded-full"
-                          [class]="getMissionStatusClass(mission.status)">
-                      {{ getMissionStatusText(mission.status) }}
-                    </span>
-                    @if (getMissionTimeText(mission)) {
-                      <span class="text-xs text-gray-400">•</span>
-                      <span class="text-xs text-gray-500">{{ getMissionTimeText(mission) }}</span>
-                    }
-                  </div>
-                </div>
-                <span class="text-sm font-bold"
-                      [class]="mission.status === 'terminee' ? 'text-gray-400' : 'text-primary'">
-                  {{ formatCurrency(mission.budget) }}
-                </span>
-              </div>
-            }
+          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
+            dashboardStats().profileViewsChange }}</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Vues du profil</p>
+        <p class="text-2xl font-bold">{{ formatNumber(dashboardStats().profileViews) }}</p>
+        <p class="text-xs text-gray-500 mt-1">7 derniers jours</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
+            <i class="fa-solid fa-euro-sign text-green-600 text-xl"></i>
           </div>
+          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
+            dashboardStats().revenueChange }}</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Revenus</p>
+        <p class="text-2xl font-bold">{{ formatCurrency(dashboardStats().revenue) }}</p>
+        <p class="text-xs text-gray-500 mt-1">Ce mois</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
+            <i class="fa-solid fa-users text-purple-600 text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
+            dashboardStats().clientsChange }}</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Clients</p>
+        <p class="text-2xl font-bold">{{ dashboardStats().clients }}</p>
+        <p class="text-xs text-gray-500 mt-1">Total</p>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-4">
+          <div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
+            <i class="fa-solid fa-clock text-orange-600 text-xl"></i>
+          </div>
+          <span class="text-xs font-semibold text-gray-600 bg-gray-50 px-2 py-1 rounded-full">{{
+            dashboardStats().hoursWorkedChange }}</span>
+        </div>
+        <p class="text-gray-600 text-sm mb-1">Heures travaillées</p>
+        <p class="text-2xl font-bold">{{ dashboardStats().hoursWorked }}h</p>
+        <p class="text-xs text-gray-500 mt-1">Ce mois</p>
+      </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+      <!-- Revenue Chart -->
+      <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="font-bold text-lg">Revenus mensuels</h3>
+            <p class="text-sm text-gray-500">Évolution sur les 6 derniers mois</p>
+          </div>
+          <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+            <option>6 mois</option>
+            <option>3 mois</option>
+            <option>1 an</option>
+          </select>
         </div>
 
-        <!-- Messages récents -->
-        <div class="bg-white rounded-2xl p-6 border border-gray-200">
-          <div class="flex items-center justify-between mb-6">
-            <h3 class="font-bold text-lg">Messages récents</h3>
-            <a href="#" class="text-sm text-primary hover:text-primary-dark font-semibold">Voir tout</a>
+        <!-- Simple chart representation -->
+        <div class="h-64 flex items-end justify-between gap-2">
+          @for (value of revenueData(); track $index) {
+          <div class="flex-1 rounded-t-lg transition-all duration-300 hover:opacity-80"
+            [class]="'bg-primary/' + (20 + ($index + 1) * 15)" [style.height.%]="value">
           </div>
-          
-          <div class="space-y-4">
-            @for (message of recentMessages(); track message.id) {
-              <div class="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <img [src]="message.senderAvatar" class="w-10 h-10 rounded-full">
-                <div class="flex-1">
-                  <div class="flex items-center justify-between mb-1">
-                    <h4 class="font-semibold text-sm">{{ message.senderName }}</h4>
-                    <span class="text-xs text-gray-400">{{ message.timeAgo }}</span>
-                  </div>
-                  <p class="text-sm text-gray-600">{{ message.message }}</p>
-                  @if (message.isUnread) {
-                    <span class="inline-block mt-2 w-2 h-2 bg-primary rounded-full"></span>
-                  }
-                </div>
+          }
+        </div>
+
+        <div class="flex justify-between mt-4 text-xs text-gray-500">
+          @for (month of chartMonths(); track month) {
+          <span>{{ month }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Top Skills -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <h3 class="font-bold text-lg mb-6">Compétences recherchées</h3>
+
+        <div class="space-y-4">
+          @for (skill of skills(); track skill.name) {
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm font-medium">{{ skill.name }}</span>
+              <span class="text-sm text-gray-500">{{ skill.percentage }}%</span>
+            </div>
+            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500" [class]="skill.color"
+                [style.width.%]="skill.percentage">
               </div>
-            }
+            </div>
           </div>
+          }
         </div>
       </div>
     </div>
+
+    <!-- Recent Activity & Missions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Recent Missions -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-bold text-lg">Missions récentes</h3>
+          <a href="#" class="text-sm text-primary hover:text-primary-dark font-semibold">Voir tout</a>
+        </div>
+
+        <div class="space-y-4">
+          @for (mission of recentMissions(); track mission.id) {
+          <div class="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 cursor-pointer">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" [class]="mission.iconColor === 'text-primary' ? 'bg-blue-50' : 
+                             mission.iconColor === 'text-purple-600' ? 'bg-purple-50' : 'bg-green-50'">
+              <i [class]="mission.icon + ' ' + mission.iconColor"></i>
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold mb-1">{{ mission.title }}</h4>
+              <p class="text-sm text-gray-500 mb-2">{{ mission.description }}</p>
+              <div class="flex items-center gap-2">
+                <span class="text-xs px-2 py-1 rounded-full" [class]="getMissionStatusClass(mission.status)">
+                  {{ getMissionStatusText(mission.status) }}
+                </span>
+                @if (getMissionTimeText(mission)) {
+                <span class="text-xs text-gray-400">•</span>
+                <span class="text-xs text-gray-500">{{ getMissionTimeText(mission) }}</span>
+                }
+              </div>
+            </div>
+            <span class="text-sm font-bold" [class]="mission.status === 'terminee' ? 'text-gray-400' : 'text-primary'">
+              {{ formatCurrency(mission.budget) }}
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+
+      <!-- Propositions reçues -->
+      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="font-bold text-lg">Propositions reçues</h3>
+          <span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
+            {{ proposals().length }}
+          </span>
+        </div>
+
+        <div class="space-y-4">
+          @if (proposals().length === 0) {
+          <div class="text-center py-8 text-gray-400">
+            <i class="fa-solid fa-inbox text-4xl mb-3 opacity-50"></i>
+            <p>Aucune proposition pour le moment</p>
+          </div>
+          }
+
+          @for (proposal of proposals(); track proposal.id) {
+          <div
+            class="flex items-start gap-3 p-4 rounded-xl border border-gray-100 hover:border-primary/30 hover:shadow-sm transition-all bg-white group cursor-pointer">
+            <!-- Avatar placeholder based on email -->
+            <div
+              class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg shrink-0 group-hover:from-primary/10 group-hover:to-accent/10 group-hover:text-primary transition-colors">
+              {{ proposal.clientEmail.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <h4 class="font-bold text-gray-900 truncate pr-2">{{ proposal.title }}</h4>
+                <span class="text-xs text-gray-400 whitespace-nowrap">
+                  {{ proposal.createdAt | date:'dd MMM' }}
+                </span>
+              </div>
+
+              <div class="text-sm text-primary font-medium mb-1">
+                {{ proposal.budget }} • {{ proposal.startDate }}
+              </div>
+
+              <p class="text-sm text-gray-600 line-clamp-2 mb-2">
+                {{ proposal.description }}
+              </p>
+
+              <div class="flex items-center gap-2 text-xs text-gray-400">
+                <i class="fa-regular fa-envelope"></i>
+                <span class="truncate">{{ proposal.clientEmail }}</span>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
 
 </app-dashboard-layout>

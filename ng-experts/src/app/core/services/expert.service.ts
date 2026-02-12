@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
 import { Expert } from '@core/models/user.model';
 import { firebase } from '@core/config/firebase.config';
 
@@ -30,7 +30,7 @@ export class ExpertService {
 
       if (expertSnap.exists()) {
         const expertData = expertSnap.data();
-        
+
         // Vérifier que c'est bien un expert
         if (expertData['role'] === 'expert') {
           return {
@@ -61,9 +61,8 @@ export class ExpertService {
       // Query pour récupérer tous les utilisateurs avec le rôle 'expert' et vérifiés
       const expertsRef = collection(firebase.firestore, 'users');
       const expertsQuery = query(
-        expertsRef, 
-        where('role', '==', 'expert'),
-        where('verificationStatus', '==', 'verified')
+        expertsRef,
+        where('role', '==', 'expert')
       );
 
       const querySnapshot = await getDocs(expertsQuery);
@@ -124,6 +123,106 @@ export class ExpertService {
   }
 
   /**
+   * Ajoute une proposition de mission pour un expert
+   */
+  async addProposal(proposal: Omit<import('@core/models/user.model').Proposal, 'id'>): Promise<void> {
+    try {
+      this.isLoading.set(true);
+      const proposalsRef = collection(firebase.firestore, 'proposals');
+      await import('firebase/firestore').then(firestore =>
+        firestore.addDoc(proposalsRef, proposal)
+      );
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de la proposition:', error);
+      throw error;
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  /**
+   * Récupère les propositions reçues pour un expert donné
+   */
+  async getProposalsForExpert(expertId: string): Promise<import('@core/models/user.model').Proposal[]> {
+    try {
+      this.isLoading.set(true);
+      const proposalsRef = collection(firebase.firestore, 'proposals');
+      const q = query(proposalsRef, where('expertId', '==', expertId));
+
+      const querySnapshot = await getDocs(q);
+      const proposals: import('@core/models/user.model').Proposal[] = [];
+
+      querySnapshot.forEach((doc) => {
+        proposals.push({
+          id: doc.id,
+          ...doc.data()
+        } as import('@core/models/user.model').Proposal);
+      });
+
+      // Trier par date décroissante (plus récent en premier)
+      return proposals.sort((a, b) => {
+        const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
+        const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+        return dateB.getTime() - dateA.getTime();
+      });
+
+    } catch (error) {
+      console.error('Erreur lors de la récupération des propositions:', error);
+      return [];
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  /**
+   * Récupère une proposition par son ID
+   */
+  async getProposalById(proposalId: string): Promise<import('@core/models/user.model').Proposal | null> {
+    try {
+      this.isLoading.set(true);
+      const proposalRef = doc(firebase.firestore, 'proposals', proposalId);
+      const proposalSnap = await getDoc(proposalRef);
+
+      if (proposalSnap.exists()) {
+        return {
+          id: proposalSnap.id,
+          ...proposalSnap.data()
+        } as import('@core/models/user.model').Proposal;
+      }
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la proposition:', error);
+      return null;
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  /**
+   * Met à jour le statut d'une proposition (acceptée/refusée)
+   */
+  async updateProposalStatus(
+    proposalId: string,
+    status: 'accepted' | 'rejected'
+  ): Promise<void> {
+    try {
+      this.isLoading.set(true);
+      const proposalRef = doc(firebase.firestore, 'proposals', proposalId);
+
+      await updateDoc(proposalRef, {
+        status,
+        updatedAt: new Date()
+      });
+
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du statut:', error);
+      throw error;
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  /**
    * Données mockées pour les tests (fallback en cas d'erreur Firebase)
    */
   getMockExpertById(expertId: string): Partial<Expert> | null {
@@ -143,6 +242,11 @@ export class ExpertService {
         isAvailable: true,
         projectsCompleted: 47,
         rating: 4.9,
+        reviewsCount: 12,
+        recommendationsCount: 5,
+        responseRate: 98,
+        responseTime: '2h',
+        languages: ['Français', 'Anglais'],
         skills: [
           {
             id: '1',
@@ -210,6 +314,11 @@ export class ExpertService {
         isAvailable: true,
         projectsCompleted: 32,
         rating: 4.8,
+        reviewsCount: 8,
+        recommendationsCount: 3,
+        responseRate: 100,
+        responseTime: '1h',
+        languages: ['Français', 'Anglais', 'Espagnol'],
         skills: [
           {
             id: '1',
@@ -269,6 +378,11 @@ export class ExpertService {
         isAvailable: false,
         projectsCompleted: 28,
         rating: 4.7,
+        reviewsCount: 15,
+        recommendationsCount: 2,
+        responseRate: 85,
+        responseTime: '6h',
+        languages: ['Français'],
         availability: {
           types: ['mentoring', 'consulting'],
           startDate: '2024-06-01',

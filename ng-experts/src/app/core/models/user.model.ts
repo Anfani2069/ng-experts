@@ -34,34 +34,38 @@ export interface BaseUser {
  */
 export interface Expert extends BaseUser {
   role: 'expert';
-  
+
   // Informations professionnelles
   company?: string;
   location: string;
   city: string;
   phone?: string;
   bio: string;
-  
+
   // Vérification
   verificationStatus: VerificationStatus;
   verifiedAt?: Date;
-  
+
   // Compétences techniques
   skills: Skill[];
   experience: Experience[];
   certifications: Certification[];
-  
+
   // Disponibilité
   availability: Availability;
-  
+
   // Profil public
   isAvailable: boolean;
   isPublic: boolean;
-  
+
   // Statistiques
   projectsCompleted: number;
   rating?: number;
   reviewsCount: number;
+  recommendationsCount?: number;
+  responseRate?: number;
+  responseTime?: string;
+  languages?: string[];
 }
 
 /**
@@ -70,20 +74,20 @@ export interface Expert extends BaseUser {
  */
 export interface Recruiter extends BaseUser {
   role: 'recruiter';
-  
+
   // Informations entreprise
   company: string;
   companySize?: string;
   industry?: string;
   location: string;
   website?: string;
-  
+
   // Abonnement
   subscription: Subscription;
-  
+
   // Préférences de recherche
   searchPreferences?: SearchPreferences;
-  
+
   // Historique
   contactedExperts: string[]; // IDs des experts contactés
   savedExperts: string[]; // IDs des experts sauvegardés
@@ -162,4 +166,16 @@ export interface SearchPreferences {
   location: string[];
   availability: string[];
   maxDailyRate?: number;
+}
+export interface Proposal {
+  id?: string;
+  expertId: string;
+  clientId?: string; // ID of the logged in user if any, or null/generated
+  clientEmail: string;
+  title: string;
+  description: string;
+  budget: string;
+  startDate: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  createdAt: Date;
 }

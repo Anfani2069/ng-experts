@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Expert } from '@core/models/user.model';
@@ -11,87 +11,58 @@ import { ExpertService } from '@core/services/expert.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule]
 })
-export class ExpertsSection {
+export class ExpertsSection implements OnInit {
+  private readonly expertService = inject(ExpertService);
+  private readonly router = inject(Router);
+
+  // Filtres
   protected readonly cityFilter = signal('');
   protected readonly techFilter = signal('');
   protected readonly availabilityFilter = signal('Tous');
 
-  protected readonly experts: Expert[] = [
-    {
-      id: 1,
-      name: 'Camille Coutens',
-      location: 'Bordeaux',
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-      rating: 5.0,
-      reviews: 24,
-      description: 'Développeuse Vue.js / Nuxt + CTO @augalo @augocel @aucode @auciono Kiffer avant tout.',
-      skills: ['Vue.js', 'Nuxt', 'Ionic'],
-      availability: ['Freelance'],
-      isVerified: true
-    },
-    {
-      id: 2,
-      name: 'Dina Ramarovahoaka',
-      location: 'Bordeaux',
-      avatar: 'https://randomuser.me/api/portraits/women/45.jpg',
-      rating: 4.9,
-      reviews: 18,
-      description: 'Bonjour, je m\'appelle Dina, 40 ans, développeuse frontend passionnée ! J\'habite à bordeaux et je suis spécialisée en Angular.',
-      skills: ['Angular', 'React'],
-      availability: ['Freelance', 'CDI'],
-      isVerified: true
-    },
-    {
-      id: 3,
-      name: 'Natacha',
-      location: 'Lille',
-      avatar: 'https://randomuser.me/api/portraits/women/46.jpg',
-      rating: 4.8,
-      reviews: 31,
-      description: 'Hello, Moi c\'est Natacha, je suis développeuse Fullstack sur des stacks JS / TS, principalement Angular et Node.js.',
-      skills: ['Angular', 'Next.JS', 'MongoDB'],
-      availability: ['Freelance'],
-      isVerified: true
-    },
-    {
-      id: 4,
-      name: 'Brenda Meunier',
-      location: 'Mende',
-      avatar: 'https://randomuser.me/api/portraits/women/47.jpg',
-      rating: 4.7,
-      reviews: 42,
-      description: 'Développeuse full-stack spécialisée en Angular (v2 -> v20) et Python (Django, FastAPI). J\'interviens sur des projets complexes.',
-      skills: ['Angular', 'TypeScript', 'RxJS'],
-      availability: ['Freelance', 'CDI'],
-      isVerified: true
-    },
-    {
-      id: 5,
-      name: 'Manon Carbonnel',
-      location: 'Nantes',
-      avatar: 'https://randomuser.me/api/portraits/men/48.jpg',
-      rating: 4.9,
-      reviews: 67,
-      description: 'Développeuse web | Software crafter | Agiliste | Yesss Leader | Fresqueuse | Experte en intégration continue.',
-      skills: ['TypeScript', 'CSS', 'PHP'],
-      availability: ['Freelance', 'CDI'],
-      isVerified: true,
-      isSpeaker: true
-    },
-    {
-      id: 6,
-      name: 'Emmanuelle ABOAF',
-      location: 'Paris',
-      avatar: 'https://randomuser.me/api/portraits/women/49.jpg',
-      rating: 5.0,
-      reviews: 89,
-      description: 'Sourde de naissance et bilingue avec deux implants cochléaires, je suis développeuse, coach et conférencière passionnée.',
-      skills: ['Angular', 'React', 'Vue.JS'],
-      availability: ['CDI'],
-      isVerified: true,
-      isSpeaker: true
-    }
-  ];
+  // Données des experts depuis Firebase
+  protected readonly experts = this.expertService.expertsData;
+  protected readonly isLoading = this.expertService.loading;
+  protected readonly error = this.expertService.errorMessage;
+
+  // Experts filtrés (computed signal)
+  protected readonly filteredExperts = computed(() => {
+    const allExperts = this.experts();
+    const city = this.cityFilter().toLowerCase().trim();
+    const tech = this.techFilter().toLowerCase().trim();
+    const availability = this.availabilityFilter();
+
+    return allExperts.filter(expert => {
+      // Filtre par ville
+      if (city && !expert.city.toLowerCase().includes(city)) {
+        return false;
+      }
+
+      // Filtre par technologie
+      if (tech) {
+        const hasSkill = expert.skills.some(skill =>
+          skill.name.toLowerCase().includes(tech)
+        );
+        if (!hasSkill) return false;
+      }
+
+      // Filtre par disponibilité
+      if (availability !== 'Tous') {
+        const availabilityLower = availability.toLowerCase();
+        const hasAvailability = expert.availability.types.some(type =>
+          type.toLowerCase() === availabilityLower
+        );
+        if (!hasAvailability) return false;
+      }
+
+      return true;
+    });
+  });
+
+  async ngOnInit() {
+    // Charger les experts depuis Firebase au démarrage
+    await this.expertService.getAllExperts();
+  }
 
   protected onCityFilterChange(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -108,8 +79,28 @@ export class ExpertsSection {
     this.availabilityFilter.set(target.value);
   }
 
-  protected onHireExpert(expertId: number): void {
-    // TODO: Implement hire expert functionality
-    console.log('Hire expert:', expertId);
+  protected onHireExpert(expertId: string): void {
+    // Naviguer vers la page de détails de l'expert
+    this.router.navigate(['/expert', expertId]);
+  }
+
+  // Helper pour obtenir le nom complet
+  protected getFullName(expert: Expert): string {
+    return `${expert.firstName} ${expert.lastName}`;
+  }
+
+  // Helper pour obtenir les noms des compétences
+  protected getSkillNames(expert: Expert): string[] {
+    return expert.skills.map(skill => skill.name);
+  }
+
+  // Helper pour formater les types de disponibilité
+  protected formatAvailabilityType(type: string): string {
+    const mapping: Record<string, string> = {
+      'freelance': 'Freelance',
+      'consulting': 'Consulting',
+      'mentoring': 'Mentoring'
+    };
+    return mapping[type] || type;
   }
 }
