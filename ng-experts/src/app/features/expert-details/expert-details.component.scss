@@ -1,100 +1,128 @@
- :host {
-   display: block;
- }
+:host {
+  display: block;
+  overflow: visible;
+}
 
- .expert-details-container {
-   max-width: 1200px;
-   margin: 0 auto;
- }
+.expert-details-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: visible;
+}
 
- // Typographie image-accurate
- .section-title {
-   font-size: 0.75rem;
-   font-weight: 700;
-   color: #94a3b8; // slate-400
-   letter-spacing: 0.05em;
-   text-transform: uppercase;
-   margin-bottom: 1.5rem;
- }
+// Sidebar — CSS sticky behavior
+.sticky-sidebar {
+  position: sticky;
+  top: 7rem; // navbar height + comfortable margin
+  z-index: 20;
+  transition: top 0.2s ease;
 
- // Avatar "Initials" style
- .avatar-placeholder {
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   background-color: #dbeafe; // blue-100
-   color: #2563eb; // blue-600
-   font-weight: 700;
-   font-size: 2rem;
-   width: 100%;
-   height: 100%;
-   border-radius: 1.5rem;
- }
+  @media (max-width: 1024px) {
+    position: static;
+  }
+}
 
- // Sidebar refinement
- .sidebar-card {
-   background: white;
-   border-radius: 2rem;
-   padding: 2.5rem;
-   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-   border: 1px solid #f1f5f9;
- }
+// Section titles - dark theme
+.section-title {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #999999;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 
- .sidebar-info-row {
-   display: flex;
-   justify-content: space-between;
-   align-items: center;
-   padding: 0.75rem 0;
-   border-bottom: 1px solid #f8fafc;
-   font-size: 0.875rem;
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 2rem;
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+}
 
-   &:last-child {
-     border-bottom: none;
-   }
+// Avatar placeholder - dark
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 2rem;
+  width: 100%;
+  height: 100%;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-   .label {
-     color: #64748b;
-   }
+// Sidebar card - dark
+.sidebar-card {
+  background: #111111;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
 
-   .value {
-     font-weight: 700;
-     color: #1e293b;
-   }
- }
+.sidebar-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.8125rem;
 
- .garantie-box {
-   background-color: #f8fafc;
-   border-radius: 1rem;
-   padding: 1.5rem;
-   margin-top: 2rem;
- }
+  &:last-child {
+    border-bottom: none;
+  }
 
- // Parcours styles
- .experience-icon-box {
-   width: 2.5rem;
-   height: 2.5rem;
-   background-color: #f1f5f9;
-   border-radius: 0.75rem;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   color: #64748b;
-   flex-shrink: 0;
- }
+  .label {
+    color: #999999;
+    font-weight: 500;
+  }
 
- // Animations base
- @keyframes fadeInUp {
-   from {
-     opacity: 0;
-     transform: translateY(10px);
-   }
+  .value {
+    font-weight: 700;
+    color: #ffffff;
+  }
+}
 
-   to {
-     opacity: 1;
-     transform: translateY(0);
-   }
- }
+// Garanties box - dark
+.garantie-box {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
 
- .animate-fadeInUp {
-   animation: fadeInUp 0.5s ease-out forwards;
- }
+// Experience icon box - dark
+.experience-icon-box {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999999;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.5s ease-out forwards;
+}

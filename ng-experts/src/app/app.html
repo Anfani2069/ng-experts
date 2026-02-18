@@ -1,12 +1,50 @@
 <!-- Layout avec navbar/footer conditionnels - Publiques: OUI, Dashboard: NON -->
-@if (shouldShowNavigation()) {
-  <app-navbar></app-navbar>
-}
 
-<main class="min-h-screen">
-  <router-outlet />
-</main>
+<!-- SVG NOISE FILTER DEFINITION -->
+<svg style="position: absolute; width: 0; height: 0;">
+  <filter id="noise-filter">
+    <feTurbulence type="fractalNoise" baseFrequency="1.24" numOctaves="4" stitchTiles="stitch"></feTurbulence>
+    <feColorMatrix type="saturate" values="0"></feColorMatrix>
+    <feComponentTransfer>
+      <feFuncR type="linear" slope="0.67"></feFuncR>
+      <feFuncG type="linear" slope="0.67"></feFuncG>
+      <feFuncB type="linear" slope="0.67"></feFuncB>
+      <feFuncA type="linear" slope="0.41"></feFuncA>
+    </feComponentTransfer>
+    <feComponentTransfer>
+      <feFuncR type="linear" slope="1.59" intercept="-0.30" />
+      <feFuncG type="linear" slope="1.59" intercept="-0.30" />
+      <feFuncB type="linear" slope="1.59" intercept="-0.30" />
+    </feComponentTransfer>
+  </filter>
+</svg>
 
-@if (shouldShowNavigation()) {
-  <app-footer></app-footer>
-}
+<!-- GRID LINES (Local to Header/Hero) -->
+<div class="grid-container">
+  <div class="grid-line"></div>
+  <div class="grid-line"></div>
+  <div class="grid-line"></div>
+  <div class="grid-line"></div>
+  <div class="grid-line"></div>
+  <div class="grid-line"></div>
+</div>
+
+<!-- @if (shouldShowNavigation()) {
+<app-sidebar></app-sidebar>
+} -->
+
+<div class="page-wrapper">
+  <div [class.content-area]="shouldShowNavigation()">
+    @if (shouldShowNavigation()) {
+    <app-navbar></app-navbar>
+    }
+
+    <main class="min-h-screen">
+      <router-outlet />
+    </main>
+
+    @if (shouldShowNavigation()) {
+    <app-footer></app-footer>
+    }
+  </div>
+</div>

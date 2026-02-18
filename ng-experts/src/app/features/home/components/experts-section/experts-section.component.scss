@@ -1,2 +1,38 @@
 // Styles spécifiques à la section Experts
 // Les styles globaux sont gérés par TailwindCSS
+
+// Styles pour les boutons pills de disponibilité
+.availability-pills {
+  button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+    }
+
+    &.selected {
+      background-color: #EC4899;
+      color: white;
+      border-color: #EC4899;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+    }
+  }
+}
+
+// Animation pour les labels
+label {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

@@ -1,32 +1,32 @@
-<nav 
-  [class]="'z-50 transition-all duration-300' + (isScrolled() ? ' fixed top-0 left-0 right-0 shadow-sm' : '')"
-  style="background: linear-gradient(135deg, #FEFCFD 0%, #FEF9FB 50%, #FEF9FC 100%);">
-  <div class="container mx-auto px-6 py-5 flex justify-between items-center">
-    <a href="#" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
-      <img src="/img/ng-expert-logo.png" alt="Ng-Expert Logo" class="w-12 h-12 rounded-full object-cover">
-      <span class="text-xl font-heading font-bold">Ng-Expert</span>
+<nav
+  [class]="'z-50 transition-all duration-300 w-full overflow-hidden' + (isScrolled() ? ' fixed top-0 left-0 right-0 bg-[#121212]/95 backdrop-blur-md shadow-2xl' : ' relative')"
+  style="background: #121212;">
+  <!-- Noise overlay synchronized with Hero -->
+  <div class="noise-overlay"></div>
+
+  <div class="container mx-auto px-6 py-5 flex justify-between items-center max-w-7xl relative z-10">
+    <a href="/" class="flex items-center gap-3">
+      <img src="/img/ng-expert-logo.png" alt="Ng-Expert Logo" class="w-10 h-10 rounded-full object-cover">
+      <span class="text-[14px] font-bold uppercase tracking-widest">
+        <span class="text-white">Ng-</span><span style="color: #EC4899 !important;">Expert</span><span
+          class="text-white">.</span>
+      </span>
     </a>
 
-    <div class="hidden md:flex space-x-8 text-sm font-medium text-gray-600">
-      <a href="#" class="hover:text-primary font-bold">Home</a>
-      <a (click)="onNavigate('experts')" class="hover:text-primary transition font-bold cursor-pointer">Annuaires</a>
-      <a (click)="onNavigate('About')" class="hover:text-primary transition font-bold cursor-pointer">About us</a>
+    <div class="hidden md:flex space-x-10 text-[10px] font-bold uppercase tracking-widest text-subtext">
+      <a (click)="onNavigateHome()" class="cursor-pointer hover:text-white transition-colors">Home</a>
+      <a (click)="onNavigate('experts')" class="cursor-pointer hover:text-white transition-colors">Experts</a>
+      <a (click)="onNavigate('features')" class="cursor-pointer hover:text-white transition-colors">Features</a>
     </div>
 
-    <div class="flex items-center gap-3">
-      <button 
-        (click)="onApplyAsExpert()"
-        class="flex items-center gap-2 border-0 rounded-full px-5 py-2 text-sm font-bold text-white hover:opacity-90 transition" 
-        style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);">
-        Apply as an Expert
+    <div class="flex items-center gap-6">
+      <button (click)="onApplyAsExpert()"
+        class="hidden lg:block text-[10px] font-bold uppercase tracking-widest text-subtext">
+        Apply as Expert
       </button>
-      <button 
-        (click)="onHireExpert()"
-        class="flex items-center gap-2 border border-gray-300 rounded-full px-5 py-2 text-sm font-bold hover:border-primary hover:text-primary transition bg-white">
-        Hire an Expert 
-        <span class="w-6 h-6 rounded-full bg-secondary text-white flex items-center justify-center text-xs transform -rotate-45">
-          <i class="fa-solid fa-arrow-right"></i>
-        </span>
+      <button (click)="onHireExpert()"
+        class="btn-fixed bg-primary text-white shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] uppercase tracking-widest">
+        Hire an Expert
       </button>
     </div>
   </div>

@@ -1,57 +1,56 @@
-<section class="min-h-screen flex items-center justify-center py-12 px-6" style="background: linear-gradient(135deg, #FEFCFD 0%, #FEF9FB 50%, #FEF9FC 100%);">
-  <div class="w-full max-w-2xl">
-    <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10 animate-fadeInUp">
-      <div class="text-center mb-8">
-        <div class="w-16 h-16 flex items-center justify-center mx-auto mb-4">
-          <img src="/img/ng-expert-logo.png" alt="Ng-Expert Logo" class="w-full h-full rounded-full object-cover">
-        </div>
-        <h1 class="text-3xl font-heading font-bold mb-2" style="color: #1E293B;">Créer un compte</h1>
-        <p class="text-gray-600">Rejoignez notre réseau d'experts Angular</p>
+<section class="min-h-screen bg-background flex relative overflow-hidden">
+  <!-- Noise overlay -->
+  <div class="noise-overlay"></div>
+
+  <!-- Left Side - Registration Form -->
+  <div class="w-full lg:w-1/2 flex items-center justify-center px-10 md:px-20 py-12 relative z-10 overflow-y-auto">
+    <div class="w-full max-w-md">
+      <div class="mb-12">
+        <h1 class="text-5xl font-heading font-bold mb-3 text-white tracking-tight">Create Account</h1>
+        <p class="text-subtext text-base">Rejoignez notre réseau d'experts Angular</p>
       </div>
 
-      <form (ngSubmit)="onSubmit()" class="space-y-5">
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Type de compte</label>
+          <label class="block text-sm font-semibold text-white mb-3">Type de compte</label>
           <div class="grid grid-cols-2 gap-3">
             <label class="relative cursor-pointer">
-              <input 
-                type="radio" 
-                name="accountType" 
-                value="developer" 
+              <input
+                type="radio"
+                name="accountType"
+                value="developer"
                 [checked]="accountType() === 'developer'"
                 (change)="onAccountTypeChange($event)"
                 class="peer sr-only"
               >
-              <div class="p-4 border-2 border-gray-200 rounded-xl peer-checked:border-primary peer-checked:bg-primary/5 transition">
+              <div class="p-4 bg-surface border border-border rounded-xl peer-checked:border-primary peer-checked:bg-primary/5 transition hover:border-primary/50">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                     <i class="fa-solid fa-code text-primary"></i>
                   </div>
                   <div>
-                    <p class="font-bold text-gray-900">Développeur</p>
-                    <p class="text-xs text-gray-500">Je cherche des missions</p>
+                    <p class="font-bold text-white text-sm">Développeur</p>
                   </div>
                 </div>
               </div>
             </label>
 
             <label class="relative cursor-pointer">
-              <input 
-                type="radio" 
-                name="accountType" 
-                value="recruiter" 
+              <input
+                type="radio"
+                name="accountType"
+                value="recruiter"
                 [checked]="accountType() === 'recruiter'"
                 (change)="onAccountTypeChange($event)"
                 class="peer sr-only"
               >
-              <div class="p-4 border-2 border-gray-200 rounded-xl peer-checked:border-primary peer-checked:bg-primary/5 transition">
+              <div class="p-4 bg-surface border border-border rounded-xl peer-checked:border-primary peer-checked:bg-primary/5 transition hover:border-primary/50">
                 <div class="flex items-center gap-3">
                   <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                     <i class="fa-solid fa-briefcase text-primary"></i>
                   </div>
                   <div>
-                    <p class="font-bold text-gray-900">Recruteur</p>
-                    <p class="text-xs text-gray-500">Je cherche des talents</p>
+                    <p class="font-bold text-white text-sm">Recruteur</p>
                   </div>
                 </div>
               </div>
@@ -61,182 +60,217 @@
 
         <!-- Messages d'erreur/succès -->
         @if (error()) {
-          <div class="p-4 bg-red-50 border border-red-200 rounded-xl">
+          <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-exclamation-circle text-red-500"></i>
-              <p class="text-red-700 text-sm font-medium">{{ error() }}</p>
+              <i class="fa-solid fa-exclamation-circle text-red-400"></i>
+              <p class="text-red-400 text-sm font-medium">{{ error() }}</p>
             </div>
           </div>
         }
 
         @if (success()) {
-          <div class="p-4 bg-green-50 border border-green-200 rounded-xl">
+          <div class="p-4 bg-green-500/10 border border-green-500/20 rounded-xl">
             <div class="flex items-center gap-2">
-              <i class="fa-solid fa-check-circle text-green-500"></i>
-              <p class="text-green-700 text-sm font-medium">{{ success() }}</p>
+              <i class="fa-solid fa-check-circle text-green-400"></i>
+              <p class="text-green-400 text-sm font-medium">{{ success() }}</p>
             </div>
           </div>
         }
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Prénom</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <i class="fa-solid fa-user text-gray-400"></i>
-              </div>
-              <input 
-                type="text" 
-                placeholder="Jean"
-                [value]="firstName()"
-                (input)="onFirstNameChange($event)"
-                class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-base"
-                [class.border-red-500]="firstName().length < 2 && firstName().length > 0"
-                required
-              >
-            </div>
+            <label class="block text-sm font-semibold text-white mb-2">Prénom</label>
+            <input
+              type="text"
+              placeholder="Jean"
+              [value]="firstName()"
+              (input)="onFirstNameChange($event)"
+              class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition text-white placeholder:text-subtext"
+              [class.border-red-500]="firstName().length < 2 && firstName().length > 0"
+              required
+            >
             @if (firstName().length > 0 && firstName().length < 2) {
-              <p class="text-red-500 text-xs mt-1">Le prénom doit contenir au moins 2 caractères</p>
+              <p class="text-red-400 text-xs mt-1">Le prénom doit contenir au moins 2 caractères</p>
             }
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">Nom</label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <i class="fa-solid fa-user text-gray-400"></i>
-              </div>
-              <input 
-                type="text" 
-                placeholder="Dupont"
-                [value]="lastName()"
-                (input)="onLastNameChange($event)"
-                class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-base"
-                required
-              >
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fa-solid fa-envelope text-gray-400"></i>
-            </div>
-            <input 
-              type="email" 
-              placeholder="votre@email.com"
-              [value]="email()"
-              (input)="onEmailChange($event)"
-              class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-base"
+            <label class="block text-sm font-semibold text-white mb-2">Nom</label>
+            <input
+              type="text"
+              placeholder="Dupont"
+              [value]="lastName()"
+              (input)="onLastNameChange($event)"
+              class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition text-white placeholder:text-subtext"
               required
             >
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Mot de passe</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fa-solid fa-lock text-gray-400"></i>
-            </div>
-            <input 
-              type="password" 
-              placeholder="••••••••"
-              [value]="password()"
-              (input)="onPasswordChange($event)"
-              class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-base"
-              required
-            >
-          </div>
-          <p class="text-xs text-gray-500 mt-2">Minimum 8 caractères avec au moins une majuscule et un chiffre</p>
+          <label class="block text-sm font-semibold text-white mb-2">Email</label>
+          <input
+            type="email"
+            placeholder="votre@email.com"
+            [value]="email()"
+            (input)="onEmailChange($event)"
+            class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition text-white placeholder:text-subtext"
+            required
+          >
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Confirmer le mot de passe</label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i class="fa-solid fa-lock text-gray-400"></i>
-            </div>
-            <input 
-              type="password" 
-              placeholder="••••••••"
-              [value]="confirmPassword()"
-              (input)="onConfirmPasswordChange($event)"
-              class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-base"
-              required
-            >
-          </div>
+          <label class="block text-sm font-semibold text-white mb-2">Mot de passe</label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            [value]="password()"
+            (input)="onPasswordChange($event)"
+            class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition text-white placeholder:text-subtext"
+            required
+          >
+          <p class="text-xs text-subtext mt-2">Minimum 8 caractères avec au moins une majuscule et un chiffre</p>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-white mb-2">Confirmer le mot de passe</label>
+          <input
+            type="password"
+            placeholder="••••••••"
+            [value]="confirmPassword()"
+            (input)="onConfirmPasswordChange($event)"
+            class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition text-white placeholder:text-subtext"
+            required
+          >
         </div>
 
         <div class="flex items-start">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             [checked]="acceptTerms()"
             (change)="onAcceptTermsChange($event)"
-            class="w-4 h-4 mt-1 text-primary border-gray-300 rounded focus:ring-primary" 
+            class="w-4 h-4 mt-1 text-primary bg-surface border-border rounded focus:ring-primary accent-primary"
             required
           >
-          <label class="ml-3 text-sm text-gray-600">
-            J'accepte les <a href="#" class="text-primary hover:underline font-semibold">Conditions d'utilisation</a> 
-            et la <a href="#" class="text-primary hover:underline font-semibold">Politique de confidentialité</a>
+          <label class="ml-3 text-sm text-subtext">
+            J'accepte les <a href="#" class="text-primary hover:text-primary-hover font-semibold">Conditions d'utilisation</a>
+            et la <a href="#" class="text-primary hover:text-primary-hover font-semibold">Politique de confidentialité</a>
           </label>
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           [disabled]="isLoading()"
-          class="w-full text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none" 
-          style="background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);"
+          class="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3.5 rounded-full transition-all shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest text-[10px]"
         >
           @if (isLoading()) {
             <i class="fa-solid fa-spinner fa-spin mr-2"></i>
             Création du compte...
           } @else {
-            Créer mon compte {{ accountType() === 'developer' ? 'Expert' : 'Recruteur' }}
+            Create Account
           }
         </button>
 
         <div class="relative my-6">
           <div class="absolute inset-0 flex items-center">
-            <div class="w-full border-t border-gray-200"></div>
+            <div class="w-full border-t border-border"></div>
           </div>
-          <div class="relative flex justify-center text-sm">
-            <span class="px-4 bg-white text-gray-500">Ou s'inscrire avec</span>
+          <div class="relative flex justify-center text-xs">
+            <span class="px-4 bg-background text-subtext uppercase tracking-wider font-bold">Powered by Espresso Auth</span>
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
-          <button type="button" (click)="onGoogleRegister()" class="flex items-center justify-center gap-2 py-3 px-4 border-2 border-gray-200 rounded-xl hover:border-primary hover:bg-gray-50 transition">
-            <i class="fa-brands fa-google text-red-500"></i>
-            <span class="font-semibold text-gray-700">Google</span>
+          <button type="button" (click)="onGoogleRegister()" class="flex items-center justify-center gap-2 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
+            <i class="fa-brands fa-google text-white"></i>
+            <span class="font-semibold text-white text-sm">Google</span>
           </button>
-          <button type="button" (click)="onGithubRegister()" class="flex items-center justify-center gap-2 py-3 px-4 border-2 border-gray-200 rounded-xl hover:border-primary hover:bg-gray-50 transition">
-            <i class="fa-brands fa-github text-gray-800"></i>
-            <span class="font-semibold text-gray-700">GitHub</span>
+          <button type="button" (click)="onGithubRegister()" class="flex items-center justify-center gap-2 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
+            <i class="fa-brands fa-github text-white"></i>
+            <span class="font-semibold text-white text-sm">GitHub</span>
           </button>
         </div>
       </form>
 
       <div class="mt-8 text-center">
-        <p class="text-gray-600">
-          Vous avez déjà un compte ? 
-          <a (click)="onLogin()" class="text-primary hover:text-primary-dark font-bold cursor-pointer">Se connecter</a>
+        <p class="text-subtext text-sm">
+          Vous avez déjà un compte ?
+          <a (click)="onLogin()" class="text-primary hover:text-primary-hover font-bold cursor-pointer transition">Sign In</a>
         </p>
       </div>
     </div>
-
-    <div class="mt-6 text-center">
-      <p class="text-sm text-gray-600">
-        En créant un compte, vous acceptez nos 
-        <a href="#" class="text-primary hover:underline">Conditions d'utilisation</a> et 
-        <a href="#" class="text-primary hover:underline">Politique de confidentialité</a>
-      </p>
-    </div>
   </div>
 
-  <!-- Decorative elements -->
-  <div class="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
-  <div class="absolute bottom-20 right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl"></div>
+  <!-- Right Side - Benefits/Features -->
+  <div class="hidden lg:flex lg:w-1/2 items-center justify-center px-10 md:px-20 relative z-10">
+    <div class="max-w-xl">
+      <div class="bg-surface border border-border rounded-2xl p-10 relative">
+        <div class="absolute -top-3 -left-3 w-24 h-24 bg-primary/20 rounded-full blur-2xl"></div>
+        <div class="absolute -bottom-3 -right-3 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+
+        <div class="relative">
+          <h2 class="text-3xl font-heading font-bold text-white mb-8">Rejoignez les experts Angular</h2>
+
+          <div class="space-y-6">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-rocket text-primary text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-white font-bold text-lg mb-2">Trouvez des missions</h3>
+                <p class="text-subtext text-sm">Accédez à des centaines d'opportunités de mission avec les meilleures entreprises</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-users text-primary text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-white font-bold text-lg mb-2">Réseau d'experts</h3>
+                <p class="text-subtext text-sm">Connectez-vous avec plus de 150+ experts Angular vérifiés et certifiés</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-chart-line text-primary text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-white font-bold text-lg mb-2">Développez votre carrière</h3>
+                <p class="text-subtext text-sm">Profitez de formations, workshops et événements exclusifs pour progresser</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-shield-halved text-primary text-xl"></i>
+              </div>
+              <div>
+                <h3 class="text-white font-bold text-lg mb-2">Plateforme sécurisée</h3>
+                <p class="text-subtext text-sm">Vos données sont protégées avec les meilleurs standards de sécurité</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-10 pt-8 border-t border-border">
+            <div class="flex items-center justify-between">
+              <div class="text-center">
+                <div class="text-3xl font-black text-white mb-1">150+</div>
+                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">Experts</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-black text-white mb-1">450+</div>
+                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">Missions</div>
+              </div>
+              <div class="text-center">
+                <div class="text-3xl font-black text-white mb-1">24h</div>
+                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">Réponse</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>

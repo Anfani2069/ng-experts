@@ -26,6 +26,11 @@ export class ExpertDetails implements OnInit {
   private expertService = inject(ExpertService);
 
   // Signaux pour l'état du component
+
+
+
+
+  // Signaux pour l'état du component
   private expertId = signal<string>('');
   private currentExpert = signal<Expert | null>(null);
   private isLoading = signal<boolean>(false);
@@ -144,6 +149,8 @@ export class ExpertDetails implements OnInit {
       }
     });
   }
+
+
 
   /**
    * Charge les données d'un expert depuis Firebase ou utilise les données mockées en fallback

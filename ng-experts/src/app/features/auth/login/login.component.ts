@@ -17,7 +17,7 @@ export class Login {
   protected readonly email = signal('');
   protected readonly password = signal('');
   protected readonly rememberMe = signal(false);
-  
+
   // États du formulaire
   protected readonly isLoading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -58,7 +58,7 @@ export class Login {
 
       if (result.success) {
         this.success.set('Connexion réussie ! Redirection...');
-        
+
         // Redirection basée sur le rôle utilisateur
         setTimeout(() => {
           const user = this.auth.getCurrentUser()();
@@ -86,7 +86,7 @@ export class Login {
    * Valider le formulaire
    */
   private isFormValid(): boolean {
-    return this.email().trim().length > 0 && 
+    return this.email().trim().length > 0 &&
            this.password().length > 0 &&
            this.isValidEmail(this.email());
   }
@@ -103,7 +103,7 @@ export class Login {
     if (this.isLoading()) return;
 
     try {
-      // On utilise 'expert' par défaut pour le login, 
+      // On utilise 'expert' par défaut pour le login,
       // l'utilisateur existe déjà donc le type sera détecté automatiquement
       const result = await this.auth.signInWithGoogle('expert');
 
@@ -139,6 +139,9 @@ export class Login {
   }
 
   protected onRegister(): void {
+    // Remonter en haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     this.router.navigate(['/register']);
   }
 }

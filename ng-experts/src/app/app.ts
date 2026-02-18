@@ -1,8 +1,7 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Navbar } from '@shared/components';
-import { Footer } from '@shared/components';
+import { Navbar, Footer } from '@shared/components';
 import { filter } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -14,9 +13,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 })
 export class App {
   protected readonly title = signal('ng-experts');
-  
+
   private router = inject(Router);
-  
+
   // Signal to track current route
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -24,11 +23,12 @@ export class App {
     ),
     { initialValue: { url: this.router.url } as NavigationEnd }
   );
-  
+
   // Computed to check if we should show navbar/footer - Sur pages publiques ET pages experts (pour recruteurs)
   protected readonly shouldShowNavigation = computed(() => {
     const url = this.currentUrl()?.url || this.router.url;
-    // Afficher navbar/footer sur pages publiques + pages experts (pour recruteurs)
-    return url === '/' || url.includes('/login') || url.includes('/register') || url.includes('/expert/');
+    // Afficher navbar/footer/sidebar sur toutes les pages publiques pour le nouveau design
+    return url === '/' || url.includes('/login') || url.includes('/register') || url.includes('/expert/') || url.includes('/experts');
   });
 }
+

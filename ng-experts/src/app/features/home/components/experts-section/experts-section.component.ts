@@ -18,7 +18,18 @@ export class ExpertsSection implements OnInit {
   // Filtres
   protected readonly cityFilter = signal('');
   protected readonly techFilter = signal('');
-  protected readonly availabilityFilter = signal('Tous');
+  protected readonly selectedAvailabilityTypes = signal<string[]>([]);
+
+  // Types de disponibilité disponibles
+  protected readonly availabilityTypes = [
+    { value: 'consulting', label: 'Conférence' },
+    { value: 'mentoring', label: 'Mentoring' },
+    { value: 'freelance', label: 'Freelance' },
+    { value: 'cdi', label: 'CDI' },
+    { value: 'coffee', label: 'Coffee chat' },
+    { value: 'pair', label: 'Pair programming' },
+    { value: 'review', label: 'Relecture CV' }
+  ];
 
   // Données des experts depuis Firebase
   protected readonly experts = this.expertService.expertsData;
@@ -30,7 +41,7 @@ export class ExpertsSection implements OnInit {
     const allExperts = this.experts();
     const city = this.cityFilter().toLowerCase().trim();
     const tech = this.techFilter().toLowerCase().trim();
-    const availability = this.availabilityFilter();
+    const selectedTypes = this.selectedAvailabilityTypes();
 
     return allExperts.filter(expert => {
       // Filtre par ville
@@ -46,13 +57,23 @@ export class ExpertsSection implements OnInit {
         if (!hasSkill) return false;
       }
 
-      // Filtre par disponibilité
-      if (availability !== 'Tous') {
-        const availabilityLower = availability.toLowerCase();
-        const hasAvailability = expert.availability.types.some(type =>
-          type.toLowerCase() === availabilityLower
-        );
-        if (!hasAvailability) return false;
+      // Filtre par types de disponibilité
+      if (selectedTypes.length > 0) {
+        const hasSelectedType = selectedTypes.some(selectedType => {
+          // Map certains types vers les types d'experts
+          if (selectedType === 'consulting' || selectedType === 'cdi') {
+            return expert.availability.types.includes('consulting' as any);
+          }
+          if (selectedType === 'coffee' || selectedType === 'pair' || selectedType === 'review') {
+            return expert.availability.types.includes('mentoring' as any);
+          }
+          // Pour freelance qui existe tel quel
+          if (selectedType === 'freelance') {
+            return expert.availability.types.includes('freelance' as any);
+          }
+          return false;
+        });
+        if (!hasSelectedType) return false;
       }
 
       return true;
@@ -74,14 +95,50 @@ export class ExpertsSection implements OnInit {
     this.techFilter.set(target.value);
   }
 
-  protected onAvailabilityChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.availabilityFilter.set(target.value);
+  protected toggleAvailabilityType(type: string): void {
+    const current = this.selectedAvailabilityTypes();
+    if (current.includes(type)) {
+      // Retirer le type
+      this.selectedAvailabilityTypes.set(current.filter(t => t !== type));
+    } else {
+      // Ajouter le type
+      this.selectedAvailabilityTypes.set([...current, type]);
+    }
+  }
+
+  protected getAvailabilityButtonClass(type: string): string {
+    const isSelected = this.selectedAvailabilityTypes().includes(type);
+    return isSelected
+      ? 'bg-primary text-white border-primary'
+      : 'bg-transparent text-subtext border-border hover:border-primary hover:text-white';
+  }
+
+  protected resetFilters(): void {
+    this.cityFilter.set('');
+    this.techFilter.set('');
+    this.selectedAvailabilityTypes.set([]);
   }
 
   protected onHireExpert(expertId: string): void {
+    // Remonter en haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     // Naviguer vers la page de détails de l'expert
     this.router.navigate(['/expert', expertId]);
+  }
+
+  protected toggleFavorite(expertId: string, event: Event): void {
+    // Empêcher la propagation du clic vers la card
+    event.stopPropagation();
+    // TODO: Implémenter la logique pour ajouter/retirer des favoris
+    console.log('Toggle favorite for expert:', expertId);
+  }
+
+  protected onShowAllExperts(): void {
+    // Remonter en haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    this.router.navigate(['/experts']);
   }
 
   // Helper pour obtenir le nom complet
@@ -102,5 +159,23 @@ export class ExpertsSection implements OnInit {
       'mentoring': 'Mentoring'
     };
     return mapping[type] || type;
+  }
+
+  // Helper pour formater le mode de travail
+  protected formatWorkPreference(preference: string): string {
+    const mapping: Record<string, string> = {
+      'remote': 'Remote',
+      'hybrid': 'Hybrid',
+      'onsite': 'On-site',
+      'flexible': 'Flexible'
+    };
+    return mapping[preference] || preference;
+  }
+
+  // Helper pour obtenir la date actuelle formatée
+  protected getCurrentDate(): string {
+    const now = new Date();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   }
 }

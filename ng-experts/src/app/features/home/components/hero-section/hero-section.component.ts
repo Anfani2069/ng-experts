@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero-section',
@@ -9,7 +10,16 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule]
 })
 export class HeroSection {
+  private router = inject(Router);
   protected readonly searchQuery = signal('');
+
+  protected onBrowseExperts(): void {
+    this.router.navigate(['/experts']);
+  }
+
+  protected onHireExpert(): void {
+    this.router.navigate(['/login']);
+  }
 
   protected onSearch(): void {
     // TODO: Implement search functionality

@@ -1,2 +1,43 @@
 // Styles spécifiques au composant Login
 // Les styles globaux sont gérés par TailwindCSS et styles.scss
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.3;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+// Animation d'entrée
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+form {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+// Focus states améliorés
+input:focus {
+  box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.1);
+}
+
+// Effet hover sur les boutons sociaux
+button[type="button"] {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.2);
+  }
+}
+

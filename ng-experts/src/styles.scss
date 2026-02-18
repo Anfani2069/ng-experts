@@ -1,4 +1,4 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
 
 /* Global styles pour Ng-Expert */
 * {
@@ -7,75 +7,218 @@
   box-sizing: border-box;
 }
 
+
 body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Geist Sans', 'Inter', sans-serif;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F8FAFC;
+  background-color: #050505;
+  color: #ffffff;
 }
 
+
+
 .font-heading {
-  font-family: 'Space Grotesk', sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: 'Geist Sans', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.05em;
 }
+
+/* 1. FILTRE DE BRUIT SVG RÉUTILISABLE */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  filter: url(#noise-filter);
+}
+
+/* 2. LIGNES VERTICALES DE GRILLE */
+.grid-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1100px;
+  display: grid;
+  grid-template-columns: 1fr 40px 1fr 40px 1fr;
+  pointer-events: none;
+  z-index: 40;
+  overflow: hidden;
+}
+
+.grid-line {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+}
+
+/* 3. TYPO & BOUTONS */
+.mega-title {
+  font-size: 96px;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
+  font-weight: 700;
+}
+
+.btn-fixed {
+  width: 145px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 99px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-fixed:hover {
+  background-color: #C0266B !important;
+}
+
+.content-area {
+  position: relative;
+  /* z-index removed — it creates a stacking context that breaks CSS sticky */
+}
+
+/* CARD STYLE WITH NOISE */
+.expert-card {
+  background-color: #222222;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #222222;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.expert-card:hover {
+  border-color: #EC4899;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.3);
+}
+
+@media (max-width: 1024px) {
+  .content-area {
+    margin-left: 0;
+  }
+
+  .grid-container {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+}
+
 
 /* Animations personnalisées du design system */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 @keyframes floatSlow {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  33% { transform: translate(20px, -20px) rotate(5deg); }
-  66% { transform: translate(-20px, 20px) rotate(-5deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  33% {
+    transform: translate(20px, -20px) rotate(5deg);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) rotate(-5deg);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.05); }
+
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 @keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.animate-float { animation: float 4s ease-in-out infinite; }
-.animate-float-slow { animation: floatSlow 20s ease-in-out infinite; }
-.animate-pulse-slow { animation: pulse 4s ease-in-out infinite; }
-.animate-scroll { animation: scroll 30s linear infinite; }
-.animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
-.animate-scaleIn { animation: scaleIn 0.5s ease-out; }
-
-.gradient-bg {
-  background: linear-gradient(135deg, #FAFBFC 0%, #F0F4F8 100%);
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }
 
-.gradient-card {
-  background: linear-gradient(135deg, rgba(233, 30, 99, 0.05) 0%, rgba(156, 39, 176, 0.05) 100%);
+.animate-float-slow {
+  animation: floatSlow 20s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s ease-in-out infinite;
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.5s ease-out;
 }
 
 .glass-effect {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .text-gradient {
-  background: linear-gradient(135deg, #E91E63 0%, #9C27B0 100%);
+  background: linear-gradient(135deg, rgb(236, 72, 153) 0%, #8B5CF6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -87,17 +230,5 @@ body {
 
 .hover-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-}
-
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animated-gradient {
-  background: linear-gradient(-45deg, #FFF1F2, #FCE7F3, #FAE8FF, #FFF1F2);
-  background-size: 400% 400%;
-  animation: gradientMove 15s ease infinite;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }

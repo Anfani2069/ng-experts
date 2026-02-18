@@ -13,7 +13,7 @@ import { Auth } from '@core/services/auth.service';
 })
 export class Register {
   private auth = inject(Auth);
-  
+
   protected readonly accountType = signal('developer');
   protected readonly firstName = signal('');
   protected readonly lastName = signal('');
@@ -21,7 +21,7 @@ export class Register {
   protected readonly password = signal('');
   protected readonly confirmPassword = signal('');
   protected readonly acceptTerms = signal(false);
-  
+
   // État du formulaire
   protected readonly isLoading = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -78,15 +78,15 @@ export class Register {
     this.success.set(null);
 
     try {
-      const result = this.accountType() === 'developer' 
+      const result = this.accountType() === 'developer'
         ? await this.registerExpert()
         : await this.registerRecruiter();
 
       if (result.success) {
         this.success.set(result.message);
         setTimeout(() => {
-          this.router.navigate(['/login'], { 
-            queryParams: { message: 'verify-email' } 
+          this.router.navigate(['/login'], {
+            queryParams: { message: 'verify-email' }
           });
         }, 3000);
       } else {
@@ -166,7 +166,7 @@ export class Register {
 
       if (result.success) {
         this.success.set(result.message);
-        
+
         if (result.isNewUser) {
           // Nouveau compte créé
           setTimeout(() => {
@@ -202,6 +202,9 @@ export class Register {
   }
 
   protected onLogin(): void {
+    // Remonter en haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     this.router.navigate(['/login']);
   }
 }
