@@ -1,75 +1,110 @@
-// Dashboard Layout component styles using design system colors
+// Dashboard Layout component styles using dark design system
 
 :host {
   display: block;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  background-color: #121212;
+  overflow: hidden;
 }
 
-// Override Tailwind primary color to match design system
+// Override Tailwind colors to match design system
 :host ::ng-deep {
   .bg-primary {
-    background-color: #E91E63; // Angular pink from design system
+    background-color: #EC4899; // Pink primary
   }
-  
+
   .text-primary {
-    color: #E91E63;
+    color: #EC4899;
   }
-  
+
   .border-primary {
-    border-color: #E91E63;
+    border-color: #EC4899;
   }
-  
-  .ring-primary\/20 {
-    --tw-ring-color: rgb(233 30 99 / 0.2);
+
+  .border-primary\/20 {
+    border-color: rgba(236, 72, 153, 0.2);
   }
-  
+
+  .border-primary\/30 {
+    border-color: rgba(236, 72, 153, 0.3);
+  }
+
+  .border-primary\/50 {
+    border-color: rgba(236, 72, 153, 0.5);
+  }
+
   .bg-primary\/10 {
-    background-color: rgb(233 30 99 / 0.1);
+    background-color: rgba(236, 72, 153, 0.1);
   }
-  
+
   .bg-primary\/20 {
-    background-color: rgb(233 30 99 / 0.2);
-  }
-  
-  .hover\:bg-primary-dark:hover {
-    background-color: #C2185B;
-  }
-  
-  .hover\:text-primary-dark:hover {
-    color: #C2185B;
+    background-color: rgba(236, 72, 153, 0.2);
   }
 
-  // Accent color (Angular purple)
-  .bg-accent {
-    background-color: #9C27B0;
-  }
-  
-  .text-accent {
-    color: #9C27B0;
+  .bg-primary\/80 {
+    background-color: rgba(236, 72, 153, 0.8);
   }
 
-  // Font heading class
-  .font-heading {
-    font-family: 'Space Grotesk', sans-serif;
-    font-weight: 700;
-    letter-spacing: -0.02em;
+  .text-subtext {
+    color: #9CA3AF;
+  }
+
+  .bg-heroBg {
+    background-color: #121212;
+  }
+
+  // Hover effects
+  .hover\:bg-primary\/80:hover {
+    background-color: rgba(236, 72, 153, 0.8);
+  }
+
+  .hover\:bg-white\/5:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .hover\:text-white:hover {
+    color: #ffffff;
+  }
+
+  .hover\:border-primary\/30:hover {
+    border-color: rgba(236, 72, 153, 0.3);
+  }
+
+  // Focus ring
+  .focus\:ring-primary\/20:focus {
+    --tw-ring-color: rgba(236, 72, 153, 0.2);
+  }
+
+  .focus\:border-primary\/50:focus {
+    border-color: rgba(236, 72, 153, 0.5);
+  }
+
+  // Custom scrollbar
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
   }
 }
 
-// Navigation hover effects
-.nav-item {
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background-color: #f1f5f9;
-  }
-  
-  &.active {
-    background-color: rgba(233, 30, 99, 0.1);
-    color: #E91E63;
-    font-weight: 500;
-  }
+// Smooth transitions
+* {
+  transition-property: background-color, border-color, color, opacity, transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 // Profile panel entrance animation
@@ -80,26 +115,25 @@
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
+    opacity: 0;
   }
   to {
     transform: translateX(0);
+    opacity: 1;
   }
 }
 
 // Responsive design
 @media (max-width: 1024px) {
-  .sidebar {
+  aside {
     transform: translateX(-100%);
     position: fixed;
     z-index: 50;
-    
+    height: 100vh;
+
     &.mobile-open {
       transform: translateX(0);
     }
-  }
-  
-  .main-content {
-    margin-left: 0;
   }
 }
 
@@ -108,26 +142,14 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 a:focus-visible {
-  outline: 2px solid #E91E63;
+  outline: 2px solid #EC4899;
   outline-offset: 2px;
-}
-
-// High contrast mode support
-@media (prefers-contrast: high) {
-  .bg-primary {
-    background-color: #C2185B !important;
-  }
-  
-  .text-primary {
-    color: #C2185B !important;
-  }
 }
 
 // Reduced motion support
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
   }
 }

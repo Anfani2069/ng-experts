@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
   User as FirebaseUser,
   updateProfile,
@@ -10,13 +10,13 @@ import {
   GoogleAuthProvider,
   signInWithPopup
 } from 'firebase/auth';
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
+import {
+  doc,
+  setDoc,
+  getDoc,
   updateDoc,
   serverTimestamp,
-  Timestamp 
+  Timestamp
 } from 'firebase/firestore';
 import { firebase } from '@core/config/firebase.config';
 import { BaseUser, UserRole, Expert, Recruiter } from '@core/models/user.model';
@@ -31,12 +31,12 @@ import { Router } from '@angular/router';
 })
 export class Auth {
   private router = inject(Router);
-  
+
   // État de l'authentification
   protected readonly currentUser = signal<BaseUser | null>(null);
   protected readonly isLoading = signal(false);
   protected readonly error = signal<string | null>(null);
-  
+
   constructor() {
     this.initAuthStateListener();
   }
@@ -61,14 +61,17 @@ export class Auth {
   private async loadUserProfile(firebaseUser: FirebaseUser): Promise<void> {
     try {
       const userDoc = await getDoc(doc(firebase.firestore, 'users', firebaseUser.uid));
-      
+
       if (userDoc.exists()) {
         const userData = userDoc.data();
+        const createdAt = userData['createdAt'];
+        const updatedAt = userData['updatedAt'];
+
         this.currentUser.set({
           ...userData,
           id: firebaseUser.uid,
-          createdAt: (userData['createdAt'] as Timestamp)?.toDate() || new Date(),
-          updatedAt: (userData['updatedAt'] as Timestamp)?.toDate() || new Date()
+          createdAt: createdAt instanceof Timestamp ? createdAt.toDate() : new Date(),
+          updatedAt: updatedAt instanceof Timestamp ? updatedAt.toDate() : new Date()
         } as BaseUser);
       }
     } catch (error) {
@@ -96,8 +99,8 @@ export class Auth {
 
       // Créer le compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
-        firebase.auth, 
-        expertData.email, 
+        firebase.auth,
+        expertData.email,
         expertData.password
       );
 
@@ -123,6 +126,7 @@ export class Auth {
         skills: [],
         experience: [],
         certifications: [],
+        education: [],
         availability: {
           types: [],
           startDate: '',
@@ -175,8 +179,8 @@ export class Auth {
 
       // Créer le compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
-        firebase.auth, 
-        recruiterData.email, 
+        firebase.auth,
+        recruiterData.email,
         recruiterData.password
       );
 
@@ -240,7 +244,7 @@ export class Auth {
       this.error.set(null);
 
       await signInWithEmailAndPassword(firebase.auth, email, password);
-      
+
       // Rediriger selon le rôle
       const user = this.currentUser();
       if (user?.role === 'expert') {
@@ -293,11 +297,11 @@ export class Auth {
 
       // Vérifier si l'utilisateur existe déjà
       const userDoc = await getDoc(doc(firebase.firestore, 'users', user.uid));
-      
+
       if (userDoc.exists()) {
         // Utilisateur existant - connexion
         await this.loadUserProfile(user);
-        
+
         const userData = this.currentUser();
         if (userData?.role === 'expert') {
           this.router.navigate(['/dashboard']);
@@ -305,10 +309,10 @@ export class Auth {
           this.router.navigate(['/recruiter/dashboard']);
         }
 
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: 'Connexion Google réussie',
-          isNewUser: false 
+          isNewUser: false
         };
       } else {
         // Nouvel utilisateur - créer le profil
@@ -329,6 +333,7 @@ export class Auth {
             skills: [],
             experience: [],
             certifications: [],
+            education: [],
             availability: {
               types: [],
               startDate: '',
@@ -376,25 +381,25 @@ export class Auth {
 
         // Charger le nouveau profil
         await this.loadUserProfile(user);
-        
+
         if (accountType === 'expert') {
           this.router.navigate(['/dashboard']);
         } else {
           this.router.navigate(['/recruiter/dashboard']);
         }
 
-        return { 
-          success: true, 
+        return {
+          success: true,
           message: `Compte ${accountType === 'expert' ? 'expert' : 'recruteur'} créé avec succès via Google`,
-          isNewUser: true 
+          isNewUser: true
         };
       }
 
     } catch (error: any) {
       console.error('Erreur Google Auth:', error);
-      
+
       let errorMessage = 'Erreur lors de la connexion Google';
-      
+
       if (error.code === 'auth/popup-closed-by-user') {
         errorMessage = 'Connexion Google annulée';
       } else if (error.code === 'auth/popup-blocked') {

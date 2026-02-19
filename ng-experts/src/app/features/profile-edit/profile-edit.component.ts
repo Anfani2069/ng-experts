@@ -4,7 +4,8 @@ import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DashboardLayout } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
-import { Expert, Skill, Experience, Certification, Availability } from '@core/models/user.model';
+import { Expert, Skill, Experience, Certification, Availability, Education } from '@core/models/user.model';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-profile-edit',
@@ -15,7 +16,7 @@ import { Expert, Skill, Experience, Certification, Availability } from '@core/mo
 })
 export class ProfileEdit implements OnInit {
   private auth = inject(Auth);
-  
+
   // User reactive forms
   protected profileForm!: FormGroup;
   protected passwordForm!: FormGroup;
@@ -24,9 +25,25 @@ export class ProfileEdit implements OnInit {
   protected readonly isAddingSkill = signal(false);
   protected readonly isAddingCertification = signal(false);
   protected readonly isAddingExperience = signal(false);
+  protected readonly isAddingEducation = signal(false);
   protected readonly newSkillName = signal('');
   protected readonly newCertification = signal({ name: '', issuer: '', dateObtained: '' });
-  protected readonly newExperience = signal({ title: '', company: '', description: '', technologies: [] });
+  protected readonly newExperience = signal({
+    title: '',
+    company: '',
+    description: '',
+    technologies: [],
+    startDate: '',
+    endDate: ''
+  });
+  protected readonly newEducation = signal({
+    degree: '',
+    school: '',
+    fieldOfStudy: '',
+    description: '',
+    startDate: '',
+    endDate: ''
+  });
 
   // État du composant
   protected readonly isLoading = signal(false);
@@ -35,12 +52,12 @@ export class ProfileEdit implements OnInit {
 
   // Utilisateur connecté depuis Firebase
   protected readonly currentUser = this.auth.getCurrentUser();
-  
+
   // Données expertes calculées depuis l'utilisateur connecté
   protected readonly expertProfile = computed(() => {
     const user = this.currentUser();
     if (!user || user.role !== 'expert') return null;
-    
+
     return user as Expert;
   });
 
@@ -62,10 +79,16 @@ export class ProfileEdit implements OnInit {
     return expert?.certifications || [];
   });
 
-  // Expériences depuis le profil expert ou valeurs par défaut  
+  // Expériences depuis le profil expert ou valeurs par défaut
   protected readonly experiences = computed(() => {
     const expert = this.expertProfile();
     return expert?.experience || [];
+  });
+
+  // Éducation depuis le profil expert ou valeurs par défaut
+  protected readonly education = computed(() => {
+    const expert = this.expertProfile();
+    return expert?.education || [];
   });
 
   // Disponibilité depuis le profil expert ou valeurs par défaut
@@ -89,22 +112,50 @@ export class ProfileEdit implements OnInit {
     'Flexible'
   ]);
   protected readonly missionDurations = signal(['3-6 mois', '6-12 mois', '12+ mois', 'Flexible']);
+  protected readonly yearsOfExperience = signal(['1-3 ans', '3-5 ans', '5-10 ans', '10+ ans']);
+  protected readonly availabilityStatuses = signal([
+    { value: true, label: 'Disponible' },
+    { value: false, label: 'Non disponible' }
+  ]);
 
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    this.initializeForms();
+    // Attendre que les données utilisateur soient disponibles
+    const user = this.currentUser();
+    if (user) {
+      this.initializeForms();
+      this.isLoading.set(false);
+    } else {
+      // Si pas d'utilisateur, initialiser avec des valeurs vides
+      this.isLoading.set(true);
+      // Réessayer après un court délai pour laisser le temps à l'auth de charger
+      setTimeout(() => {
+        this.initializeForms();
+        this.isLoading.set(false);
+      }, 500);
+    }
+  }
+
+  /**
+   * Convertir une date Firestore Timestamp en Date JavaScript
+   */
+  protected toDate(value: any): Date {
+    if (!value) return new Date();
+    if (value instanceof Timestamp) return value.toDate();
+    if (value instanceof Date) return value;
+    return new Date(value);
   }
 
   private initializeForms(): void {
     const expert = this.expertProfile();
-    
+
     this.profileForm = this.fb.group({
       firstName: [expert?.firstName || '', [Validators.required]],
       lastName: [expert?.lastName || '', [Validators.required]],
       company: [expert?.company || ''],
-      location: [expert?.location || 'France', [Validators.required]],
-      city: [expert?.city || 'Paris', [Validators.required]],
+      location: [expert?.location || '', [Validators.required]],
+      city: [expert?.city || '', [Validators.required]],
       email: [expert?.email || '', [Validators.required, Validators.email]],
       phone: [expert?.phone || ''],
       bio: [expert?.bio || '']
@@ -151,7 +202,7 @@ export class ProfileEdit implements OnInit {
     };
 
     const updatedSkills = [...(expert.skills || []), newSkill];
-    
+
     await this.auth.updateExpertProfile({ skills: updatedSkills });
     this.isAddingSkill.set(false);
     this.newSkillName.set('');
@@ -162,7 +213,7 @@ export class ProfileEdit implements OnInit {
     if (!expert) return;
 
     const updatedSkills = expert.skills?.filter(skill => skill.name !== skillName) || [];
-    
+
     await this.auth.updateExpertProfile({ skills: updatedSkills });
   }
 
@@ -195,7 +246,7 @@ export class ProfileEdit implements OnInit {
     };
 
     const updatedCertifications = [...(expert.certifications || []), newCertification];
-    
+
     await this.auth.updateExpertProfile({ certifications: updatedCertifications });
     this.isAddingCertification.set(false);
     this.newCertification.set({ name: '', issuer: '', dateObtained: '' });
@@ -206,7 +257,7 @@ export class ProfileEdit implements OnInit {
     if (!expert) return;
 
     const updatedCertifications = expert.certifications?.filter(cert => cert.id !== certId) || [];
-    
+
     await this.auth.updateExpertProfile({ certifications: updatedCertifications });
   }
 
@@ -214,7 +265,7 @@ export class ProfileEdit implements OnInit {
   protected toggleAddExperience(): void {
     this.isAddingExperience.update(current => !current);
     if (!this.isAddingExperience()) {
-      this.newExperience.set({ title: '', company: '', description: '', technologies: [] });
+      this.newExperience.set({ title: '', company: '', description: '', technologies: [], startDate: '', endDate: '' });
     }
   }
 
@@ -234,17 +285,18 @@ export class ProfileEdit implements OnInit {
       title: exp.title.trim(),
       company: exp.company.trim(),
       location: 'Remote', // Default value
-      startDate: new Date(), // Default to today
+      startDate: exp.startDate ? new Date(exp.startDate) : new Date(),
+      endDate: exp.endDate ? new Date(exp.endDate) : undefined,
       description: exp.description.trim(),
       technologies: exp.technologies,
-      isCurrent: true
+      isCurrent: !exp.endDate // Si pas de date de fin, c'est en cours
     };
 
     const updatedExperience = [...(expert.experience || []), newExperience];
-    
+
     await this.auth.updateExpertProfile({ experience: updatedExperience });
     this.isAddingExperience.set(false);
-    this.newExperience.set({ title: '', company: '', description: '', technologies: [] });
+    this.newExperience.set({ title: '', company: '', description: '', technologies: [], startDate: '', endDate: '' });
   }
 
   protected async removeExperience(expId: string): Promise<void> {
@@ -252,8 +304,54 @@ export class ProfileEdit implements OnInit {
     if (!expert) return;
 
     const updatedExperience = expert.experience?.filter(exp => exp.id !== expId) || [];
-    
+
     await this.auth.updateExpertProfile({ experience: updatedExperience });
+  }
+
+  // Methods for education management
+  protected toggleAddEducation(): void {
+    this.isAddingEducation.update(current => !current);
+    if (!this.isAddingEducation()) {
+      this.newEducation.set({ degree: '', school: '', fieldOfStudy: '', description: '', startDate: '', endDate: '' });
+    }
+  }
+
+  protected updateNewEducation(field: string, value: string): void {
+    this.newEducation.update(current => ({ ...current, [field]: value }));
+  }
+
+  protected async confirmAddEducation(): Promise<void> {
+    const edu = this.newEducation();
+    if (!edu.degree.trim() || !edu.school.trim() || !edu.fieldOfStudy.trim()) return;
+
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const newEducation: Education = {
+      id: Date.now().toString(),
+      degree: edu.degree.trim(),
+      school: edu.school.trim(),
+      fieldOfStudy: edu.fieldOfStudy.trim(),
+      startDate: edu.startDate ? new Date(edu.startDate) : new Date(),
+      endDate: edu.endDate ? new Date(edu.endDate) : undefined,
+      description: edu.description?.trim() || '',
+      isCurrent: !edu.endDate
+    };
+
+    const updatedEducation = [...(expert.education || []), newEducation];
+
+    await this.auth.updateExpertProfile({ education: updatedEducation });
+    this.isAddingEducation.set(false);
+    this.newEducation.set({ degree: '', school: '', fieldOfStudy: '', description: '', startDate: '', endDate: '' });
+  }
+
+  protected async removeEducation(eduId: string): Promise<void> {
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const updatedEducation = expert.education?.filter(edu => edu.id !== eduId) || [];
+
+    await this.auth.updateExpertProfile({ education: updatedEducation });
   }
 
   // Avatar management
@@ -264,7 +362,7 @@ export class ProfileEdit implements OnInit {
 
   protected async onAvatarReset(): Promise<void> {
     const defaultAvatar = 'https://randomuser.me/api/portraits/men/32.jpg';
-    
+
     await this.auth.updateExpertProfile({ avatar: defaultAvatar });
   }
 
@@ -297,7 +395,7 @@ export class ProfileEdit implements OnInit {
       };
 
       const result = await this.auth.updateExpertProfile(expertUpdate);
-      
+
       if (result.success) {
         this.success.set(result.message);
       } else {
@@ -342,12 +440,32 @@ export class ProfileEdit implements OnInit {
     };
 
     const validType = type as 'freelance' | 'mentoring' | 'consulting';
-    const types = checked 
+    const types = checked
       ? [...currentAvailability.types, validType]
       : currentAvailability.types.filter(t => t !== validType);
 
     const updatedAvailability: Availability = { ...currentAvailability, types };
-    
+
+    await this.auth.updateExpertProfile({ availability: updatedAvailability });
+  }
+
+  protected async onAvailabilityFieldChange(field: keyof Availability, value: string): Promise<void> {
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const currentAvailability = expert.availability || {
+      types: [],
+      startDate: '',
+      dailyRate: '',
+      workPreference: 'remote' as const,
+      missionDuration: ''
+    };
+
+    const updatedAvailability: Availability = {
+      ...currentAvailability,
+      [field]: value
+    };
+
     await this.auth.updateExpertProfile({ availability: updatedAvailability });
   }
 
@@ -355,6 +473,14 @@ export class ProfileEdit implements OnInit {
     const availability = this.availability();
     const validType = type as 'freelance' | 'mentoring' | 'consulting';
     return availability.types.some(t => t === validType);
+  }
+
+  protected async onAvailabilityStatusChange(isAvailable: boolean): Promise<void> {
+    await this.auth.updateExpertProfile({ isAvailable });
+  }
+
+  protected async onYearsOfExperienceChange(years: string): Promise<void> {
+    await this.auth.updateExpertProfile({ yearsOfExperience: years });
   }
 
 

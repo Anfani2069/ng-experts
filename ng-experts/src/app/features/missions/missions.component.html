@@ -1,15 +1,15 @@
 <app-dashboard-layout [pageTitle]="'Mes Missions'" [pageSubtitle]="'Gérez vos propositions et vos missions en cours'"
     [showSearch]="true">
-    <div class="p-6 md:p-8">
+    <div class="p-6 md:p-8 bg-heroBg">
 
         <!-- Tabs Navigation -->
-        <div class="flex border-b border-gray-200 mb-8">
+        <div class="flex border-b border-white/10 mb-8">
             <button (click)="activeTab.set('proposals')"
                 class="pb-4 px-6 font-medium text-sm transition-colors relative"
-                [class.text-primary]="activeTab() === 'proposals'" [class.text-gray-500]="activeTab() !== 'proposals'">
+                [class.text-primary]="activeTab() === 'proposals'" [class.text-subtext]="activeTab() !== 'proposals'">
                 Propositions reçues
                 @if (pendingProposals().length > 0) {
-                <span class="ml-2 bg-red-100 text-red-600 px-2 py-0.5 rounded-full text-xs font-bold">{{
+                <span class="ml-2 bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest">{{
                     pendingProposals().length }}</span>
                 }
                 @if (activeTab() === 'proposals') {
@@ -18,10 +18,10 @@
             </button>
 
             <button (click)="activeTab.set('active')" class="pb-4 px-6 font-medium text-sm transition-colors relative"
-                [class.text-primary]="activeTab() === 'active'" [class.text-gray-500]="activeTab() !== 'active'">
+                [class.text-primary]="activeTab() === 'active'" [class.text-subtext]="activeTab() !== 'active'">
                 Missions en cours
                 @if (activeMissions().length > 0) {
-                <span class="ml-2 bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs font-bold">{{
+                <span class="ml-2 bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest">{{
                     activeMissions().length }}</span>
                 }
                 @if (activeTab() === 'active') {
@@ -34,7 +34,7 @@
         <div class="min-h-[400px]">
 
             @if (isLoading()) {
-            <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+            <div class="flex flex-col items-center justify-center py-20 text-subtext">
                 <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
                 <p>Chargement des données...</p>
             </div>
@@ -44,12 +44,12 @@
             @if (activeTab() === 'proposals') {
             @if (pendingProposals().length === 0) {
             <!-- Empty State Proposals -->
-            <div class="bg-white rounded-3xl p-12 text-center border border-dashed border-gray-300">
-                <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+            <div class="bg-[#1a1a1a] border border-white/5 rounded-3xl p-12 text-center">
+                <div class="w-20 h-20 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
                     <i class="fa-regular fa-envelope-open text-primary text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Aucune proposition en attente</h3>
-                <p class="text-gray-500 max-w-sm mx-auto">
+                <h3 class="text-xl font-bold text-white mb-2">Aucune proposition en attente</h3>
+                <p class="text-subtext max-w-sm mx-auto">
                     Vous n'avez pas encore reçu de nouvelles propositions de mission. Complétez votre profil pour
                     attirer plus de recruteurs.
                 </p>
@@ -58,18 +58,18 @@
             <!-- Proposals List -->
             <div class="grid grid-cols-1 gap-6">
                 @for (proposal of pendingProposals(); track proposal.id) {
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all">
+                <div class="bg-[#1a1a1a] rounded-2xl p-6 shadow-sm border border-white/5 hover:shadow-md transition-all">
                     <div class="flex flex-col md:flex-row gap-6">
                         <!-- Client Info (Left) -->
                         <div
-                            class="md:w-1/4 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-gray-100 pb-4 md:pb-0 md:pr-6">
+                            class="md:w-1/4 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6">
                             <div
-                                class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 font-bold text-2xl mb-3">
+                                class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-subtext font-bold text-2xl mb-3">
                                 {{ proposal.clientEmail.charAt(0).toUpperCase() }}
                             </div>
-                            <h4 class="font-bold text-gray-900 truncate w-full" [title]="proposal.clientEmail">{{
+                            <h4 class="font-bold text-white truncate w-full" [title]="proposal.clientEmail">{{
                                 proposal.clientEmail }}</h4>
-                            <p class="text-xs text-gray-500 mt-1">Recruteur</p>
+                            <p class="text-xs text-subtext mt-1">Recruteur</p>
                             <button (click)="openDetails(proposal)"
                                 class="mt-4 text-sm text-primary font-medium hover:underline">
                                 Voir les détails
@@ -79,38 +79,38 @@
                         <!-- Mission Details (Middle) -->
                         <div class="flex-1">
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-gray-800">{{ proposal.title }}</h3>
+                                <h3 class="text-xl font-bold text-white">{{ proposal.title }}</h3>
                                 <span
-                                    class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Nouvelle</span>
+                                    class="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Nouvelle</span>
                             </div>
 
-                            <div class="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+                            <div class="flex flex-wrap gap-4 text-sm text-subtext mb-4">
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-calendar text-gray-400"></i>
+                                    <i class="fa-solid fa-calendar text-subtext"></i>
                                     <span>Début: {{ proposal.startDate }}</span>
                                 </div>
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-coins text-gray-400"></i>
-                                    <span class="text-gray-900 font-semibold">{{ proposal.budget }}</span>
+                                    <i class="fa-solid fa-coins text-subtext"></i>
+                                    <span class="text-white font-semibold">{{ proposal.budget }}</span>
                                 </div>
                             </div>
 
-                            <div class="bg-gray-50 rounded-xl p-4 mb-4">
-                                <p class="text-gray-600 text-sm leading-relaxed line-clamp-3">
+                            <div class="bg-white/5 rounded-xl p-4 mb-4">
+                                <p class="text-subtext text-sm leading-relaxed line-clamp-3">
                                     {{ proposal.description }}
                                 </p>
                             </div>
                         </div>
 
                         <!-- Actions (Right) -->
-                        <div class="md:w-48 flex flex-col justify-center gap-3 md:border-l border-gray-100 md:pl-6">
+                        <div class="md:w-48 flex flex-col justify-center gap-3 md:border-l border-white/5 md:pl-6">
                             <button (click)="confirmAction('accepted', proposal)"
-                                class="w-full py-2.5 px-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 shadow-sm shadow-blue-200">
+                                class="w-full py-2.5 px-4 bg-primary hover:bg-primary/80 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 shadow-sm shadow-primary/20">
                                 <i class="fa-solid fa-check"></i>
                                 Accepter
                             </button>
                             <button (click)="confirmAction('rejected', proposal)"
-                                class="w-full py-2.5 px-4 bg-white border border-gray-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-gray-600 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                                class="w-full py-2.5 px-4 bg-[#1a1a1a] border border-white/10 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/30 text-subtext rounded-xl font-medium transition-all flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-xmark"></i>
                                 Refuser
                             </button>
@@ -126,12 +126,12 @@
             @if (activeTab() === 'active') {
             @if (activeMissions().length === 0) {
             <!-- Empty State Missions -->
-            <div class="bg-white rounded-3xl p-12 text-center border border-dashed border-gray-300">
-                <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-solid fa-clipboard-check text-green-600 text-3xl"></i>
+            <div class="bg-[#1a1a1a] rounded-3xl p-12 text-center border border-dashed border-white/10">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fa-solid fa-clipboard-check text-primary text-3xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Aucune mission en cours</h3>
-                <p class="text-gray-500 max-w-sm mx-auto">
+                <h3 class="text-xl font-bold text-white mb-2">Aucune mission en cours</h3>
+                <p class="text-subtext max-w-sm mx-auto">
                     Les missions que vous acceptez apparaîtront ici. Vous pourrez y suivre l'avancement et gérer les
                     livrables.
                 </p>
@@ -141,44 +141,44 @@
             <div class="grid grid-cols-1 gap-6">
                 @for (mission of activeMissions(); track mission.id) {
                 <div
-                    class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all group">
+                    class="bg-[#1a1a1a] rounded-2xl p-6 shadow-sm border border-white/5 hover:shadow-md transition-all group">
                     <div class="flex items-start justify-between mb-4">
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-600 text-xl font-bold">
+                                class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-xl font-bold">
                                 <i class="fa-solid fa-briefcase"></i>
                             </div>
                             <div>
-                                <h4 class="font-bold text-lg text-gray-900 group-hover:text-primary transition-colors">
+                                <h4 class="font-bold text-lg text-white group-hover:text-primary transition-colors">
                                     {{ mission.title }}</h4>
-                                <p class="text-sm text-gray-500">{{ mission.clientEmail }}</p>
+                                <p class="text-sm text-subtext">{{ mission.clientEmail }}</p>
                             </div>
                         </div>
                         <span
                             class="bg-green-100 text-green-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span class="w-2 h-2 rounded-full bg-primary/100 animate-pulse"></span>
                             En cours
                         </span>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-4 py-4 border-t border-b border-gray-100 mb-4">
+                    <div class="grid grid-cols-3 gap-4 py-4 border-t border-b border-white/5 mb-4">
                         <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Budget</p>
-                            <p class="font-semibold text-gray-800">{{ mission.budget }}</p>
+                            <p class="text-xs text-subtext uppercase tracking-wider mb-1">Budget</p>
+                            <p class="font-semibold text-white">{{ mission.budget }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Début</p>
-                            <p class="font-semibold text-gray-800">{{ mission.startDate }}</p>
+                            <p class="text-xs text-subtext uppercase tracking-wider mb-1">Début</p>
+                            <p class="font-semibold text-white">{{ mission.startDate }}</p>
                         </div>
                         <div>
-                            <p class="text-xs text-gray-400 uppercase tracking-wider mb-1">Jours restants</p>
-                            <p class="font-semibold text-gray-800">15 jours</p>
+                            <p class="text-xs text-subtext uppercase tracking-wider mb-1">Jours restants</p>
+                            <p class="font-semibold text-white">15 jours</p>
                         </div>
                     </div>
 
                     <div class="flex justify-end gap-3">
                         <button (click)="openDetails(mission)"
-                            class="text-sm font-medium text-gray-500 hover:text-primary transition-colors px-3 py-2">
+                            class="text-sm font-medium text-subtext hover:text-primary transition-colors px-3 py-2">
                             Détails
                         </button>
                         <!-- Removed the 'Accéder à l'espace projet' button here as requested -->
@@ -200,7 +200,7 @@
 
         <!-- Modal Content -->
         <div
-            class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl relative z-10 overflow-hidden transform transition-all">
+            class="bg-[#1a1a1a] rounded-3xl w-full max-w-2xl shadow-2xl relative z-10 overflow-hidden transform transition-all">
             <div class="bg-primary px-8 py-6 text-white flex justify-between items-start">
                 <div>
                     <h2 class="text-2xl font-bold mb-1">{{ proposal.title }}</h2>
@@ -213,29 +213,29 @@
 
             <div class="p-8 max-h-[70vh] overflow-y-auto">
                 <div class="grid grid-cols-2 gap-6 mb-8">
-                    <div class="p-4 bg-gray-50 rounded-xl">
-                        <p class="text-xs text-gray-400 uppercase font-bold mb-1">Budget</p>
-                        <p class="text-xl font-bold text-gray-800">{{ proposal.budget }}</p>
+                    <div class="p-4 bg-white/5 rounded-xl">
+                        <p class="text-xs text-subtext uppercase font-bold mb-1">Budget</p>
+                        <p class="text-xl font-bold text-white">{{ proposal.budget }}</p>
                     </div>
-                    <div class="p-4 bg-gray-50 rounded-xl">
-                        <p class="text-xs text-gray-400 uppercase font-bold mb-1">Démarrage</p>
-                        <p class="text-xl font-bold text-gray-800">{{ proposal.startDate }}</p>
+                    <div class="p-4 bg-white/5 rounded-xl">
+                        <p class="text-xs text-subtext uppercase font-bold mb-1">Démarrage</p>
+                        <p class="text-xl font-bold text-white">{{ proposal.startDate }}</p>
                     </div>
                 </div>
 
-                <h3 class="font-bold text-gray-800 mb-3">Description du projet</h3>
-                <p class="text-gray-600 leading-relaxed mb-6 whitespace-pre-wrap">
+                <h3 class="font-bold text-white mb-3">Description du projet</h3>
+                <p class="text-subtext leading-relaxed mb-6 whitespace-pre-wrap">
                     {{ proposal.description }}
                 </p>
 
                 @if (proposal.status === 'pending') {
-                <div class="flex gap-4 pt-6 border-t border-gray-100">
+                <div class="flex gap-4 pt-6 border-t border-white/5">
                     <button (click)="confirmAction('rejected', proposal); closeDetails()"
-                        class="flex-1 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-colors">
+                        class="flex-1 py-3 bg-[#1a1a1a] border border-white/10 text-gray-700 font-bold rounded-xl hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-600 transition-colors">
                         Refuser
                     </button>
                     <button (click)="confirmAction('accepted', proposal); closeDetails()"
-                        class="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/30">
+                        class="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/80 transition-colors shadow-lg shadow-primary/30">
                         Accepter
                     </button>
                 </div>
@@ -254,11 +254,11 @@
 
         <!-- Modal -->
         <div
-            class="bg-white rounded-2xl shadow-xl w-full max-w-sm relative z-10 overflow-hidden scale-100 transition-all">
+            class="bg-[#1a1a1a] rounded-2xl shadow-xl w-full max-w-sm relative z-10 overflow-hidden scale-100 transition-all">
             <div class="p-6 text-center">
                 <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
                     [class.bg-green-100]="action.type === 'accepted'"
-                    [class.text-green-600]="action.type === 'accepted'" [class.bg-red-100]="action.type === 'rejected'"
+                    [class.text-primary]="action.type === 'accepted'" [class.bg-red-100]="action.type === 'rejected'"
                     [class.text-red-600]="action.type === 'rejected'">
                     @if (action.type === 'accepted') {
                     <i class="fa-solid fa-check text-3xl"></i>
@@ -267,10 +267,10 @@
                     }
                 </div>
 
-                <h3 class="text-xl font-bold text-gray-900 mb-2">
+                <h3 class="text-xl font-bold text-white mb-2">
                     {{ action.type === 'accepted' ? 'Accepter la mission ?' : 'Refuser la mission ?' }}
                 </h3>
-                <p class="text-gray-500 mb-6">
+                <p class="text-subtext mb-6">
                     {{ action.type === 'accepted'
                     ? 'Bravos ! En acceptant, cette mission passera dans vos missions en cours.'
                     : 'Êtes-vous sûr de vouloir refuser cette opportunité ? Cette action est irréversible.' }}
@@ -278,7 +278,7 @@
 
                 <div class="flex gap-3">
                     <button (click)="closeConfirmModal()"
-                        class="flex-1 py-2.5 bg-white border border-gray-200 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors">
+                        class="flex-1 py-2.5 bg-[#1a1a1a] border border-white/10 text-gray-700 font-medium rounded-xl hover:bg-white/5 transition-colors">
                         Annuler
                     </button>
                     <button (click)="executeAction()" [class.bg-green-600]="action.type === 'accepted'"

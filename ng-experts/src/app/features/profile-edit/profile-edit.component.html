@@ -1,87 +1,93 @@
 <app-dashboard-layout [showSearch]="false" [pageTitle]="'Paramètres du Profil'" [pageSubtitle]="'Gérez vos informations personnelles'">
 
   <!-- Content Area -->
-  <div class="p-8">
+  <div class="p-8 bg-heroBg">
+    @if (isLoading()) {
+      <div class="flex flex-col items-center justify-center py-20">
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primary mb-4"></i>
+        <p class="text-subtext">Chargement de votre profil...</p>
+      </div>
+    } @else {
       <div class="max-w-6xl mx-auto space-y-6">
-        
+
         <!-- Change Profile & Change Password Row -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
+
           <!-- Change Profile -->
-          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h2 class="text-lg font-heading font-bold text-gray-900 mb-2">Change Profile</h2>
-            <p class="text-sm text-gray-500 mb-6">Change your profile picture from here</p>
-            
+          <div class="bg-[#1a1a1a] rounded-2xl p-6 shadow-sm border border-white/5">
+            <h2 class="text-lg font-heading font-bold text-white mb-2">Change Profile</h2>
+            <p class="text-sm text-subtext mb-6">Change your profile picture from here</p>
+
             <div class="flex flex-col items-center">
               <div class="relative mb-4">
-                <img [src]="userAvatar()" class="w-32 h-32 rounded-full border-4 border-gray-100 object-cover">
-                <button (click)="onAvatarUpload()" class="absolute bottom-0 right-0 w-10 h-10 bg-primary text-white rounded-full hover:bg-primary-dark transition shadow-md">
+                <img [src]="userAvatar()" alt="Profile picture" class="w-32 h-32 rounded-full border-4 border-white/5 object-cover">
+                <button (click)="onAvatarUpload()" class="absolute bottom-0 right-0 w-10 h-10 bg-primary text-white rounded-full hover:bg-primary/80 transition shadow-md">
                   <i class="fa-solid fa-camera text-sm"></i>
                 </button>
               </div>
-              
+
               <div class="flex gap-3 mb-4">
-                <button (click)="onAvatarUpload()" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium text-sm">
+                <button (click)="onAvatarUpload()" class="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/80 transition font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)]">
                   Upload
                 </button>
-                <button (click)="onAvatarReset()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium text-sm">
+                <button (click)="onAvatarReset()" class="px-6 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition font-medium text-sm">
                   Reset
                 </button>
               </div>
-              
-              <p class="text-xs text-gray-500 text-center">Allowed JPG, GIF or PNG. Max size of 800K</p>
+
+              <p class="text-xs text-subtext text-center">Allowed JPG, GIF or PNG. Max size of 800K</p>
             </div>
           </div>
 
           <!-- Change Password -->
-          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-            <h2 class="text-lg font-heading font-bold text-gray-900 mb-2">Change Password</h2>
-            <p class="text-sm text-gray-500 mb-6">To change your password please confirm here</p>
-            
+          <div class="bg-[#1a1a1a] rounded-2xl p-6 shadow-sm border border-white/5">
+            <h2 class="text-lg font-heading font-bold text-white mb-2">Change Password</h2>
+            <p class="text-sm text-subtext mb-6">To change your password please confirm here</p>
+
             <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()" class="space-y-4">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Current Password</label>
-                <input 
-                  type="password" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Current Password</label>
+                <input
+                  type="password"
                   formControlName="currentPassword"
-                  placeholder="••••••••••" 
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  placeholder="••••••••••"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getPasswordError('currentPassword')"
                 >
                 @if (getPasswordError('currentPassword')) {
                   <p class="text-red-500 text-xs mt-1">{{ getPasswordError('currentPassword') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
-                <input 
-                  type="password" 
+                <label class="block text-sm font-semibold text-subtext mb-2">New Password</label>
+                <input
+                  type="password"
                   formControlName="newPassword"
-                  placeholder="••••••••••••" 
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  placeholder="••••••••••••"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getPasswordError('newPassword')"
                 >
                 @if (getPasswordError('newPassword')) {
                   <p class="text-red-500 text-xs mt-1">{{ getPasswordError('newPassword') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
-                <input 
-                  type="password" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Confirm Password</label>
+                <input
+                  type="password"
                   formControlName="confirmPassword"
-                  placeholder="••••••••••••" 
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  placeholder="••••••••••••"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getPasswordError('confirmPassword')"
                 >
                 @if (getPasswordError('confirmPassword')) {
                   <p class="text-red-500 text-xs mt-1">{{ getPasswordError('confirmPassword') }}</p>
                 }
               </div>
-              
-              <button type="submit" class="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium text-sm">
+
+              <button type="submit" class="w-full px-4 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)]">
                 Change Password
               </button>
             </form>
@@ -89,22 +95,22 @@
         </div>
 
         <!-- Personal Details -->
-        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h2 class="text-lg font-heading font-bold text-gray-900 mb-2">Personal Details</h2>
-          <p class="text-sm text-gray-500 mb-6">To change your personal detail, edit and save from here</p>
-          
+        <div class="bg-[#1a1a1a] rounded-2xl p-6 shadow-sm border border-white/5">
+          <h2 class="text-lg font-heading font-bold text-white mb-2">Personal Details</h2>
+          <p class="text-sm text-subtext mb-6">To change your personal detail, edit and save from here</p>
+
           <!-- Messages de feedback -->
           @if (error()) {
-            <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div class="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
               <div class="flex items-center">
                 <i class="fa-solid fa-exclamation-circle text-red-500 mr-2"></i>
                 <span class="text-red-700 text-sm font-medium">{{ error() }}</span>
               </div>
             </div>
           }
-          
+
           @if (success()) {
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="mb-6 p-4 bg-primary/10 border border-primary/30 rounded-lg">
               <div class="flex items-center">
                 <i class="fa-solid fa-check-circle text-green-500 mr-2"></i>
                 <span class="text-green-700 text-sm font-medium">{{ success() }}</span>
@@ -115,191 +121,217 @@
           <form [formGroup]="profileForm">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Prénom</label>
-                <input 
-                  type="text" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Prénom</label>
+                <input
+                  type="text"
                   formControlName="firstName"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getFieldError('firstName')"
                 >
                 @if (getFieldError('firstName')) {
                   <p class="text-red-500 text-xs mt-1">{{ getFieldError('firstName') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Nom</label>
-                <input 
-                  type="text" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Nom</label>
+                <input
+                  type="text"
                   formControlName="lastName"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getFieldError('lastName')"
                 >
                 @if (getFieldError('lastName')) {
                   <p class="text-red-500 text-xs mt-1">{{ getFieldError('lastName') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Entreprise / Titre</label>
-                <input 
-                  type="text" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Entreprise / Titre</label>
+                <input
+                  type="text"
                   formControlName="company"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getFieldError('company')"
                 >
                 @if (getFieldError('company')) {
                   <p class="text-red-500 text-xs mt-1">{{ getFieldError('company') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Location</label>
-                <select 
+                <label class="block text-sm font-semibold text-subtext mb-2">Location</label>
+                <select
                   formControlName="location"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm">
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                   @for (country of countries(); track country) {
                     <option [value]="country">{{ country }}</option>
                   }
                 </select>
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Ville</label>
-                <input 
-                  type="text" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Ville</label>
+                <input
+                  type="text"
                   formControlName="city"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getFieldError('city')"
                 >
                 @if (getFieldError('city')) {
                   <p class="text-red-500 text-xs mt-1">{{ getFieldError('city') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
-                <input 
-                  type="email" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Email</label>
+                <input
+                  type="email"
                   formControlName="email"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getFieldError('email')"
                 >
                 @if (getFieldError('email')) {
                   <p class="text-red-500 text-xs mt-1">{{ getFieldError('email') }}</p>
                 }
               </div>
-              
+
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Phone</label>
-                <input 
-                  type="tel" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Phone</label>
+                <input
+                  type="tel"
                   formControlName="phone"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   [class.border-red-300]="getFieldError('phone')"
                 >
                 @if (getFieldError('phone')) {
                   <p class="text-red-500 text-xs mt-1">{{ getFieldError('phone') }}</p>
                 }
               </div>
-              
+
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Address</label>
-                <textarea 
-                  rows="3" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Address</label>
+                <textarea
+                  rows="3"
                   formControlName="address"
                   placeholder="Enter your full address"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm">
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                 </textarea>
               </div>
 
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Bio / Description</label>
-                <textarea 
-                  rows="4" 
+                <label class="block text-sm font-semibold text-subtext mb-2">Bio / Description</label>
+                <textarea
+                  rows="4"
                   formControlName="bio"
                   placeholder="Tell us about yourself"
-                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm">
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                 </textarea>
+              </div>
+
+              <!-- Statut de disponibilité et années d'expérience -->
+              <div>
+                <label class="block text-sm font-semibold text-subtext mb-2">Statut de disponibilité</label>
+                <select
+                  [value]="expertProfile()?.isAvailable"
+                  (change)="onAvailabilityStatusChange($any($event.target).value === 'true')"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white">
+                  @for (status of availabilityStatuses(); track status.value) {
+                    <option [value]="status.value">{{ status.label }}</option>
+                  }
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold text-subtext mb-2">Années d'expérience</label>
+                <select
+                  [value]="expertProfile()?.yearsOfExperience"
+                  (change)="onYearsOfExperienceChange($any($event.target).value)"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white">
+                  <option value="">Sélectionner...</option>
+                  @for (years of yearsOfExperience(); track years) {
+                    <option [value]="years">{{ years }}</option>
+                  }
+                </select>
               </div>
             </div>
 
             <!-- Compétences -->
-            <div class="mt-6 pt-6 border-t border-gray-200">
-              <label class="block text-sm font-semibold text-gray-700 mb-3">Compétences Principales</label>
+            <div class="mt-6 pt-6 border-t border-white/10">
+              <label class="block text-sm font-semibold text-subtext mb-3">Compétences Principales</label>
               <div class="flex flex-wrap gap-2 mb-3">
                 @for (skill of skills(); track skill.id) {
-                  <span class="px-4 py-2 bg-blue-100 text-primary rounded-full text-sm font-medium flex items-center gap-2">
+                  <span class="px-4 py-2 bg-primary/10 border border-primary/20 text-primary rounded-full text-sm font-medium flex items-center gap-2">
                     {{ skill.name }}
-                    <button type="button" (click)="removeSkill(skill.name)" class="hover:text-red-500">
+                    <button type="button" (click)="removeSkill(skill.name)" class="hover:text-red-500 transition">
                       <i class="fa-solid fa-times text-xs"></i>
                     </button>
                   </span>
                 }
               </div>
-              
+
               @if (isAddingSkill()) {
                 <div class="flex gap-2 mb-2">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     [value]="newSkillName()"
                     (input)="updateNewSkillName($event.target.value)"
                     placeholder="Nom de la compétence"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                    class="flex-1 px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                   >
-                  <button type="button" (click)="confirmAddSkill()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition text-sm">
+                  <button type="button" (click)="confirmAddSkill()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
                     <i class="fa-solid fa-check"></i>
                   </button>
-                  <button type="button" (click)="toggleAddSkill()" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition text-sm">
+                  <button type="button" (click)="toggleAddSkill()" class="px-4 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition text-sm">
                     <i class="fa-solid fa-times"></i>
                   </button>
                 </div>
               } @else {
-                <button type="button" (click)="toggleAddSkill()" class="px-4 py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded-lg text-sm font-medium hover:border-primary hover:text-primary transition">
+                <button type="button" (click)="toggleAddSkill()" class="px-4 py-2 border-2 border-dashed border-white/10 text-subtext rounded-lg text-sm font-medium hover:border-primary hover:text-primary transition">
                   <i class="fa-solid fa-plus mr-1"></i> Ajouter une compétence
                 </button>
               }
             </div>
 
             <!-- Certifications -->
-            <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="mt-6 pt-6 border-t border-white/10">
               <div class="flex items-center justify-between mb-3">
-                <label class="block text-sm font-semibold text-gray-700">Certifications</label>
+                <label class="block text-sm font-semibold text-subtext">Certifications</label>
                 @if (!isAddingCertification()) {
                   <button type="button" (click)="toggleAddCertification()" class="text-primary text-sm font-medium hover:text-primary-dark transition">
                     <i class="fa-solid fa-plus mr-1"></i> Ajouter une certification
                   </button>
                 }
               </div>
-              
+
               @if (isAddingCertification()) {
-                <div class="mb-4 p-4 bg-gray-50 rounded-lg border">
+                <div class="mb-4 p-4 bg-white/5 rounded-lg border">
                   <div class="space-y-3">
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       [value]="newCertification().name"
                       (input)="updateNewCertification('name', $event.target.value)"
                       placeholder="Nom de la certification"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       [value]="newCertification().issuer"
                       (input)="updateNewCertification('issuer', $event.target.value)"
                       placeholder="Organisme certificateur"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
-                    <input 
-                      type="date" 
+                    <input
+                      type="date"
                       [value]="newCertification().dateObtained"
                       (input)="updateNewCertification('dateObtained', $event.target.value)"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
                     <div class="flex gap-2">
-                      <button type="button" (click)="confirmAddCertification()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition text-sm">
+                      <button type="button" (click)="confirmAddCertification()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
                         <i class="fa-solid fa-check mr-1"></i> Ajouter
                       </button>
-                      <button type="button" (click)="toggleAddCertification()" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition text-sm">
+                      <button type="button" (click)="toggleAddCertification()" class="px-4 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition text-sm">
                         <i class="fa-solid fa-times mr-1"></i> Annuler
                       </button>
                     </div>
@@ -308,15 +340,20 @@
               }
               <div class="space-y-3">
                 @for (cert of certifications(); track cert.id) {
-                  <div class="flex items-start gap-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <div class="flex items-start gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
                     <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <i class="fa-solid fa-certificate text-primary text-xl"></i>
                     </div>
                     <div class="flex-1">
-                      <h4 class="font-semibold text-gray-900 text-sm">{{ cert.name }}</h4>
-                      <p class="text-xs text-gray-500 mt-1">{{ cert.issuer }} - Obtenu le {{ cert.dateObtained | date:'dd/MM/yyyy' }}</p>
+                      <h4 class="font-semibold text-white text-sm">{{ cert.name }}</h4>
+                      <p class="text-xs text-subtext mt-1">
+                        {{ cert.issuer }}
+                        @if (cert.dateObtained) {
+                          - Obtenu le {{ toDate(cert.dateObtained) | date:'dd/MM/yyyy' }}
+                        }
+                      </p>
                     </div>
-                    <button type="button" (click)="removeCertification(cert.id)" class="text-gray-400 hover:text-red-500 transition">
+                    <button type="button" (click)="removeCertification(cert.id)" class="text-subtext hover:text-red-500 transition">
                       <i class="fa-solid fa-trash text-sm"></i>
                     </button>
                   </div>
@@ -325,45 +362,65 @@
             </div>
 
             <!-- Expériences -->
-            <div class="mt-6 pt-6 border-t border-gray-200">
+            <div class="mt-6 pt-6 border-t border-white/10">
               <div class="flex items-center justify-between mb-3">
-                <label class="block text-sm font-semibold text-gray-700">Expériences Marquantes</label>
+                <label class="block text-sm font-semibold text-subtext">Expériences Marquantes</label>
                 @if (!isAddingExperience()) {
                   <button type="button" (click)="toggleAddExperience()" class="text-primary text-sm font-medium hover:text-primary-dark transition">
                     <i class="fa-solid fa-plus mr-1"></i> Ajouter un projet
                   </button>
                 }
               </div>
-              
+
               @if (isAddingExperience()) {
-                <div class="mb-4 p-4 bg-gray-50 rounded-lg border">
+                <div class="mb-4 p-4 bg-white/5 rounded-lg border">
                   <div class="space-y-3">
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       [value]="newExperience().title"
                       (input)="updateNewExperience('title', $event.target.value)"
                       placeholder="Titre du projet/poste"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       [value]="newExperience().company"
                       (input)="updateNewExperience('company', $event.target.value)"
                       placeholder="Entreprise/Client"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm"
+                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
-                    <textarea 
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="block text-xs text-subtext mb-1">Date de début</label>
+                        <input
+                          type="date"
+                          [value]="newExperience().startDate"
+                          (change)="updateNewExperience('startDate', $any($event.target).value)"
+                          class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                        >
+                      </div>
+                      <div>
+                        <label class="block text-xs text-subtext mb-1">Date de fin (optionnel)</label>
+                        <input
+                          type="date"
+                          [value]="newExperience().endDate"
+                          (change)="updateNewExperience('endDate', $any($event.target).value)"
+                          class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                        >
+                      </div>
+                    </div>
+                    <textarea
                       [value]="newExperience().description"
                       (input)="updateNewExperience('description', $any($event.target).value)"
                       placeholder="Description du projet et réalisations"
                       rows="3"
-                      class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-sm resize-none"
+                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm resize-none"
                     ></textarea>
                     <div class="flex gap-2">
-                      <button type="button" (click)="confirmAddExperience()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition text-sm">
+                      <button type="button" (click)="confirmAddExperience()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
                         <i class="fa-solid fa-check mr-1"></i> Ajouter
                       </button>
-                      <button type="button" (click)="toggleAddExperience()" class="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50 transition text-sm">
+                      <button type="button" (click)="toggleAddExperience()" class="px-4 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition text-sm">
                         <i class="fa-solid fa-times mr-1"></i> Annuler
                       </button>
                     </div>
@@ -372,20 +429,20 @@
               }
               <div class="space-y-4">
                 @for (exp of experiences(); track exp.id) {
-                  <div class="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-100">
+                  <div class="p-4 bg-white/5 rounded-lg border border-white/10">
                     <div class="flex items-start justify-between mb-2">
                       <div>
-                        <h4 class="font-semibold text-gray-900">{{ exp.title }}</h4>
-                        <p class="text-xs text-gray-500 mt-1">{{ exp.company }} • {{ exp.startDate | date:'MM/yyyy' }} - {{ exp.endDate ? (exp.endDate | date:'MM/yyyy') : 'Présent' }}</p>
+                        <h4 class="font-semibold text-white">{{ exp.title }}</h4>
+                        <p class="text-xs text-subtext mt-1">{{ exp.company }} • {{ toDate(exp.startDate) | date:'MM/yyyy' }} - {{ exp.endDate ? (toDate(exp.endDate) | date:'MM/yyyy') : 'Présent' }}</p>
                       </div>
-                      <button type="button" (click)="removeExperience(exp.id)" class="text-gray-400 hover:text-red-500 transition">
+                      <button type="button" (click)="removeExperience(exp.id)" class="text-subtext hover:text-red-500 transition">
                         <i class="fa-solid fa-trash text-sm"></i>
                       </button>
                     </div>
-                    <p class="text-sm text-gray-700 mb-3">{{ exp.description }}</p>
+                    <p class="text-sm text-subtext mb-3">{{ exp.description }}</p>
                     <div class="flex flex-wrap gap-2">
                       @for (tech of exp.technologies; track tech) {
-                        <span class="px-3 py-1 bg-white text-primary text-xs font-medium rounded-full">{{ tech }}</span>
+                        <span class="px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs font-medium rounded-full">{{ tech }}</span>
                       }
                     </div>
                   </div>
@@ -393,62 +450,174 @@
               </div>
             </div>
 
+            <!-- Éducation -->
+            <div class="mt-6 pt-6 border-t border-white/10">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-graduation-cap text-primary"></i>
+                  Éducation
+                </h3>
+                <button type="button" (click)="toggleAddEducation()" class="text-primary hover:text-primary/80 transition text-sm font-medium">
+                  <i class="fa-solid fa-plus mr-1"></i> Ajouter une formation
+                </button>
+              </div>
+              @if (isAddingEducation()) {
+                <div class="mb-6 p-6 bg-white/5 rounded-lg border border-white/10">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label class="block text-sm font-medium text-subtext mb-2">Diplôme</label>
+                      <input
+                        type="text"
+                        [value]="newEducation().degree"
+                        (input)="updateNewEducation('degree', $any($event.target).value)"
+                        placeholder="Ex: Master en Informatique"
+                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                      >
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-subtext mb-2">École / Université</label>
+                      <input
+                        type="text"
+                        [value]="newEducation().school"
+                        (input)="updateNewEducation('school', $any($event.target).value)"
+                        placeholder="Ex: Université Paris-Saclay"
+                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                      >
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-subtext mb-2">Domaine d'étude</label>
+                      <input
+                        type="text"
+                        [value]="newEducation().fieldOfStudy"
+                        (input)="updateNewEducation('fieldOfStudy', $any($event.target).value)"
+                        placeholder="Ex: Développement Web"
+                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                      >
+                    </div>
+                    <div class="md:col-span-2">
+                      <label class="block text-sm font-medium text-subtext mb-2">Description (optionnel)</label>
+                      <textarea
+                        [value]="newEducation().description"
+                        (input)="updateNewEducation('description', $any($event.target).value)"
+                        placeholder="Décrivez votre parcours et vos accomplissements..."
+                        rows="2"
+                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm resize-none"
+                      ></textarea>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-subtext mb-2">Date de début</label>
+                      <input
+                        type="date"
+                        [value]="newEducation().startDate"
+                        (change)="updateNewEducation('startDate', $any($event.target).value)"
+                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                      >
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-subtext mb-2">Date de fin (optionnel)</label>
+                      <input
+                        type="date"
+                        [value]="newEducation().endDate"
+                        (change)="updateNewEducation('endDate', $any($event.target).value)"
+                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                      >
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <button type="button" (click)="confirmAddEducation()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
+                      <i class="fa-solid fa-check mr-1"></i> Ajouter
+                    </button>
+                    <button type="button" (click)="toggleAddEducation()" class="px-4 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition text-sm">
+                      <i class="fa-solid fa-times mr-1"></i> Annuler
+                    </button>
+                  </div>
+                </div>
+              }
+              <div class="space-y-4">
+                @for (edu of education(); track edu.id) {
+                  <div class="p-4 bg-white/5 rounded-lg border border-white/10">
+                    <div class="flex items-start justify-between mb-2">
+                      <div>
+                        <h4 class="font-semibold text-white">{{ edu.degree }}</h4>
+                        <p class="text-xs text-primary mt-1">{{ edu.school }}</p>
+                        <p class="text-xs text-subtext mt-1">{{ edu.fieldOfStudy }} • {{ toDate(edu.startDate) | date:'MM/yyyy' }} - {{ edu.endDate ? (toDate(edu.endDate) | date:'MM/yyyy') : 'En cours' }}</p>
+                      </div>
+                      <button type="button" (click)="removeEducation(edu.id)" class="text-subtext hover:text-red-500 transition">
+                        <i class="fa-solid fa-trash text-sm"></i>
+                      </button>
+                    </div>
+                    @if (edu.description) {
+                      <p class="text-sm text-subtext mt-2">{{ edu.description }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+
             <!-- Disponibilité -->
-            <div class="mt-6 pt-6 border-t border-gray-200">
-              <label class="block text-sm font-semibold text-gray-700 mb-3">Type de Contrat</label>
+            <div class="mt-6 pt-6 border-t border-white/10">
+              <label class="block text-sm font-semibold text-subtext mb-3">Type de Contrat</label>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-primary transition cursor-pointer">
-                  <input type="checkbox" id="freelance" [checked]="isContractTypeSelected('freelance')" 
+                <div class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-primary transition cursor-pointer">
+                  <input type="checkbox" id="freelance" [checked]="isContractTypeSelected('freelance')"
                          (change)="onContractTypeChange('freelance', $event.target.checked)"
                          class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary/20">
-                  <label for="freelance" class="text-sm font-medium text-gray-700 cursor-pointer">Freelance</label>
+                  <label for="freelance" class="text-sm font-medium text-subtext cursor-pointer">Freelance</label>
                 </div>
-                <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-primary transition cursor-pointer">
-                  <input type="checkbox" id="cdi" [checked]="isContractTypeSelected('cdi')" 
+                <div class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-primary transition cursor-pointer">
+                  <input type="checkbox" id="cdi" [checked]="isContractTypeSelected('cdi')"
                          (change)="onContractTypeChange('cdi', $event.target.checked)"
                          class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary/20">
-                  <label for="cdi" class="text-sm font-medium text-gray-700 cursor-pointer">CDI</label>
+                  <label for="cdi" class="text-sm font-medium text-subtext cursor-pointer">CDI</label>
                 </div>
-                <div class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:border-primary transition cursor-pointer">
-                  <input type="checkbox" id="mentoring" [checked]="isContractTypeSelected('mentoring')" 
+                <div class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-primary transition cursor-pointer">
+                  <input type="checkbox" id="mentoring" [checked]="isContractTypeSelected('mentoring')"
                          (change)="onContractTypeChange('mentoring', $event.target.checked)"
                          class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary/20">
-                  <label for="mentoring" class="text-sm font-medium text-gray-700 cursor-pointer">Mentoring</label>
+                  <label for="mentoring" class="text-sm font-medium text-subtext cursor-pointer">Mentoring</label>
                 </div>
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Disponibilité à partir de</label>
-                  <input 
-                    type="date" 
+                  <label class="block text-sm font-semibold text-subtext mb-2">Disponibilité à partir de</label>
+                  <input
+                    type="date"
                     [value]="availability().startDate"
-                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                    (change)="onAvailabilityFieldChange('startDate', $any($event.target).value)"
+                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                   >
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Taux journalier (TJM)</label>
+                  <label class="block text-sm font-semibold text-subtext mb-2">Taux journalier (TJM)</label>
                   <div class="relative">
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       [value]="availability().dailyRate"
+                      (change)="onAvailabilityFieldChange('dailyRate', $any($event.target).value)"
                       placeholder="Ex: 500-600"
-                      class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm"
+                      class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
                     >
-                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€/jour</span>
+                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-subtext text-sm">€/jour</span>
                   </div>
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Préférence de travail</label>
-                  <select class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm">
+                  <label class="block text-sm font-semibold text-subtext mb-2">Préférence de travail</label>
+                  <select
+                    [value]="availability().workPreference"
+                    (change)="onAvailabilityFieldChange('workPreference', $any($event.target).value)"
+                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                     @for (pref of workPreferences(); track pref) {
                       <option [value]="pref" [selected]="pref === availability().workPreference">{{ pref }}</option>
                     }
                   </select>
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold text-gray-700 mb-2">Durée de mission préférée</label>
-                  <select class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-sm">
+                  <label class="block text-sm font-semibold text-subtext mb-2">Durée de mission préférée</label>
+                  <select
+                    [value]="availability().missionDuration"
+                    (change)="onAvailabilityFieldChange('missionDuration', $any($event.target).value)"
+                    class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                     @for (duration of missionDurations(); track duration) {
                       <option [value]="duration" [selected]="duration === availability().missionDuration">{{ duration }}</option>
                     }
@@ -459,10 +628,10 @@
 
             <!-- Action Buttons -->
             <div class="mt-8 flex items-center justify-end gap-3">
-              <button type="button" (click)="onCancel()" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium">
+              <button type="button" (click)="onCancel()" class="px-6 py-3 border border-white/10 text-subtext rounded-full hover:bg-white/5 transition font-bold uppercase tracking-widest text-[10px]">
                 Annuler
               </button>
-              <button type="button" (click)="onSaveProfile()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium shadow-sm">
+              <button type="button" (click)="onSaveProfile()" class="px-6 py-3 bg-primary text-white rounded-full hover:bg-primary/80 transition font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)]">
                 <i class="fa-solid fa-save mr-2"></i>
                 Enregistrer
               </button>
@@ -470,7 +639,8 @@
           </form>
         </div>
 
-    </div>
+      </div>
+    }
   </div>
 
 </app-dashboard-layout>

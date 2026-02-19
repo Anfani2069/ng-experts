@@ -15,9 +15,27 @@
         <span class="text-white/40">Artificial Intelligence.</span>
       </h1>
 
-      <p class="text-lg text-subtext max-w-xl mb-12 leading-relaxed font-medium">
-        Trouvez les meilleurs consultants et développeurs Angular pour vos projets les plus ambitieux.
-      </p>
+      <div class="flex items-start gap-8 mb-12">
+        <p class="text-lg text-subtext max-w-xl leading-relaxed font-medium">
+          Trouvez les meilleurs consultants et développeurs Angular pour vos projets les plus ambitieux.
+        </p>
+
+        <!-- Avatars empilés -->
+        <div class="flex items-center gap-4 flex-shrink-0">
+          <div class="flex -space-x-3">
+            @for (avatar of visibleAvatars(); track avatar; let i = $index) {
+              <div class="w-12 h-12 rounded-full border-2 border-heroBg overflow-hidden transition-all duration-500 transform hover:scale-110 hover:z-10 avatar-card"
+                   [style.animation-delay.ms]="i * 100">
+                <img [src]="avatar" [alt]="'Expert ' + (i + 1)" class="w-full h-full object-cover">
+              </div>
+            }
+          </div>
+          <div class="text-subtext">
+            <span class="text-white font-semibold">Join 1,000+ professionals</span><br>
+            <span class="text-sm">already on Ng-Expert</span>
+          </div>
+        </div>
+      </div>
 
       <div class="flex flex-col sm:flex-row gap-6 mb-20">
         <div class="relative flex-1 max-w-md group">

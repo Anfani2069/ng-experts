@@ -38,38 +38,47 @@ export class DashboardLayout {
 
   // Utilisateur connecté via Auth service
   protected readonly currentUser = this.auth.getCurrentUser();
-  
+
+  // État de chargement de l'utilisateur
+  protected readonly isUserLoaded = computed(() => {
+    return this.currentUser() !== null;
+  });
+
   // Nom complet de l'utilisateur pour affichage
   protected readonly userDisplayName = computed(() => {
     const user = this.currentUser();
-    return user ? `${user.firstName} ${user.lastName}` : 'Utilisateur';
+    if (!user) return '';
+    return `${user.firstName} ${user.lastName}`;
   });
-  
+
   // Rôle de l'utilisateur pour affichage
   protected readonly userRole = computed(() => {
     const user = this.currentUser();
-    if (!user) return 'Utilisateur';
-    
+    if (!user) return '';
+
     return user.role === 'expert' ? 'Expert Angular' : 'Recruteur';
   });
 
   // Avatar de l'utilisateur
   protected readonly userAvatar = computed(() => {
     const user = this.currentUser();
-    return user?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+    if (!user) return '';
+    return user?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(this.userDisplayName()) + '&background=EC4899&color=fff';
   });
+
+  // Nombre de notifications (à remplacer par des données réelles)
+  protected readonly notificationCount = signal(0);
 
   // Données de navigation
   protected readonly navItems = signal<NavigationItem[]>([
     { icon: 'fa-solid fa-home', label: 'Dashboard', isActive: true },
     { icon: 'fa-solid fa-briefcase', label: 'Mes Missions', isActive: false },
-    { icon: 'fa-solid fa-message', label: 'Messages', isActive: false, badge: 3 },
-    { icon: 'fa-solid fa-user', label: 'Mon Profil', isActive: false }
+    { icon: 'fa-solid fa-message', label: 'Messages', isActive: false },
+    { icon: 'fa-solid fa-user-pen', label: 'Editer mon profil', isActive: false }
   ]);
 
   protected readonly settingsItems = signal<NavigationItem[]>([
-    { icon: 'fa-solid fa-bell', label: 'Notifications', isActive: false },
-    { icon: 'fa-solid fa-gear', label: 'Paramètres', isActive: false }
+    { icon: 'fa-solid fa-bell', label: 'Notifications', isActive: false }
   ]);
 
   // Methods
@@ -96,10 +105,9 @@ export class DashboardLayout {
     const routeMapping: { [key: string]: string } = {
       'Dashboard': '/dashboard',
       'Mes Missions': '/missions',
-      'Messages': '/messages', 
-      'Mon Profil': '/profile/1',
-      'Notifications': '/notifications',
-      'Paramètres': '/profile-edit'
+      'Messages': '/messages',
+      'Editer mon profil': '/profile-edit',
+      'Notifications': '/notifications'
     };
 
     const route = routeMapping[sectionLabel];
@@ -112,17 +120,17 @@ export class DashboardLayout {
   }
 
   protected setActiveNavItem(activeLabel: string): void {
-    this.navItems.update(items => 
-      items.map(item => ({ 
-        ...item, 
-        isActive: item.label === activeLabel 
+    this.navItems.update(items =>
+      items.map(item => ({
+        ...item,
+        isActive: item.label === activeLabel
       }))
     );
 
-    this.settingsItems.update(items => 
-      items.map(item => ({ 
-        ...item, 
-        isActive: item.label === activeLabel 
+    this.settingsItems.update(items =>
+      items.map(item => ({
+        ...item,
+        isActive: item.label === activeLabel
       }))
     );
   }
@@ -133,7 +141,13 @@ export class DashboardLayout {
     if (currentPath.includes('dashboard')) {
       this.setActiveNavItem('Dashboard');
     } else if (currentPath.includes('profile-edit')) {
-      this.setActiveNavItem('Mon Profil');
+      this.setActiveNavItem('Editer mon profil');
+    } else if (currentPath.includes('missions')) {
+      this.setActiveNavItem('Mes Missions');
+    } else if (currentPath.includes('messages')) {
+      this.setActiveNavItem('Messages');
+    } else if (currentPath.includes('notifications')) {
+      this.setActiveNavItem('Notifications');
     }
   }
 }

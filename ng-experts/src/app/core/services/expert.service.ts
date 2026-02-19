@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { collection, doc, getDoc, getDocs, query, where, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, where, updateDoc, Timestamp } from 'firebase/firestore';
 import { Expert } from '@core/models/user.model';
 import { firebase } from '@core/config/firebase.config';
 
@@ -15,6 +15,50 @@ export class ExpertService {
   public readonly expertsData = this.experts.asReadonly();
   public readonly loading = this.isLoading.asReadonly();
   public readonly errorMessage = this.error.asReadonly();
+
+  /**
+   * Convertit les Timestamps Firestore en Dates pour un objet expert
+   */
+  private convertTimestampsToDate(data: any): any {
+    const converted = { ...data };
+
+    // Convertir les dates principales
+    if (converted.createdAt instanceof Timestamp) {
+      converted.createdAt = converted.createdAt.toDate();
+    }
+    if (converted.updatedAt instanceof Timestamp) {
+      converted.updatedAt = converted.updatedAt.toDate();
+    }
+
+    // Convertir les dates dans les expériences
+    if (converted.experience && Array.isArray(converted.experience)) {
+      converted.experience = converted.experience.map((exp: any) => ({
+        ...exp,
+        startDate: exp.startDate instanceof Timestamp ? exp.startDate.toDate() : exp.startDate,
+        endDate: exp.endDate instanceof Timestamp ? exp.endDate.toDate() : exp.endDate
+      }));
+    }
+
+    // Convertir les dates dans les certifications
+    if (converted.certifications && Array.isArray(converted.certifications)) {
+      converted.certifications = converted.certifications.map((cert: any) => ({
+        ...cert,
+        dateObtained: cert.dateObtained instanceof Timestamp ? cert.dateObtained.toDate() : cert.dateObtained,
+        expirationDate: cert.expirationDate instanceof Timestamp ? cert.expirationDate.toDate() : cert.expirationDate
+      }));
+    }
+
+    // Convertir les dates dans l'éducation
+    if (converted.education && Array.isArray(converted.education)) {
+      converted.education = converted.education.map((edu: any) => ({
+        ...edu,
+        startDate: edu.startDate instanceof Timestamp ? edu.startDate.toDate() : edu.startDate,
+        endDate: edu.endDate instanceof Timestamp ? edu.endDate.toDate() : edu.endDate
+      }));
+    }
+
+    return converted;
+  }
 
   /**
    * Récupère un expert par son ID depuis Firestore
@@ -33,10 +77,15 @@ export class ExpertService {
 
         // Vérifier que c'est bien un expert
         if (expertData['role'] === 'expert') {
-          return {
+          const rawData = {
             id: expertSnap.id,
             ...expertData
-          } as Expert;
+          };
+
+          // Convertir les Timestamps en Dates
+          const convertedData = this.convertTimestampsToDate(rawData);
+
+          return convertedData as Expert;
         }
       }
 
@@ -69,10 +118,14 @@ export class ExpertService {
       const expertsList: Expert[] = [];
 
       querySnapshot.forEach((doc) => {
-        expertsList.push({
+        const rawData = {
           id: doc.id,
           ...doc.data()
-        } as Expert);
+        };
+
+        // Convertir les Timestamps en Dates
+        const convertedData = this.convertTimestampsToDate(rawData);
+        expertsList.push(convertedData as Expert);
       });
 
       this.experts.set(expertsList);
@@ -106,10 +159,14 @@ export class ExpertService {
       const availableExperts: Expert[] = [];
 
       querySnapshot.forEach((doc) => {
-        availableExperts.push({
+        const rawData = {
           id: doc.id,
           ...doc.data()
-        } as Expert);
+        };
+
+        // Convertir les Timestamps en Dates
+        const convertedData = this.convertTimestampsToDate(rawData);
+        availableExperts.push(convertedData as Expert);
       });
 
       return availableExperts;

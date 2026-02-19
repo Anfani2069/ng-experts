@@ -54,7 +54,12 @@ export class Dashboard {
   // Nom d'utilisateur pour affichage
   protected readonly userName = computed(() => {
     const user = this.currentUser();
-    return user ? user.firstName : 'Expert';
+    return user?.firstName || '';
+  });
+
+  // Vérifier si l'utilisateur est chargé
+  protected readonly isUserLoaded = computed(() => {
+    return this.currentUser() !== null;
   });
 
   // Profile completion signal
@@ -171,13 +176,13 @@ export class Dashboard {
   protected getMissionStatusClass(status: Mission['status']): string {
     switch (status) {
       case 'en-cours':
-        return 'bg-green-50 text-green-600';
+        return 'bg-primary/10 text-primary border border-primary/20';
       case 'en-attente':
-        return 'bg-yellow-50 text-yellow-600';
+        return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
       case 'terminee':
-        return 'bg-gray-50 text-gray-600';
+        return 'bg-white/5 text-subtext border border-white/10';
       default:
-        return 'bg-gray-50 text-gray-600';
+        return 'bg-white/5 text-subtext border border-white/10';
     }
   }
 

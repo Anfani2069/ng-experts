@@ -46,12 +46,15 @@ export class ExpertDetails implements OnInit {
   // Computed properties pour l'affichage
   protected readonly fullName = computed(() => {
     const expert = this.expertData();
-    return expert ? `${expert.firstName} ${expert.lastName}` : 'Expert Angular';
+    if (!expert) return '';
+    const firstNameInitial = expert.firstName || '';
+    const lastNameInitial = expert.lastName ? expert.lastName.charAt(0).toUpperCase() + '.' : '';
+    return `${firstNameInitial} ${lastNameInitial}`.trim();
   });
 
   protected readonly userAvatar = computed(() => {
     const expert = this.expertData();
-    return expert?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+    return expert?.avatar || '';
   });
 
   protected readonly availabilityStatus = computed(() => {
@@ -61,33 +64,33 @@ export class ExpertDetails implements OnInit {
 
   protected readonly fullLocation = computed(() => {
     const expert = this.expertData();
-    return expert ? `${expert.city}, ${expert.location}` : 'France';
+    return expert ? `${expert.city}, ${expert.location}` : '';
   });
 
   protected readonly memberSince = computed(() => {
     const expert = this.expertData();
-    if (!expert?.createdAt) return '2024';
+    if (!expert?.createdAt) return '';
     const date = new Date(expert.createdAt);
     return date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   });
 
   protected readonly jobTitle = computed(() => {
     const expert = this.expertData();
-    // Générer un titre basé sur les certifs ou compétences principales
+    if (!expert) return '';
     const mainSkill = expert?.skills?.[0]?.name || 'Angular';
     return `Expert ${mainSkill} & Développement Web`;
   });
 
   protected readonly totalExperience = computed(() => {
     const expert = this.expertData();
-    // Calcul approximatif ou mocked, idéalement ferait la somme des expériences
+    if (!expert) return '';
     const firstExp = expert?.experience?.[expert.experience.length - 1];
     if (firstExp?.startDate) {
       const start = new Date(firstExp.startDate).getFullYear();
       const now = new Date().getFullYear();
       return `${now - start} ans`;
     }
-    return '5 ans'; // Fallback
+    return '';
   });
 
   protected readonly responseRate = computed(() => {

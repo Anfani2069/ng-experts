@@ -141,9 +141,11 @@ export class ExpertsSection implements OnInit {
     this.router.navigate(['/experts']);
   }
 
-  // Helper pour obtenir le nom complet
+  // Helper pour obtenir le nom complet au format "Prénom N."
   protected getFullName(expert: Expert): string {
-    return `${expert.firstName} ${expert.lastName}`;
+    const firstName = expert.firstName || '';
+    const lastNameInitial = expert.lastName ? expert.lastName.charAt(0).toUpperCase() + '.' : '';
+    return `${firstName} ${lastNameInitial}`.trim();
   }
 
   // Helper pour obtenir les noms des compétences

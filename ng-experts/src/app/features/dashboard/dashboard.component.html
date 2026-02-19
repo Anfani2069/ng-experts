@@ -1,114 +1,118 @@
 <app-dashboard-layout [showSearch]="true">
 
   <!-- Dashboard Content -->
-  <div class="px-8 py-6">
+  <div class="px-8 py-6 bg-heroBg">
     <!-- Welcome Card -->
-    <div class="bg-gradient-to-r from-primary to-accent rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
+    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-8 mb-8 text-white relative overflow-hidden">
       <div class="relative z-10">
-        <h1 class="text-3xl font-heading font-bold mb-2">Bienvenue {{ userName() }} ! 👋</h1>
-        <p class="text-white/90 mb-6">Vous avez complété {{ profileCompletion() }}% de votre profil</p>
+        @if (isUserLoaded()) {
+          <h1 class="text-3xl font-bold mb-2 tracking-tight">Bienvenue {{ userName() }} ! 👋</h1>
+        } @else {
+          <div class="h-9 w-64 bg-white/5 rounded animate-pulse mb-2"></div>
+        }
+        <p class="text-subtext mb-6">Vous avez complété {{ profileCompletion() }}% de votre profil</p>
 
         <div class="grid grid-cols-3 gap-6 max-w-2xl">
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/5 hover:border-primary/30 transition-all">
             <div class="flex items-center gap-2 mb-2">
-              <i class="fa-solid fa-briefcase"></i>
-              <span class="text-sm">Nouvelles missions</span>
+              <i class="fa-solid fa-briefcase text-primary"></i>
+              <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext">Nouvelles missions</span>
             </div>
-            <p class="text-2xl font-bold">{{ quickStats().newMissions }}</p>
-            <p class="text-xs text-white/70">En attente</p>
+            <p class="text-2xl font-black text-white tracking-tighter">{{ quickStats().newMissions }}</p>
+            <p class="text-xs text-white/40">En attente</p>
           </div>
 
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/5 hover:border-primary/30 transition-all">
             <div class="flex items-center gap-2 mb-2">
-              <i class="fa-solid fa-check-circle"></i>
-              <span class="text-sm">Missions actives</span>
+              <i class="fa-solid fa-check-circle text-primary"></i>
+              <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext">Missions actives</span>
             </div>
-            <p class="text-2xl font-bold">{{ quickStats().activeMissions }}</p>
-            <p class="text-xs text-white/70">En cours</p>
+            <p class="text-2xl font-black text-white tracking-tighter">{{ quickStats().activeMissions }}</p>
+            <p class="text-xs text-white/40">En cours</p>
           </div>
 
-          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
+          <div class="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/5 hover:border-primary/30 transition-all">
             <div class="flex items-center gap-2 mb-2">
-              <i class="fa-solid fa-star"></i>
-              <span class="text-sm">Évaluations</span>
+              <i class="fa-solid fa-star text-primary"></i>
+              <span class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext">Évaluations</span>
             </div>
-            <p class="text-2xl font-bold">{{ quickStats().averageRating }}</p>
-            <p class="text-xs text-white/70">Note moyenne</p>
+            <p class="text-2xl font-black text-white tracking-tighter">{{ quickStats().averageRating }}</p>
+            <p class="text-xs text-white/40">Note moyenne</p>
           </div>
         </div>
       </div>
 
       <!-- Decorative illustration -->
-      <div class="absolute right-8 bottom-0 opacity-20">
+      <div class="absolute right-8 bottom-0 opacity-5">
         <i class="fa-solid fa-code text-9xl"></i>
       </div>
     </div>
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-primary/30 transition-all">
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+          <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
             <i class="fa-solid fa-eye text-primary text-xl"></i>
           </div>
-          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
+          <span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full border border-primary/20">{{
             dashboardStats().profileViewsChange }}</span>
         </div>
-        <p class="text-gray-600 text-sm mb-1">Vues du profil</p>
-        <p class="text-2xl font-bold">{{ formatNumber(dashboardStats().profileViews) }}</p>
-        <p class="text-xs text-gray-500 mt-1">7 derniers jours</p>
+        <p class="text-subtext text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Vues du profil</p>
+        <p class="text-2xl font-black text-white tracking-tighter">{{ formatNumber(dashboardStats().profileViews) }}</p>
+        <p class="text-xs text-white/40 mt-1">7 derniers jours</p>
       </div>
 
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-primary/30 transition-all">
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
-            <i class="fa-solid fa-euro-sign text-green-600 text-xl"></i>
+          <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+            <i class="fa-solid fa-euro-sign text-primary text-xl"></i>
           </div>
-          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
+          <span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full border border-primary/20">{{
             dashboardStats().revenueChange }}</span>
         </div>
-        <p class="text-gray-600 text-sm mb-1">Revenus</p>
-        <p class="text-2xl font-bold">{{ formatCurrency(dashboardStats().revenue) }}</p>
-        <p class="text-xs text-gray-500 mt-1">Ce mois</p>
+        <p class="text-subtext text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Revenus</p>
+        <p class="text-2xl font-black text-white tracking-tighter">{{ formatCurrency(dashboardStats().revenue) }}</p>
+        <p class="text-xs text-white/40 mt-1">Ce mois</p>
       </div>
 
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-primary/30 transition-all">
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center">
-            <i class="fa-solid fa-users text-purple-600 text-xl"></i>
+          <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+            <i class="fa-solid fa-users text-primary text-xl"></i>
           </div>
-          <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">{{
+          <span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-full border border-primary/20">{{
             dashboardStats().clientsChange }}</span>
         </div>
-        <p class="text-gray-600 text-sm mb-1">Clients</p>
-        <p class="text-2xl font-bold">{{ dashboardStats().clients }}</p>
-        <p class="text-xs text-gray-500 mt-1">Total</p>
+        <p class="text-subtext text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Clients</p>
+        <p class="text-2xl font-black text-white tracking-tighter">{{ dashboardStats().clients }}</p>
+        <p class="text-xs text-white/40 mt-1">Total</p>
       </div>
 
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-primary/30 transition-all">
         <div class="flex items-center justify-between mb-4">
-          <div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center">
-            <i class="fa-solid fa-clock text-orange-600 text-xl"></i>
+          <div class="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+            <i class="fa-solid fa-clock text-primary text-xl"></i>
           </div>
-          <span class="text-xs font-semibold text-gray-600 bg-gray-50 px-2 py-1 rounded-full">{{
+          <span class="text-[10px] font-bold uppercase tracking-widest text-subtext bg-white/5 px-2 py-1 rounded-full border border-white/10">{{
             dashboardStats().hoursWorkedChange }}</span>
         </div>
-        <p class="text-gray-600 text-sm mb-1">Heures travaillées</p>
-        <p class="text-2xl font-bold">{{ dashboardStats().hoursWorked }}h</p>
-        <p class="text-xs text-gray-500 mt-1">Ce mois</p>
+        <p class="text-subtext text-[10px] font-bold uppercase tracking-[0.3em] mb-1">Heures travaillées</p>
+        <p class="text-2xl font-black text-white tracking-tighter">{{ dashboardStats().hoursWorked }}h</p>
+        <p class="text-xs text-white/40 mt-1">Ce mois</p>
       </div>
     </div>
 
     <!-- Charts Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
       <!-- Revenue Chart -->
-      <div class="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="lg:col-span-2 bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
           <div>
-            <h3 class="font-bold text-lg">Revenus mensuels</h3>
-            <p class="text-sm text-gray-500">Évolution sur les 6 derniers mois</p>
+            <h3 class="font-bold text-lg text-white">Revenus mensuels</h3>
+            <p class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext">Évolution sur les 6 derniers mois</p>
           </div>
-          <select class="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+          <select class="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-primary/50 transition">
             <option>6 mois</option>
             <option>3 mois</option>
             <option>1 an</option>
@@ -118,13 +122,13 @@
         <!-- Simple chart representation -->
         <div class="h-64 flex items-end justify-between gap-2">
           @for (value of revenueData(); track $index) {
-          <div class="flex-1 rounded-t-lg transition-all duration-300 hover:opacity-80"
-            [class]="'bg-primary/' + (20 + ($index + 1) * 15)" [style.height.%]="value">
+          <div class="flex-1 rounded-t-lg transition-all duration-300 hover:opacity-80 bg-gradient-to-t from-primary to-primary/50"
+            [style.height.%]="value">
           </div>
           }
         </div>
 
-        <div class="flex justify-between mt-4 text-xs text-gray-500">
+        <div class="flex justify-between mt-4 text-[10px] font-bold uppercase tracking-widest text-subtext">
           @for (month of chartMonths(); track month) {
           <span>{{ month }}</span>
           }
@@ -132,18 +136,18 @@
       </div>
 
       <!-- Top Skills -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
-        <h3 class="font-bold text-lg mb-6">Compétences recherchées</h3>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
+        <h3 class="font-bold text-lg mb-6 text-white">Compétences recherchées</h3>
 
         <div class="space-y-4">
           @for (skill of skills(); track skill.name) {
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-sm font-medium">{{ skill.name }}</span>
-              <span class="text-sm text-gray-500">{{ skill.percentage }}%</span>
+              <span class="text-sm font-medium text-white">{{ skill.name }}</span>
+              <span class="text-sm text-subtext">{{ skill.percentage }}%</span>
             </div>
-            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-500" [class]="skill.color"
+            <div class="h-2 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-primary to-primary/70"
                 [style.width.%]="skill.percentage">
               </div>
             </div>
@@ -156,33 +160,32 @@
     <!-- Recent Activity & Missions -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Recent Missions -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
-          <h3 class="font-bold text-lg">Missions récentes</h3>
-          <a href="#" class="text-sm text-primary hover:text-primary-dark font-semibold">Voir tout</a>
+          <h3 class="font-bold text-lg text-white">Missions récentes</h3>
+          <a href="#" class="text-[10px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition">Voir tout</a>
         </div>
 
         <div class="space-y-4">
           @for (mission of recentMissions(); track mission.id) {
-          <div class="flex items-start gap-4 p-4 rounded-lg hover:bg-gray-50 cursor-pointer">
-            <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0" [class]="mission.iconColor === 'text-primary' ? 'bg-blue-50' : 
-                             mission.iconColor === 'text-purple-600' ? 'bg-purple-50' : 'bg-green-50'">
-              <i [class]="mission.icon + ' ' + mission.iconColor"></i>
+          <div class="flex items-start gap-4 p-4 rounded-lg bg-white/5 border border-white/5 hover:border-primary/30 hover:bg-white/[0.07] cursor-pointer transition-all">
+            <div class="w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 bg-primary/10 border border-primary/20">
+              <i [class]="mission.icon + ' text-primary'"></i>
             </div>
             <div class="flex-1">
-              <h4 class="font-semibold mb-1">{{ mission.title }}</h4>
-              <p class="text-sm text-gray-500 mb-2">{{ mission.description }}</p>
+              <h4 class="font-semibold mb-1 text-white">{{ mission.title }}</h4>
+              <p class="text-sm text-subtext mb-2">{{ mission.description }}</p>
               <div class="flex items-center gap-2">
-                <span class="text-xs px-2 py-1 rounded-full" [class]="getMissionStatusClass(mission.status)">
+                <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full" [class]="getMissionStatusClass(mission.status)">
                   {{ getMissionStatusText(mission.status) }}
                 </span>
                 @if (getMissionTimeText(mission)) {
-                <span class="text-xs text-gray-400">•</span>
-                <span class="text-xs text-gray-500">{{ getMissionTimeText(mission) }}</span>
+                <span class="text-xs text-white/20">•</span>
+                <span class="text-xs text-subtext">{{ getMissionTimeText(mission) }}</span>
                 }
               </div>
             </div>
-            <span class="text-sm font-bold" [class]="mission.status === 'terminee' ? 'text-gray-400' : 'text-primary'">
+            <span class="text-sm font-bold" [class]="mission.status === 'terminee' ? 'text-white/40' : 'text-primary'">
               {{ formatCurrency(mission.budget) }}
             </span>
           </div>
@@ -191,35 +194,35 @@
       </div>
 
       <!-- Propositions reçues -->
-      <div class="bg-white rounded-2xl p-6 border border-gray-200">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
         <div class="flex items-center justify-between mb-6">
-          <h3 class="font-bold text-lg">Propositions reçues</h3>
-          <span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">
+          <h3 class="font-bold text-lg text-white">Propositions reçues</h3>
+          <span class="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-primary/20">
             {{ proposals().length }}
           </span>
         </div>
 
         <div class="space-y-4">
           @if (proposals().length === 0) {
-          <div class="text-center py-8 text-gray-400">
-            <i class="fa-solid fa-inbox text-4xl mb-3 opacity-50"></i>
+          <div class="text-center py-8 text-subtext">
+            <i class="fa-solid fa-inbox text-4xl mb-3 opacity-30"></i>
             <p>Aucune proposition pour le moment</p>
           </div>
           }
 
           @for (proposal of proposals(); track proposal.id) {
           <div
-            class="flex items-start gap-3 p-4 rounded-xl border border-gray-100 hover:border-primary/30 hover:shadow-sm transition-all bg-white group cursor-pointer">
+            class="flex items-start gap-3 p-4 rounded-xl border border-white/5 hover:border-primary/30 hover:bg-white/5 transition-all cursor-pointer group">
             <!-- Avatar placeholder based on email -->
             <div
-              class="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg shrink-0 group-hover:from-primary/10 group-hover:to-accent/10 group-hover:text-primary transition-colors">
+              class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-subtext font-bold text-lg shrink-0 group-hover:border-primary/30 group-hover:bg-primary/10 group-hover:text-primary transition-all">
               {{ proposal.clientEmail.charAt(0).toUpperCase() }}
             </div>
 
             <div class="flex-1 min-w-0">
               <div class="flex items-center justify-between mb-1">
-                <h4 class="font-bold text-gray-900 truncate pr-2">{{ proposal.title }}</h4>
-                <span class="text-xs text-gray-400 whitespace-nowrap">
+                <h4 class="font-bold text-white truncate pr-2">{{ proposal.title }}</h4>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-subtext whitespace-nowrap">
                   {{ proposal.createdAt | date:'dd MMM' }}
                 </span>
               </div>
@@ -228,11 +231,11 @@
                 {{ proposal.budget }} • {{ proposal.startDate }}
               </div>
 
-              <p class="text-sm text-gray-600 line-clamp-2 mb-2">
+              <p class="text-sm text-subtext line-clamp-2 mb-2">
                 {{ proposal.description }}
               </p>
 
-              <div class="flex items-center gap-2 text-xs text-gray-400">
+              <div class="flex items-center gap-2 text-xs text-white/40">
                 <i class="fa-regular fa-envelope"></i>
                 <span class="truncate">{{ proposal.clientEmail }}</span>
               </div>

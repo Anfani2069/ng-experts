@@ -41,6 +41,7 @@ export interface Expert extends BaseUser {
   city: string;
   phone?: string;
   bio: string;
+  yearsOfExperience?: string; // Ex: "5-10 ans"
 
   // Vérification
   verificationStatus: VerificationStatus;
@@ -50,6 +51,7 @@ export interface Expert extends BaseUser {
   skills: Skill[];
   experience: Experience[];
   certifications: Certification[];
+  education?: Education[];
 
   // Disponibilité
   availability: Availability;
@@ -130,6 +132,20 @@ export interface Certification {
   expirationDate?: Date;
   credentialId?: string;
   credentialUrl?: string;
+}
+
+/**
+ * Formation / Éducation
+ */
+export interface Education {
+  id: string;
+  degree: string;
+  school: string;
+  fieldOfStudy: string;
+  startDate: Date;
+  endDate?: Date;
+  description?: string;
+  isCurrent: boolean;
 }
 
 /**

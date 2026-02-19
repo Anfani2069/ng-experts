@@ -7,13 +7,16 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
 
 body {
   font-family: 'Geist Sans', 'Inter', sans-serif;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #050505;
+  background-color: #121212;
   color: #ffffff;
 }
 
@@ -37,21 +40,28 @@ body {
 
 /* 2. LIGNES VERTICALES DE GRILLE */
 .grid-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 1100px;
+  height: 100vh;
+  max-width: 1400px; /* Limiter la largeur pour ne pas être trop large sur grands écrans */
+  margin: 0 auto; /* Centrer */
   display: grid;
-  grid-template-columns: 1fr 40px 1fr 40px 1fr;
+  grid-template-columns: repeat(5, 1fr); /* 5 colonnes égales */
   pointer-events: none;
-  z-index: 40;
+  z-index: 0;
   overflow: hidden;
+  opacity: 0.4; /* Réduire l'opacité pour qu'elles soient plus subtiles */
 }
 
 .grid-line {
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.06); /* Encore plus subtil */
   height: 100%;
+}
+
+.grid-line:last-child {
+  border-right: none; /* Pas de ligne sur le dernier élément */
 }
 
 /* 3. TYPO & BOUTONS */
@@ -79,8 +89,18 @@ body {
 }
 
 .content-area {
-  position: relative;
+  /* position: relative supprimée pour ne pas créer de contexte d'empilement */
   /* z-index removed — it creates a stacking context that breaks CSS sticky */
+}
+
+.page-wrapper {
+  min-height: 100vh;
+  /* position: relative supprimée pour ne pas bloquer le navbar fixed */
+}
+
+app-root {
+  display: block;
+  min-height: 100vh;
 }
 
 /* CARD STYLE WITH NOISE */
@@ -104,7 +124,14 @@ body {
   }
 
   .grid-container {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr); /* Seulement 3 lignes sur tablette */
+    opacity: 0.25; /* Encore plus subtil sur petit écran */
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-container {
+    display: none; /* Masquer complètement sur mobile */
   }
 }
 

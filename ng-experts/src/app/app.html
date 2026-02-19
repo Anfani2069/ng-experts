@@ -20,6 +20,7 @@
 </svg>
 
 <!-- GRID LINES (Local to Header/Hero) -->
+@if (shouldShowNavigation()) {
 <div class="grid-container">
   <div class="grid-line"></div>
   <div class="grid-line"></div>
@@ -28,6 +29,7 @@
   <div class="grid-line"></div>
   <div class="grid-line"></div>
 </div>
+}
 
 <!-- @if (shouldShowNavigation()) {
 <app-sidebar></app-sidebar>
@@ -39,7 +41,7 @@
     <app-navbar></app-navbar>
     }
 
-    <main class="min-h-screen">
+    <main [ngClass]="{'min-h-screen': shouldShowNavigation()}">
       <router-outlet />
     </main>
 

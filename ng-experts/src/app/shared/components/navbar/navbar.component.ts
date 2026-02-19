@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { Component, signal, inject, ChangeDetectorRef, afterNextRender, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -6,23 +6,28 @@ import { Router } from '@angular/router';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
-  host: { 'class': 'block' }
+  imports: [CommonModule]
 })
 export class Navbar {
+  private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+  private destroyRef = inject(DestroyRef);
+
   protected readonly isScrolled = signal(false);
 
-  constructor(private router: Router) {
-    this.setupScrollListener();
-  }
-
-  private setupScrollListener(): void {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('scroll', () => {
+  constructor() {
+    afterNextRender(() => {
+      const onScroll = () => {
         this.isScrolled.set(window.scrollY > 50);
+        this.cdr.markForCheck();
+      };
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      this.destroyRef.onDestroy(() => {
+        window.removeEventListener('scroll', onScroll);
       });
-    }
+    });
   }
 
   protected onApplyAsExpert(): void {
