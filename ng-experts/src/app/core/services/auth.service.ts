@@ -416,6 +416,36 @@ export class Auth {
   }
 
   /**
+   * Supprime récursivement les valeurs undefined d'un objet
+   * Firebase Firestore n'accepte pas les valeurs undefined
+   */
+  private removeUndefinedValues<T>(obj: T): T {
+    if (obj === null || obj === undefined) {
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.removeUndefinedValues(item)) as T;
+    }
+
+    if (obj instanceof Date) {
+      return obj;
+    }
+
+    if (typeof obj === 'object') {
+      const cleanedObj: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined) {
+          cleanedObj[key] = this.removeUndefinedValues(value);
+        }
+      }
+      return cleanedObj;
+    }
+
+    return obj;
+  }
+
+  /**
    * Mettre à jour le profil expert dans Firestore
    */
   async updateExpertProfile(expertData: Partial<Expert>): Promise<{ success: boolean; message: string }> {
@@ -428,9 +458,12 @@ export class Auth {
         return { success: false, message: 'Utilisateur non connecté' };
       }
 
+      // Nettoyer les valeurs undefined (Firebase ne les accepte pas)
+      const cleanedData = this.removeUndefinedValues(expertData);
+
       // Ajouter la date de mise à jour
       const updateData = {
-        ...expertData,
+        ...cleanedData,
         updatedAt: serverTimestamp()
       };
 

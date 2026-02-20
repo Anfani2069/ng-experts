@@ -11,13 +11,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Expert } from '@core/models/user.model';
 import { ExpertService } from '@core/services/expert.service';
 import { Auth } from '@core/services/auth.service';
+import { SanitizeQuillPipe } from '@shared/pipes';
+import { Timestamp } from 'firebase/firestore';
 
 @Component({
   selector: 'app-expert-details',
   templateUrl: './expert-details.component.html',
   styleUrls: ['./expert-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule],
+  imports: [CommonModule, SanitizeQuillPipe],
 })
 export class ExpertDetails implements OnInit {
   private route = inject(ActivatedRoute);
@@ -141,6 +143,33 @@ export class ExpertDetails implements OnInit {
     const expert = this.expertData();
     return expert?.certifications && expert.certifications.length > 0;
   });
+
+  /**
+   * Convertir une date Firestore Timestamp en Date JavaScript
+   * Retourne null si la date est invalide pour éviter les erreurs du DatePipe
+   */
+  protected toDate(value: any): Date | null {
+    if (!value) return null;
+    if (value instanceof Timestamp) return value.toDate();
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? null : value;
+    }
+    // Gérer les objets Timestamp sérialisés (avec seconds et nanoseconds)
+    if (typeof value === 'object' && 'seconds' in value && 'nanoseconds' in value) {
+      return new Date(value.seconds * 1000 + value.nanoseconds / 1000000);
+    }
+    // Gérer les chaînes de date
+    if (typeof value === 'string' && value.trim() !== '') {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    // Gérer les timestamps numériques
+    if (typeof value === 'number') {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    return null;
+  }
 
   async ngOnInit(): Promise<void> {
     // Récupérer l'ID depuis les paramètres de route

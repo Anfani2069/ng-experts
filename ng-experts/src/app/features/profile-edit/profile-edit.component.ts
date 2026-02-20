@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit } 
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DashboardLayout } from '@shared/components';
+import { DashboardLayout, RichTextEditorComponent } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
 import { Expert, Skill, Experience, Certification, Availability, Education } from '@core/models/user.model';
 import { Timestamp } from 'firebase/firestore';
@@ -12,7 +12,7 @@ import { Timestamp } from 'firebase/firestore';
   templateUrl: './profile-edit.component.html',
   styleUrl: './profile-edit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule, DashboardLayout]
+  imports: [CommonModule, RouterModule, ReactiveFormsModule, DashboardLayout, RichTextEditorComponent]
 })
 export class ProfileEdit implements OnInit {
   private auth = inject(Auth);
@@ -26,6 +26,8 @@ export class ProfileEdit implements OnInit {
   protected readonly isAddingCertification = signal(false);
   protected readonly isAddingExperience = signal(false);
   protected readonly isAddingEducation = signal(false);
+  protected readonly isEditingExperience = signal<string | null>(null);
+  protected readonly isEditingEducation = signal<string | null>(null);
   protected readonly newSkillName = signal('');
   protected readonly newCertification = signal({ name: '', issuer: '', dateObtained: '' });
   protected readonly newExperience = signal({
@@ -36,7 +38,25 @@ export class ProfileEdit implements OnInit {
     startDate: '',
     endDate: ''
   });
+  protected readonly editExperience = signal({
+    id: '',
+    title: '',
+    company: '',
+    description: '',
+    technologies: [] as string[],
+    startDate: '',
+    endDate: ''
+  });
   protected readonly newEducation = signal({
+    degree: '',
+    school: '',
+    fieldOfStudy: '',
+    description: '',
+    startDate: '',
+    endDate: ''
+  });
+  protected readonly editEducation = signal({
+    id: '',
     degree: '',
     school: '',
     fieldOfStudy: '',
@@ -139,12 +159,29 @@ export class ProfileEdit implements OnInit {
 
   /**
    * Convertir une date Firestore Timestamp en Date JavaScript
+   * Retourne null si la date est invalide pour éviter les erreurs du DatePipe
    */
-  protected toDate(value: any): Date {
-    if (!value) return new Date();
+  protected toDate(value: any): Date | null {
+    if (!value) return null;
     if (value instanceof Timestamp) return value.toDate();
-    if (value instanceof Date) return value;
-    return new Date(value);
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? null : value;
+    }
+    // Gérer les objets Timestamp sérialisés (avec seconds et nanoseconds)
+    if (typeof value === 'object' && 'seconds' in value && 'nanoseconds' in value) {
+      return new Date(value.seconds * 1000 + value.nanoseconds / 1000000);
+    }
+    // Gérer les chaînes de date
+    if (typeof value === 'string' && value.trim() !== '') {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    // Gérer les timestamps numériques
+    if (typeof value === 'number') {
+      const date = new Date(value);
+      return isNaN(date.getTime()) ? null : date;
+    }
+    return null;
   }
 
   private initializeForms(): void {
@@ -308,6 +345,78 @@ export class ProfileEdit implements OnInit {
     await this.auth.updateExpertProfile({ experience: updatedExperience });
   }
 
+  protected startEditExperience(exp: Experience): void {
+    this.isEditingExperience.set(exp.id);
+    this.editExperience.set({
+      id: exp.id,
+      title: exp.title,
+      company: exp.company,
+      description: exp.description,
+      technologies: exp.technologies || [],
+      startDate: exp.startDate ? this.formatDateForInput(this.toDate(exp.startDate)) : '',
+      endDate: exp.endDate ? this.formatDateForInput(this.toDate(exp.endDate)) : ''
+    });
+  }
+
+  protected cancelEditExperience(): void {
+    this.isEditingExperience.set(null);
+    this.editExperience.set({
+      id: '',
+      title: '',
+      company: '',
+      description: '',
+      technologies: [],
+      startDate: '',
+      endDate: ''
+    });
+  }
+
+  protected updateEditExperience(field: string, value: string | string[]): void {
+    this.editExperience.update(current => ({ ...current, [field]: value }));
+  }
+
+  protected async confirmEditExperience(): Promise<void> {
+    const exp = this.editExperience();
+    if (!exp.title.trim() || !exp.company.trim() || !exp.description.trim()) return;
+
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const updatedExperience = expert.experience?.map(e => {
+      if (e.id !== exp.id) return e;
+
+      const updated: any = {
+        ...e,
+        title: exp.title.trim(),
+        company: exp.company.trim(),
+        description: exp.description.trim(),
+        startDate: exp.startDate ? new Date(exp.startDate) : e.startDate,
+        technologies: exp.technologies,
+        isCurrent: !exp.endDate
+      };
+
+      // Ajouter endDate seulement si elle existe
+      if (exp.endDate) {
+        updated.endDate = new Date(exp.endDate);
+      } else {
+        delete updated.endDate;
+      }
+
+      return updated;
+    }) || [];
+
+    await this.auth.updateExpertProfile({ experience: updatedExperience });
+    this.cancelEditExperience();
+  }
+
+  private formatDateForInput(date: Date | null): string {
+    if (!date) return '';
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   // Methods for education management
   protected toggleAddEducation(): void {
     this.isAddingEducation.update(current => !current);
@@ -352,6 +461,69 @@ export class ProfileEdit implements OnInit {
     const updatedEducation = expert.education?.filter(edu => edu.id !== eduId) || [];
 
     await this.auth.updateExpertProfile({ education: updatedEducation });
+  }
+
+  protected startEditEducation(edu: Education): void {
+    this.isEditingEducation.set(edu.id);
+    this.editEducation.set({
+      id: edu.id,
+      degree: edu.degree,
+      school: edu.school,
+      fieldOfStudy: edu.fieldOfStudy,
+      description: edu.description || '',
+      startDate: edu.startDate ? this.formatDateForInput(this.toDate(edu.startDate)) : '',
+      endDate: edu.endDate ? this.formatDateForInput(this.toDate(edu.endDate)) : ''
+    });
+  }
+
+  protected cancelEditEducation(): void {
+    this.isEditingEducation.set(null);
+    this.editEducation.set({
+      id: '',
+      degree: '',
+      school: '',
+      fieldOfStudy: '',
+      description: '',
+      startDate: '',
+      endDate: ''
+    });
+  }
+
+  protected updateEditEducation(field: string, value: string): void {
+    this.editEducation.update(current => ({ ...current, [field]: value }));
+  }
+
+  protected async confirmEditEducation(): Promise<void> {
+    const edu = this.editEducation();
+    if (!edu.degree.trim() || !edu.school.trim()) return;
+
+    const expert = this.expertProfile();
+    if (!expert) return;
+
+    const updatedEducation = expert.education?.map(e => {
+      if (e.id !== edu.id) return e;
+
+      const updated: any = {
+        ...e,
+        degree: edu.degree.trim(),
+        school: edu.school.trim(),
+        fieldOfStudy: edu.fieldOfStudy.trim(),
+        description: edu.description.trim(),
+        startDate: edu.startDate ? new Date(edu.startDate) : e.startDate,
+        isCurrent: !edu.endDate
+      };
+
+      if (edu.endDate) {
+        updated.endDate = new Date(edu.endDate);
+      } else {
+        delete updated.endDate;
+      }
+
+      return updated;
+    }) || [];
+
+    await this.auth.updateExpertProfile({ education: updatedEducation });
+    this.cancelEditEducation();
   }
 
   // Avatar management

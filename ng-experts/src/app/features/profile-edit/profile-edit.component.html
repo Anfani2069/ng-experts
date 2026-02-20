@@ -233,11 +233,10 @@
               <div>
                 <label class="block text-sm font-semibold text-subtext mb-2">Statut de disponibilité</label>
                 <select
-                  [value]="expertProfile()?.isAvailable"
                   (change)="onAvailabilityStatusChange($any($event.target).value === 'true')"
                   class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white">
                   @for (status of availabilityStatuses(); track status.value) {
-                    <option [value]="status.value">{{ status.label }}</option>
+                    <option [value]="status.value" [selected]="expertProfile()?.isAvailable === status.value">{{ status.label }}</option>
                   }
                 </select>
               </div>
@@ -245,12 +244,11 @@
               <div>
                 <label class="block text-sm font-semibold text-subtext mb-2">Années d'expérience</label>
                 <select
-                  [value]="expertProfile()?.yearsOfExperience"
                   (change)="onYearsOfExperienceChange($any($event.target).value)"
                   class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white">
                   <option value="">Sélectionner...</option>
                   @for (years of yearsOfExperience(); track years) {
-                    <option [value]="years">{{ years }}</option>
+                    <option [value]="years" [selected]="expertProfile()?.yearsOfExperience === years">{{ years }}</option>
                   }
                 </select>
               </div>
@@ -274,8 +272,8 @@
                 <div class="flex gap-2 mb-2">
                   <input
                     type="text"
-                    [value]="newSkillName()"
-                    (input)="updateNewSkillName($event.target.value)"
+                    #skillNameInput
+                    (input)="updateNewSkillName(skillNameInput.value)"
                     placeholder="Nom de la compétence"
                     class="flex-1 px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                   >
@@ -309,22 +307,22 @@
                   <div class="space-y-3">
                     <input
                       type="text"
-                      [value]="newCertification().name"
-                      (input)="updateNewCertification('name', $event.target.value)"
+                      #certNameInput
+                      (input)="updateNewCertification('name', certNameInput.value)"
                       placeholder="Nom de la certification"
                       class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
                     <input
                       type="text"
-                      [value]="newCertification().issuer"
-                      (input)="updateNewCertification('issuer', $event.target.value)"
+                      #certIssuerInput
+                      (input)="updateNewCertification('issuer', certIssuerInput.value)"
                       placeholder="Organisme certificateur"
                       class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
                     <input
                       type="date"
-                      [value]="newCertification().dateObtained"
-                      (input)="updateNewCertification('dateObtained', $event.target.value)"
+                      #certDateInput
+                      (change)="updateNewCertification('dateObtained', certDateInput.value)"
                       class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
                     <div class="flex gap-2">
@@ -349,7 +347,7 @@
                       <p class="text-xs text-subtext mt-1">
                         {{ cert.issuer }}
                         @if (cert.dateObtained) {
-                          - Obtenu le {{ toDate(cert.dateObtained) | date:'dd/MM/yyyy' }}
+                          - Obtenu le {{ toDate(cert.dateObtained) ? (toDate(cert.dateObtained) | date:'dd/MM/yyyy') : 'N/A' }}
                         }
                       </p>
                     </div>
@@ -377,15 +375,15 @@
                   <div class="space-y-3">
                     <input
                       type="text"
-                      [value]="newExperience().title"
-                      (input)="updateNewExperience('title', $event.target.value)"
+                      #expTitleInput
+                      (input)="updateNewExperience('title', expTitleInput.value)"
                       placeholder="Titre du projet/poste"
                       class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
                     <input
                       type="text"
-                      [value]="newExperience().company"
-                      (input)="updateNewExperience('company', $event.target.value)"
+                      #expCompanyInput
+                      (input)="updateNewExperience('company', expCompanyInput.value)"
                       placeholder="Entreprise/Client"
                       class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                     >
@@ -394,8 +392,8 @@
                         <label class="block text-xs text-subtext mb-1">Date de début</label>
                         <input
                           type="date"
-                          [value]="newExperience().startDate"
-                          (change)="updateNewExperience('startDate', $any($event.target).value)"
+                          #expStartDateInput
+                          (change)="updateNewExperience('startDate', expStartDateInput.value)"
                           class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                         >
                       </div>
@@ -403,19 +401,20 @@
                         <label class="block text-xs text-subtext mb-1">Date de fin (optionnel)</label>
                         <input
                           type="date"
-                          [value]="newExperience().endDate"
-                          (change)="updateNewExperience('endDate', $any($event.target).value)"
+                          #expEndDateInput
+                          (change)="updateNewExperience('endDate', expEndDateInput.value)"
                           class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                         >
                       </div>
                     </div>
-                    <textarea
-                      [value]="newExperience().description"
-                      (input)="updateNewExperience('description', $any($event.target).value)"
-                      placeholder="Description du projet et réalisations"
-                      rows="3"
-                      class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm resize-none"
-                    ></textarea>
+                    <div>
+                      <label class="block text-xs text-subtext mb-1">Description</label>
+                      <app-rich-text-editor
+                        [placeholder]="'Description du projet et réalisations...'"
+                        [height]="'200px'"
+                        (contentChange)="updateNewExperience('description', $event)"
+                      ></app-rich-text-editor>
+                    </div>
                     <div class="flex gap-2">
                       <button type="button" (click)="confirmAddExperience()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
                         <i class="fa-solid fa-check mr-1"></i> Ajouter
@@ -430,21 +429,88 @@
               <div class="space-y-4">
                 @for (exp of experiences(); track exp.id) {
                   <div class="p-4 bg-white/5 rounded-lg border border-white/10">
-                    <div class="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 class="font-semibold text-white">{{ exp.title }}</h4>
-                        <p class="text-xs text-subtext mt-1">{{ exp.company }} • {{ toDate(exp.startDate) | date:'MM/yyyy' }} - {{ exp.endDate ? (toDate(exp.endDate) | date:'MM/yyyy') : 'Présent' }}</p>
+                    @if (isEditingExperience() === exp.id) {
+                      <!-- Mode édition -->
+                      <div class="space-y-3">
+                        <input
+                          type="text"
+                          #editExpTitleInput
+                          [defaultValue]="editExperience().title"
+                          (input)="updateEditExperience('title', editExpTitleInput.value)"
+                          placeholder="Titre du projet/poste"
+                          class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                        >
+                        <input
+                          type="text"
+                          #editExpCompanyInput
+                          [defaultValue]="editExperience().company"
+                          (input)="updateEditExperience('company', editExpCompanyInput.value)"
+                          placeholder="Entreprise/Client"
+                          class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                        >
+                        <div class="grid grid-cols-2 gap-3">
+                          <div>
+                            <label class="block text-xs text-subtext mb-1">Date de début</label>
+                            <input
+                              type="date"
+                              #editExpStartDateInput
+                              [defaultValue]="editExperience().startDate"
+                              (change)="updateEditExperience('startDate', editExpStartDateInput.value)"
+                              class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                            >
+                          </div>
+                          <div>
+                            <label class="block text-xs text-subtext mb-1">Date de fin (optionnel)</label>
+                            <input
+                              type="date"
+                              #editExpEndDateInput
+                              [defaultValue]="editExperience().endDate"
+                              (change)="updateEditExperience('endDate', editExpEndDateInput.value)"
+                              class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                            >
+                          </div>
+                        </div>
+                        <div>
+                          <label class="block text-xs text-subtext mb-1">Description</label>
+                          <app-rich-text-editor
+                            [placeholder]="'Description du projet et réalisations...'"
+                            [height]="'200px'"
+                            [initialValue]="editExperience().description"
+                            (contentChange)="updateEditExperience('description', $event)"
+                          ></app-rich-text-editor>
+                        </div>
+                        <div class="flex gap-2">
+                          <button type="button" (click)="confirmEditExperience()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
+                            <i class="fa-solid fa-check mr-1"></i> Enregistrer
+                          </button>
+                          <button type="button" (click)="cancelEditExperience()" class="px-4 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition text-sm">
+                            <i class="fa-solid fa-times mr-1"></i> Annuler
+                          </button>
+                        </div>
                       </div>
-                      <button type="button" (click)="removeExperience(exp.id)" class="text-subtext hover:text-red-500 transition">
-                        <i class="fa-solid fa-trash text-sm"></i>
-                      </button>
-                    </div>
-                    <p class="text-sm text-subtext mb-3">{{ exp.description }}</p>
-                    <div class="flex flex-wrap gap-2">
-                      @for (tech of exp.technologies; track tech) {
-                        <span class="px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs font-medium rounded-full">{{ tech }}</span>
-                      }
-                    </div>
+                    } @else {
+                      <!-- Mode affichage -->
+                      <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                          <h4 class="font-semibold text-white">{{ exp.title }}</h4>
+                          <p class="text-xs text-subtext mt-1">{{ exp.company }} • {{ toDate(exp.startDate) ? (toDate(exp.startDate) | date:'MM/yyyy') : 'N/A' }} - {{ exp.endDate && toDate(exp.endDate) ? (toDate(exp.endDate) | date:'MM/yyyy') : 'Présent' }}</p>
+                        </div>
+                        <div class="flex gap-2">
+                          <button type="button" (click)="startEditExperience(exp)" class="text-subtext hover:text-primary transition">
+                            <i class="fa-solid fa-edit text-sm"></i>
+                          </button>
+                          <button type="button" (click)="removeExperience(exp.id)" class="text-subtext hover:text-red-500 transition">
+                            <i class="fa-solid fa-trash text-sm"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="text-sm text-subtext mb-3" [innerHTML]="exp.description"></div>
+                      <div class="flex flex-wrap gap-2">
+                        @for (tech of exp.technologies; track tech) {
+                          <span class="px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs font-medium rounded-full">{{ tech }}</span>
+                        }
+                      </div>
+                    }
                   </div>
                 }
               </div>
@@ -468,8 +534,8 @@
                       <label class="block text-sm font-medium text-subtext mb-2">Diplôme</label>
                       <input
                         type="text"
-                        [value]="newEducation().degree"
-                        (input)="updateNewEducation('degree', $any($event.target).value)"
+                        #degreeInput
+                        (input)="updateNewEducation('degree', degreeInput.value)"
                         placeholder="Ex: Master en Informatique"
                         class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                       >
@@ -478,8 +544,8 @@
                       <label class="block text-sm font-medium text-subtext mb-2">École / Université</label>
                       <input
                         type="text"
-                        [value]="newEducation().school"
-                        (input)="updateNewEducation('school', $any($event.target).value)"
+                        #schoolInput
+                        (input)="updateNewEducation('school', schoolInput.value)"
                         placeholder="Ex: Université Paris-Saclay"
                         class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                       >
@@ -488,28 +554,26 @@
                       <label class="block text-sm font-medium text-subtext mb-2">Domaine d'étude</label>
                       <input
                         type="text"
-                        [value]="newEducation().fieldOfStudy"
-                        (input)="updateNewEducation('fieldOfStudy', $any($event.target).value)"
+                        #fieldOfStudyInput
+                        (input)="updateNewEducation('fieldOfStudy', fieldOfStudyInput.value)"
                         placeholder="Ex: Développement Web"
                         class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                       >
                     </div>
                     <div class="md:col-span-2">
                       <label class="block text-sm font-medium text-subtext mb-2">Description (optionnel)</label>
-                      <textarea
-                        [value]="newEducation().description"
-                        (input)="updateNewEducation('description', $any($event.target).value)"
-                        placeholder="Décrivez votre parcours et vos accomplissements..."
-                        rows="2"
-                        class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm resize-none"
-                      ></textarea>
+                      <app-rich-text-editor
+                        [placeholder]="'Décrivez votre parcours et vos accomplissements...'"
+                        [height]="'150px'"
+                        (contentChange)="updateNewEducation('description', $event)"
+                      ></app-rich-text-editor>
                     </div>
                     <div>
                       <label class="block text-sm font-medium text-subtext mb-2">Date de début</label>
                       <input
                         type="date"
-                        [value]="newEducation().startDate"
-                        (change)="updateNewEducation('startDate', $any($event.target).value)"
+                        #startDateInput
+                        (change)="updateNewEducation('startDate', startDateInput.value)"
                         class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                       >
                     </div>
@@ -517,8 +581,8 @@
                       <label class="block text-sm font-medium text-subtext mb-2">Date de fin (optionnel)</label>
                       <input
                         type="date"
-                        [value]="newEducation().endDate"
-                        (change)="updateNewEducation('endDate', $any($event.target).value)"
+                        #endDateInput
+                        (change)="updateNewEducation('endDate', endDateInput.value)"
                         class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
                       >
                     </div>
@@ -536,18 +600,101 @@
               <div class="space-y-4">
                 @for (edu of education(); track edu.id) {
                   <div class="p-4 bg-white/5 rounded-lg border border-white/10">
-                    <div class="flex items-start justify-between mb-2">
-                      <div>
-                        <h4 class="font-semibold text-white">{{ edu.degree }}</h4>
-                        <p class="text-xs text-primary mt-1">{{ edu.school }}</p>
-                        <p class="text-xs text-subtext mt-1">{{ edu.fieldOfStudy }} • {{ toDate(edu.startDate) | date:'MM/yyyy' }} - {{ edu.endDate ? (toDate(edu.endDate) | date:'MM/yyyy') : 'En cours' }}</p>
+                    @if (isEditingEducation() === edu.id) {
+                      <!-- Mode édition -->
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label class="block text-sm font-medium text-subtext mb-2">Diplôme</label>
+                          <input
+                            type="text"
+                            #editEduDegreeInput
+                            [defaultValue]="editEducation().degree"
+                            (input)="updateEditEducation('degree', editEduDegreeInput.value)"
+                            placeholder="Ex: Master en Informatique"
+                            class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                          >
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-subtext mb-2">École / Université</label>
+                          <input
+                            type="text"
+                            #editEduSchoolInput
+                            [defaultValue]="editEducation().school"
+                            (input)="updateEditEducation('school', editEduSchoolInput.value)"
+                            placeholder="Ex: Université Paris-Saclay"
+                            class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                          >
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-subtext mb-2">Domaine d'étude</label>
+                          <input
+                            type="text"
+                            #editEduFieldInput
+                            [defaultValue]="editEducation().fieldOfStudy"
+                            (input)="updateEditEducation('fieldOfStudy', editEduFieldInput.value)"
+                            placeholder="Ex: Développement Web"
+                            class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                          >
+                        </div>
+                        <div></div>
+                        <div class="md:col-span-2">
+                          <label class="block text-sm font-medium text-subtext mb-2">Description (optionnel)</label>
+                          <app-rich-text-editor
+                            [placeholder]="'Décrivez votre parcours et vos accomplissements...'"
+                            [height]="'150px'"
+                            [initialValue]="editEducation().description"
+                            (contentChange)="updateEditEducation('description', $event)"
+                          ></app-rich-text-editor>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-subtext mb-2">Date de début</label>
+                          <input
+                            type="date"
+                            #editEduStartDateInput
+                            [defaultValue]="editEducation().startDate"
+                            (change)="updateEditEducation('startDate', editEduStartDateInput.value)"
+                            class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                          >
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-subtext mb-2">Date de fin (optionnel)</label>
+                          <input
+                            type="date"
+                            #editEduEndDateInput
+                            [defaultValue]="editEducation().endDate"
+                            (change)="updateEditEducation('endDate', editEduEndDateInput.value)"
+                            class="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 text-sm"
+                          >
+                        </div>
                       </div>
-                      <button type="button" (click)="removeEducation(edu.id)" class="text-subtext hover:text-red-500 transition">
-                        <i class="fa-solid fa-trash text-sm"></i>
-                      </button>
-                    </div>
-                    @if (edu.description) {
-                      <p class="text-sm text-subtext mt-2">{{ edu.description }}</p>
+                      <div class="flex items-center gap-3">
+                        <button type="button" (click)="confirmEditEducation()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/80 transition text-sm">
+                          <i class="fa-solid fa-check mr-1"></i> Enregistrer
+                        </button>
+                        <button type="button" (click)="cancelEditEducation()" class="px-4 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition text-sm">
+                          <i class="fa-solid fa-times mr-1"></i> Annuler
+                        </button>
+                      </div>
+                    } @else {
+                      <!-- Mode affichage -->
+                      <div class="flex items-start justify-between mb-2">
+                        <div>
+                          <h4 class="font-semibold text-white">{{ edu.degree }}</h4>
+                          <p class="text-xs text-primary mt-1">{{ edu.school }}</p>
+                          <p class="text-xs text-subtext mt-1">{{ edu.fieldOfStudy }} • {{ toDate(edu.startDate) ? (toDate(edu.startDate) | date:'MM/yyyy') : 'N/A' }} - {{ edu.endDate && toDate(edu.endDate) ? (toDate(edu.endDate) | date:'MM/yyyy') : 'En cours' }}</p>
+                        </div>
+                        <div class="flex gap-2">
+                          <button type="button" (click)="startEditEducation(edu)" class="text-subtext hover:text-primary transition">
+                            <i class="fa-solid fa-edit text-sm"></i>
+                          </button>
+                          <button type="button" (click)="removeEducation(edu.id)" class="text-subtext hover:text-red-500 transition">
+                            <i class="fa-solid fa-trash text-sm"></i>
+                          </button>
+                        </div>
+                      </div>
+                      @if (edu.description) {
+                        <div class="text-sm text-subtext mt-2" [innerHTML]="edu.description"></div>
+                      }
                     }
                   </div>
                 }
@@ -559,20 +706,20 @@
               <label class="block text-sm font-semibold text-subtext mb-3">Type de Contrat</label>
               <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-primary transition cursor-pointer">
-                  <input type="checkbox" id="freelance" [checked]="isContractTypeSelected('freelance')"
-                         (change)="onContractTypeChange('freelance', $event.target.checked)"
+                  <input type="checkbox" id="freelance" #freelanceCheckbox [checked]="isContractTypeSelected('freelance')"
+                         (change)="onContractTypeChange('freelance', freelanceCheckbox.checked)"
                          class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary/20">
                   <label for="freelance" class="text-sm font-medium text-subtext cursor-pointer">Freelance</label>
                 </div>
                 <div class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-primary transition cursor-pointer">
-                  <input type="checkbox" id="cdi" [checked]="isContractTypeSelected('cdi')"
-                         (change)="onContractTypeChange('cdi', $event.target.checked)"
+                  <input type="checkbox" id="cdi" #cdiCheckbox [checked]="isContractTypeSelected('cdi')"
+                         (change)="onContractTypeChange('cdi', cdiCheckbox.checked)"
                          class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary/20">
                   <label for="cdi" class="text-sm font-medium text-subtext cursor-pointer">CDI</label>
                 </div>
                 <div class="flex items-center gap-3 p-4 border border-white/10 rounded-lg hover:border-primary transition cursor-pointer">
-                  <input type="checkbox" id="mentoring" [checked]="isContractTypeSelected('mentoring')"
-                         (change)="onContractTypeChange('mentoring', $event.target.checked)"
+                  <input type="checkbox" id="mentoring" #mentoringCheckbox [checked]="isContractTypeSelected('mentoring')"
+                         (change)="onContractTypeChange('mentoring', mentoringCheckbox.checked)"
                          class="w-5 h-5 text-primary rounded focus:ring-2 focus:ring-primary/20">
                   <label for="mentoring" class="text-sm font-medium text-subtext cursor-pointer">Mentoring</label>
                 </div>
@@ -604,7 +751,6 @@
                 <div>
                   <label class="block text-sm font-semibold text-subtext mb-2">Préférence de travail</label>
                   <select
-                    [value]="availability().workPreference"
                     (change)="onAvailabilityFieldChange('workPreference', $any($event.target).value)"
                     class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                     @for (pref of workPreferences(); track pref) {
@@ -615,7 +761,6 @@
                 <div>
                   <label class="block text-sm font-semibold text-subtext mb-2">Durée de mission préférée</label>
                   <select
-                    [value]="availability().missionDuration"
                     (change)="onAvailabilityFieldChange('missionDuration', $any($event.target).value)"
                     class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext">
                     @for (duration of missionDurations(); track duration) {

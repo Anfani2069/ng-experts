@@ -1,4 +1,5 @@
 @import url('https://cdn.jsdelivr.net/npm/geist@1.3.0/dist/fonts/geist-sans/style.css');
+@import 'quill/dist/quill.snow.css';
 
 /* Global styles pour Ng-Expert */
 * {
@@ -259,3 +260,130 @@ app-root {
   transform: translateY(-4px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
 }
+
+/* Styles pour le contenu Quill affiché (pas en mode édition) */
+.quill-content {
+  line-height: 1.6;
+
+  /* Titres */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+  }
+
+  h1 { font-size: 2em; }
+  h2 { font-size: 1.5em; }
+  h3 { font-size: 1.17em; }
+
+  /* Paragraphes */
+  p {
+    margin-bottom: 1em;
+  }
+
+  /* Listes */
+  ul, ol {
+    padding-left: 1.5em;
+    margin-bottom: 1em;
+
+    li {
+      margin-bottom: 0.5em;
+      line-height: 1.6;
+    }
+  }
+
+  ul {
+    list-style-type: disc;
+
+    li {
+      list-style-type: disc;
+    }
+  }
+
+  ol {
+    list-style-type: decimal;
+
+    li {
+      list-style-type: decimal;
+    }
+  }
+
+  /* Listes à puces Quill */
+  [data-list="bullet"] {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 1.5em;
+  }
+
+  /* Listes ordonnées Quill */
+  [data-list="ordered"] {
+    display: list-item;
+    list-style-type: decimal;
+    margin-left: 1.5em;
+  }
+
+  /* Indentation */
+  .ql-indent-1 { padding-left: 3em; }
+  .ql-indent-2 { padding-left: 6em; }
+  .ql-indent-3 { padding-left: 9em; }
+  .ql-indent-4 { padding-left: 12em; }
+  .ql-indent-5 { padding-left: 15em; }
+  .ql-indent-6 { padding-left: 18em; }
+  .ql-indent-7 { padding-left: 21em; }
+  .ql-indent-8 { padding-left: 24em; }
+
+  /* Mise en forme du texte */
+  strong {
+    font-weight: bold;
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  u {
+    text-decoration: underline;
+  }
+
+  s {
+    text-decoration: line-through;
+  }
+
+  /* Liens */
+  a {
+    color: #ec4899;
+    text-decoration: underline;
+
+    &:hover {
+      color: #db2777;
+    }
+  }
+
+  /* Cacher les éléments UI de Quill (points de liste) */
+  .ql-ui {
+    display: none !important;
+  }
+
+  /* Cacher les paragraphes vides avec indentation */
+  p.ql-indent-1:empty,
+  p.ql-indent-1 > br:only-child {
+    display: none;
+  }
+
+  p.ql-indent-1 {
+    &:has(> br:only-child) {
+      display: none;
+    }
+  }
+
+  /* Supprimer les marges inutiles */
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
+}
+
