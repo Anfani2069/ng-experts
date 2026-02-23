@@ -73,6 +73,46 @@ export class Auth {
           createdAt: createdAt instanceof Timestamp ? createdAt.toDate() : new Date(),
           updatedAt: updatedAt instanceof Timestamp ? updatedAt.toDate() : new Date()
         } as BaseUser);
+      } else {
+        // Document Firestore manquant — créer un profil recruteur minimal
+        console.warn('Profil Firestore manquant pour', firebaseUser.uid, '— création d\'un profil recruteur minimal');
+        const names = (firebaseUser.displayName || '').split(' ');
+        const firstName = names[0] || '';
+        const lastName = names.slice(1).join(' ') || '';
+
+        const minimalRecruiter: Omit<Recruiter, 'id'> = {
+          email: firebaseUser.email || '',
+          firstName,
+          lastName,
+          role: 'recruiter',
+          company: 'Non renseigné',
+          location: 'France',
+          subscription: {
+            type: 'monthly',
+            status: 'expired',
+            startDate: new Date(),
+            endDate: new Date(),
+            contactsRemaining: 0,
+            maxContacts: 0,
+            autoRenew: false
+          },
+          contactedExperts: [],
+          savedExperts: [],
+          createdAt: serverTimestamp() as any,
+          updatedAt: serverTimestamp() as any,
+          isActive: true
+        };
+
+        const cleanRecruiter = this.removeUndefinedValues(minimalRecruiter);
+        await setDoc(doc(firebase.firestore, 'users', firebaseUser.uid), cleanRecruiter);
+        console.log('✅ Profil recruteur minimal créé pour', firebaseUser.uid);
+
+        this.currentUser.set({
+          ...cleanRecruiter,
+          id: firebaseUser.uid,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        } as BaseUser);
       }
     } catch (error) {
       console.error('Erreur lors du chargement du profil:', error);
@@ -109,10 +149,7 @@ export class Auth {
         displayName: `${expertData.firstName} ${expertData.lastName}`
       });
 
-      // Envoyer email de vérification
-      await sendEmailVerification(userCredential.user);
-
-      // Créer le profil expert dans Firestore
+      // Créer le profil expert dans Firestore — AVANT l'email de vérification
       const expert: Omit<Expert, 'id'> = {
         email: expertData.email,
         role: 'expert',
@@ -143,7 +180,14 @@ export class Auth {
         isActive: true
       };
 
-      await setDoc(doc(firebase.firestore, 'users', userCredential.user.uid), expert);
+      const cleanExpert = this.removeUndefinedValues(expert);
+      await setDoc(doc(firebase.firestore, 'users', userCredential.user.uid), cleanExpert);
+      console.log('✅ Profil expert créé dans Firestore:', userCredential.user.uid);
+
+      // Envoyer email de vérification (non bloquant)
+      sendEmailVerification(userCredential.user).catch(e =>
+        console.warn('Email de vérification non envoyé:', e)
+      );
 
       return {
         success: true,
@@ -177,10 +221,18 @@ export class Auth {
       this.isLoading.set(true);
       this.error.set(null);
 
+      // Validation basique avant d'appeler Firebase
+      if (!recruiterData.email?.trim()) {
+        return { success: false, message: 'L\'adresse email est requise' };
+      }
+      if (!recruiterData.password || recruiterData.password.length < 6) {
+        return { success: false, message: 'Le mot de passe doit contenir au moins 6 caractères' };
+      }
+
       // Créer le compte Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         firebase.auth,
-        recruiterData.email,
+        recruiterData.email.trim(),
         recruiterData.password
       );
 
@@ -189,23 +241,20 @@ export class Auth {
         displayName: `${recruiterData.firstName} ${recruiterData.lastName}`
       });
 
-      // Envoyer email de vérification
-      await sendEmailVerification(userCredential.user);
-
-      // Créer le profil recruteur dans Firestore
-      const recruiter: Omit<Recruiter, 'id'> = {
-        email: recruiterData.email,
+      // Créer le profil recruteur dans Firestore (sans valeurs undefined) — AVANT l'email
+      const recruiterRaw: Omit<Recruiter, 'id'> = {
+        email: recruiterData.email.trim(),
         role: 'recruiter',
         firstName: recruiterData.firstName,
         lastName: recruiterData.lastName,
-        company: recruiterData.company,
+        company: recruiterData.company || 'Non renseigné',
         companySize: recruiterData.companySize,
         industry: recruiterData.industry,
-        location: recruiterData.location,
+        location: recruiterData.location || 'France',
         website: recruiterData.website,
         subscription: {
           type: 'monthly',
-          status: 'expired', // Nécessite activation d'abonnement
+          status: 'expired',
           startDate: new Date(),
           endDate: new Date(),
           contactsRemaining: 0,
@@ -219,14 +268,22 @@ export class Auth {
         isActive: true
       };
 
+      const recruiter = this.removeUndefinedValues(recruiterRaw);
       await setDoc(doc(firebase.firestore, 'users', userCredential.user.uid), recruiter);
+      console.log('✅ Profil recruteur créé dans Firestore:', userCredential.user.uid);
+
+      // Envoyer email de vérification (non bloquant)
+      sendEmailVerification(userCredential.user).catch(e =>
+        console.warn('Email de vérification non envoyé:', e)
+      );
 
       return {
         success: true,
-        message: 'Compte recruteur créé avec succès. Vérifiez votre email et activez votre abonnement.'
+        message: 'Compte recruteur créé avec succès. Vérifiez votre email pour activer votre compte.'
       };
 
     } catch (error: any) {
+      console.error('Erreur inscription recruteur:', error);
       const errorMessage = this.getAuthErrorMessage(error.code);
       this.error.set(errorMessage);
       return { success: false, message: errorMessage };
@@ -244,14 +301,7 @@ export class Auth {
       this.error.set(null);
 
       await signInWithEmailAndPassword(firebase.auth, email, password);
-
-      // Rediriger selon le rôle
-      const user = this.currentUser();
-      if (user?.role === 'expert') {
-        this.router.navigate(['/dashboard']);
-      } else if (user?.role === 'recruiter') {
-        this.router.navigate(['/recruiter/dashboard']);
-      }
+      // La redirection est gérée dans login.component.ts après chargement de currentUser
 
       return { success: true, message: 'Connexion réussie' };
 
@@ -495,10 +545,14 @@ export class Auth {
       'auth/user-not-found': 'Aucun utilisateur trouvé avec cette adresse email',
       'auth/wrong-password': 'Mot de passe incorrect',
       'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard',
-      'auth/network-request-failed': 'Erreur de connexion. Vérifiez votre internet'
+      'auth/network-request-failed': 'Erreur de connexion. Vérifiez votre internet',
+      'auth/invalid-credential': 'Identifiants invalides. Vérifiez votre email et mot de passe',
+      'auth/operation-not-allowed': 'Cette méthode de connexion n\'est pas activée',
+      'auth/missing-email': 'L\'adresse email est requise',
+      'auth/missing-password': 'Le mot de passe est requis',
+      'auth/internal-error': 'Erreur interne. Veuillez réessayer',
     };
-
-    return errorMessages[errorCode] || 'Une erreur inattendue s\'est produite';
+    return errorMessages[errorCode] || `Erreur: ${errorCode || 'Une erreur inattendue s\'est produite'}`;
   }
 
   // Getters pour les composants

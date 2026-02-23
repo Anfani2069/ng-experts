@@ -59,17 +59,26 @@ export class Login {
       if (result.success) {
         this.success.set('Connexion réussie ! Redirection...');
 
-        // Redirection basée sur le rôle utilisateur
-        setTimeout(() => {
+        // Attendre que currentUser soit chargé puis rediriger
+        let attempts = 0;
+        const waitAndRedirect = () => {
           const user = this.auth.getCurrentUser()();
-          if (user?.role === 'expert') {
-            this.router.navigate(['/dashboard']);
-          } else if (user?.role === 'recruiter') {
-            this.router.navigate(['/recruiter/dashboard']);
+          if (user) {
+            if (user.role === 'recruiter') {
+              this.router.navigate(['/recruiter/dashboard']);
+            } else {
+              this.router.navigate(['/dashboard']);
+            }
+          } else if (attempts < 20) {
+            // Réessayer jusqu'à 20 fois (max 2 secondes)
+            attempts++;
+            setTimeout(waitAndRedirect, 100);
           } else {
+            // Fallback après 2 secondes
             this.router.navigate(['/dashboard']);
           }
-        }, 1500);
+        };
+        setTimeout(waitAndRedirect, 200);
       } else {
         this.error.set(result.message);
       }

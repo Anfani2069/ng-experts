@@ -121,11 +121,11 @@ export class Register {
    */
   private async registerRecruiter() {
     return await this.auth.registerRecruiter({
-      email: this.email(),
+      email: this.email().trim(),
       password: this.password(),
-      firstName: this.firstName(),
-      lastName: this.lastName(),
-      company: 'Mon Entreprise', // Valeur par défaut
+      firstName: this.firstName().trim(),
+      lastName: this.lastName().trim(),
+      company: 'Non renseigné',
       location: 'France'
     });
   }
@@ -134,9 +134,9 @@ export class Register {
    * Valider le formulaire
    */
   private isFormValid(): boolean {
-    return this.firstName().length >= 2 &&
-           this.lastName().length >= 2 &&
-           this.isValidEmail(this.email()) &&
+    return this.firstName().trim().length >= 2 &&
+           this.lastName().trim().length >= 2 &&
+           this.isValidEmail(this.email().trim()) &&
            this.password().length >= 6 &&
            this.password() === this.confirmPassword() &&
            this.acceptTerms();

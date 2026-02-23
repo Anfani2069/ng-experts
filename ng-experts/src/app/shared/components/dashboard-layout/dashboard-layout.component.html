@@ -24,7 +24,6 @@
         </a>
       }
 
-      <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext mb-3 px-3 mt-6">Paramètres</div>
 
       @for (item of settingsItems(); track item.label) {
         <a (click)="navigateToSection(item.label)" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-subtext hover:bg-white/5 hover:text-white transition cursor-pointer">
@@ -34,27 +33,6 @@
       }
     </nav>
 
-    <!-- User Profile -->
-    <div class="p-4 border-t border-white/5">
-      @if (isUserLoaded()) {
-        <div class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 cursor-pointer">
-          <img [src]="userAvatar()" alt="User avatar" class="w-10 h-10 rounded-full object-cover border border-white/10">
-          <div class="flex-1">
-            <p class="font-semibold text-sm text-white">{{ userDisplayName() }}</p>
-            <p class="text-[10px] font-bold uppercase tracking-widest text-subtext">{{ userRole() }}</p>
-          </div>
-          <i class="fa-solid fa-chevron-down text-subtext text-xs"></i>
-        </div>
-      } @else {
-        <div class="flex items-center gap-3 p-3">
-          <div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 animate-pulse"></div>
-          <div class="flex-1 space-y-2">
-            <div class="h-3 w-full bg-white/5 rounded animate-pulse"></div>
-            <div class="h-2 w-20 bg-white/5 rounded animate-pulse"></div>
-          </div>
-        </div>
-      }
-    </div>
   </aside>
 
   <!-- Main Content -->
@@ -87,24 +65,16 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition">
-            <i class="fa-solid fa-moon text-subtext"></i>
-          </button>
+          <a routerLink="/messages" class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative" title="Messages">
+            <i class="fa-regular fa-envelope text-subtext"></i>
+          </a>
 
-          <button class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative">
-            <i class="fa-solid fa-globe text-subtext"></i>
-          </button>
-
-          <button class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative">
-            <i class="fa-solid fa-shopping-cart text-subtext"></i>
-          </button>
-
-          <button class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative">
+          <a routerLink="/notifications" class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative" title="Notifications">
             <i class="fa-solid fa-bell text-subtext"></i>
             @if (notificationCount() > 0) {
               <span class="absolute top-1.5 right-1.5 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">{{ notificationCount() }}</span>
             }
-          </button>
+          </a>
 
           <div class="h-8 w-px bg-white/10 mx-2"></div>
 
@@ -158,33 +128,33 @@
 
           <!-- Menu Items -->
           <div class="space-y-2">
-            <a href="/profile-edit" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-primary/30 transition group">
+            <a [routerLink]="isRecruiter() ? '/recruiter/profile-edit' : '/profile-edit'" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-primary/30 transition group">
               <div class="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition">
                 <i class="fa-solid fa-user text-primary"></i>
               </div>
               <div class="flex-1">
-                <p class="font-semibold text-sm text-white">Editer-profil</p>
+                <p class="font-semibold text-sm text-white">Editer mon profil</p>
                 <p class="text-xs text-subtext">Modifier mes informations</p>
               </div>
             </a>
 
-            <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-primary/30 transition group">
+            <a routerLink="/messages" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-primary/30 transition group">
               <div class="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition">
-                <i class="fa-solid fa-note-sticky text-primary"></i>
+                <i class="fa-regular fa-envelope text-primary"></i>
               </div>
               <div class="flex-1">
-                <p class="font-semibold text-sm text-white">Mes Notes</p>
-                <p class="text-xs text-subtext">Notes quotidiennes</p>
+                <p class="font-semibold text-sm text-white">Messages</p>
+                <p class="text-xs text-subtext">Vos conversations</p>
               </div>
             </a>
 
-            <a href="#" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-primary/30 transition group">
+            <a routerLink="/notifications" class="flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 border border-transparent hover:border-primary/30 transition group">
               <div class="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition">
-                <i class="fa-solid fa-tasks text-primary"></i>
+                <i class="fa-solid fa-bell text-primary"></i>
               </div>
               <div class="flex-1">
-                <p class="font-semibold text-sm text-white">Mes Tâches</p>
-                <p class="text-xs text-subtext">To-do et tâches quotidiennes</p>
+                <p class="font-semibold text-sm text-white">Notifications</p>
+                <p class="text-xs text-subtext">Vos alertes</p>
               </div>
             </a>
           </div>

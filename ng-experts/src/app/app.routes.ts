@@ -18,6 +18,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.Dashboard)
   },
   {
+    path: 'recruiter/dashboard',
+    loadComponent: () => import('./features/recruiter-dashboard/recruiter-dashboard.component').then(m => m.RecruiterDashboard)
+  },
+  {
+    path: 'recruiter/profile-edit',
+    loadComponent: () => import('./features/recruiter-profile-edit/recruiter-profile-edit.component').then(m => m.RecruiterProfileEdit)
+  },
+  {
     path: 'missions',
     loadComponent: () => import('./features/missions/missions.component').then(m => m.Missions)
   },

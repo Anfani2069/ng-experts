@@ -95,26 +95,34 @@ export class DashboardLayout {
     this.closeProfilePanel();
   }
 
+  protected readonly isRecruiter = computed(() => this.currentUser()?.role === 'recruiter');
+
   protected navigateToProfile(): void {
     this.closeProfilePanel();
-    this.router.navigate(['/profile-edit']);
+    const route = this.isRecruiter() ? '/recruiter/profile-edit' : '/profile-edit';
+    this.router.navigate([route]);
   }
 
   protected navigateToSection(sectionLabel: string): void {
-    // Mapping des labels vers les routes
-    const routeMapping: { [key: string]: string } = {
-      'Dashboard': '/dashboard',
-      'Mes Missions': '/missions',
-      'Messages': '/messages',
+    const isRecruiter = this.isRecruiter();
+
+    const routeMapping: { [key: string]: string } = isRecruiter ? {
+      'Dashboard':        '/recruiter/dashboard',
+      'Mes Missions':     '/missions',
+      'Messages':         '/messages',
+      'Editer mon profil': '/recruiter/profile-edit',
+      'Notifications':    '/notifications'
+    } : {
+      'Dashboard':        '/dashboard',
+      'Mes Missions':     '/missions',
+      'Messages':         '/messages',
       'Editer mon profil': '/profile-edit',
-      'Notifications': '/notifications'
+      'Notifications':    '/notifications'
     };
 
     const route = routeMapping[sectionLabel];
     if (route) {
-      // Mettre à jour l'état actif
       this.setActiveNavItem(sectionLabel);
-      // Naviguer vers la route
       this.router.navigate([route]);
     }
   }

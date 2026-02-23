@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardLayout } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
+import { Proposal } from '@core/models/user.model';
 
 export interface DashboardStats {
   profileViews: number;
@@ -29,15 +30,6 @@ export interface Mission {
   iconColor: string;
 }
 
-export interface Message {
-  id: string;
-  senderName: string;
-  senderAvatar: string;
-  message: string;
-  timeAgo: string;
-  isUnread: boolean;
-}
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -45,54 +37,51 @@ export interface Message {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, DashboardLayout]
 })
-export class Dashboard {
+export class Dashboard implements OnInit {
   private auth = inject(Auth);
+  private expertService = inject(ExpertService);
 
   // Utilisateur connecté
   protected readonly currentUser = this.auth.getCurrentUser();
 
-  // Nom d'utilisateur pour affichage
-  protected readonly userName = computed(() => {
-    const user = this.currentUser();
-    return user?.firstName || '';
-  });
+  protected readonly userName = computed(() => this.currentUser()?.firstName || '');
+  protected readonly isUserLoaded = computed(() => this.currentUser() !== null);
 
-  // Vérifier si l'utilisateur est chargé
-  protected readonly isUserLoaded = computed(() => {
-    return this.currentUser() !== null;
-  });
-
-  // Profile completion signal
-  protected readonly profileCompletion = signal(85);
-
-  // Dashboard stats
+  // Stats de profil (vues uniquement, le reste est supprimé du template)
   protected readonly dashboardStats = signal<DashboardStats>({
-    profileViews: 1248,
-    profileViewsChange: '+12.5%',
-    revenue: 12500,
-    revenueChange: '+8.2%',
-    clients: 45,
-    clientsChange: '+23%',
-    hoursWorked: 156,
-    hoursWorkedChange: '--'
+    profileViews: 0,
+    profileViewsChange: '',
+    revenue: 0,
+    revenueChange: '',
+    clients: 0,
+    clientsChange: '',
+    hoursWorked: 0,
+    hoursWorkedChange: ''
   });
 
-  // Quick stats for welcome card
+  // Quick stats
   protected readonly quickStats = signal({
-    newMissions: 12,
-    activeMissions: 3,
-    averageRating: 4.9
+    newMissions: 0,
+    activeMissions: 0,
+    averageRating: 0
   });
 
-  // Skills data
-  protected readonly skills = signal([
-    { name: 'Angular', percentage: 92, color: 'bg-primary' },
-    { name: 'TypeScript', percentage: 88, color: 'bg-cyan-400' },
-    { name: 'RxJS', percentage: 75, color: 'bg-purple-400' },
-    { name: 'NgRx', percentage: 68, color: 'bg-green-400' }
-  ]);
+  // Propositions reçues (depuis Firebase)
+  protected readonly proposals = signal<Proposal[]>([]);
 
-  // Recent missions
+  // Proposition en cours de traitement
+  protected readonly processingId = signal<string | null>(null);
+
+  // Nombre de propositions en attente
+  protected readonly pendingCount = computed(() =>
+    this.proposals().filter(p => p.status === 'pending').length
+  );
+
+  // Compteurs notifications/messages (simulés — à brancher sur Firebase plus tard)
+  protected readonly unreadMessages = signal(0);
+  protected readonly unreadNotifications = signal(0);
+
+  // Missions récentes (données locales — missions acceptées simulées)
   protected readonly recentMissions = signal<Mission[]>([
     {
       id: '1',
@@ -126,89 +115,83 @@ export class Dashboard {
     }
   ]);
 
-  // Recent messages
-  protected readonly recentMessages = signal<Message[]>([
-    {
-      id: '1',
-      senderName: 'Marie Dubois',
-      senderAvatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-      message: 'Bonjour, j\'aimerais discuter du projet Angular...',
-      timeAgo: 'Il y a 2h',
-      isUnread: true
-    },
-    {
-      id: '2',
-      senderName: 'Thomas Martin',
-      senderAvatar: 'https://randomuser.me/api/portraits/men/45.jpg',
-      message: 'Merci pour votre travail sur le dashboard !',
-      timeAgo: 'Hier',
-      isUnread: false
-    },
-    {
-      id: '3',
-      senderName: 'Sophie Laurent',
-      senderAvatar: 'https://randomuser.me/api/portraits/women/46.jpg',
-      message: 'Pouvez-vous m\'envoyer le devis pour la migration ?',
-      timeAgo: '2 jours',
-      isUnread: false
-    }
-  ]);
-
-  // Proposals
-  protected readonly proposals = signal<import('@core/models/user.model').Proposal[]>([]);
-  private expertService = inject(ExpertService);
-
   async ngOnInit() {
-    // Charger les propositions si c'est un expert
     const user = this.currentUser();
     if (user && user.role === 'expert') {
-      const proposals = await this.expertService.getProposalsForExpert(user.id);
-      this.proposals.set(proposals);
+      try {
+        const props = await this.expertService.getProposalsForExpert(user.id);
+        this.proposals.set(props);
+
+        // Mettre à jour les stats
+        const active = props.filter(p => p.status === 'accepted').length;
+        this.quickStats.set({
+          newMissions: props.filter(p => p.status === 'pending').length,
+          activeMissions: active,
+          averageRating: 0
+        });
+      } catch (e) {
+        console.error('Erreur chargement propositions dashboard', e);
+      }
     }
   }
 
-  // Revenue chart data (simplified for display)
-  protected readonly revenueData = signal([45, 60, 55, 75, 85, 100]);
-  protected readonly chartMonths = signal(['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin']);
+  // Accepter une proposition
+  protected async acceptProposal(proposal: Proposal): Promise<void> {
+    if (!proposal.id || this.processingId()) return;
+    try {
+      this.processingId.set(proposal.id);
+      await this.expertService.updateProposalStatus(proposal.id, 'accepted');
+      this.proposals.update(list =>
+        list.map(p => p.id === proposal.id ? { ...p, status: 'accepted' as const } : p)
+      );
+      // Recalculer les stats
+      const active = this.proposals().filter(p => p.status === 'accepted').length;
+      this.quickStats.update(s => ({ ...s, activeMissions: active }));
+    } catch (e) {
+      console.error('Erreur acceptation', e);
+    } finally {
+      this.processingId.set(null);
+    }
+  }
 
-  // Methods
+  // Refuser une proposition
+  protected async rejectProposal(proposal: Proposal): Promise<void> {
+    if (!proposal.id || this.processingId()) return;
+    try {
+      this.processingId.set(proposal.id);
+      await this.expertService.updateProposalStatus(proposal.id, 'rejected');
+      this.proposals.update(list =>
+        list.map(p => p.id === proposal.id ? { ...p, status: 'rejected' as const } : p)
+      );
+    } catch (e) {
+      console.error('Erreur refus', e);
+    } finally {
+      this.processingId.set(null);
+    }
+  }
 
   protected getMissionStatusClass(status: Mission['status']): string {
     switch (status) {
-      case 'en-cours':
-        return 'bg-primary/10 text-primary border border-primary/20';
-      case 'en-attente':
-        return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
-      case 'terminee':
-        return 'bg-white/5 text-subtext border border-white/10';
-      default:
-        return 'bg-white/5 text-subtext border border-white/10';
+      case 'en-cours': return 'bg-primary/10 text-primary border border-primary/20';
+      case 'en-attente': return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+      case 'terminee': return 'bg-white/5 text-subtext border border-white/10';
+      default: return 'bg-white/5 text-subtext border border-white/10';
     }
   }
 
   protected getMissionStatusText(status: Mission['status']): string {
     switch (status) {
-      case 'en-cours':
-        return 'En cours';
-      case 'en-attente':
-        return 'En attente';
-      case 'terminee':
-        return 'Terminée';
-      default:
-        return 'Inconnu';
+      case 'en-cours': return 'En cours';
+      case 'en-attente': return 'En attente';
+      case 'terminee': return 'Terminée';
+      default: return 'Inconnu';
     }
   }
 
   protected getMissionTimeText(mission: Mission): string {
-    if (mission.status === 'en-cours' && mission.daysLeft) {
-      return `${mission.daysLeft} jours restants`;
-    }
-    if (mission.status === 'en-attente' && mission.startDate) {
-      return `Démarre le ${mission.startDate}`;
-    }
-    if (mission.status === 'terminee' && mission.completedDate) {
-      return mission.completedDate;
-    }
+    if (mission.status === 'en-cours' && mission.daysLeft) return `${mission.daysLeft} jours restants`;
+    if (mission.status === 'en-attente' && mission.startDate) return `Démarre le ${mission.startDate}`;
+    if (mission.status === 'terminee' && mission.completedDate) return mission.completedDate;
     return '';
   }
 
