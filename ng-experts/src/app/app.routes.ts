@@ -26,6 +26,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recruiter-profile-edit/recruiter-profile-edit.component').then(m => m.RecruiterProfileEdit)
   },
   {
+    path: 'recruiter/missions',
+    loadComponent: () => import('./features/recruiter-missions/recruiter-missions.component').then(m => m.RecruiterMissions)
+  },
+  {
     path: 'missions',
     loadComponent: () => import('./features/missions/missions.component').then(m => m.Missions)
   },

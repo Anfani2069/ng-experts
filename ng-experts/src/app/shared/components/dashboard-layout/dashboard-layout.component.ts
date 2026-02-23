@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, signal, inject, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, signal, inject, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
@@ -10,13 +10,6 @@ export interface NavigationItem {
   badge?: number;
 }
 
-export interface CurrentUser {
-  name: string;
-  role: string;
-  avatar: string;
-  email: string;
-}
-
 @Component({
   selector: 'app-dashboard-layout',
   templateUrl: './dashboard-layout.component.html',
@@ -24,7 +17,7 @@ export interface CurrentUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule]
 })
-export class DashboardLayout {
+export class DashboardLayout implements OnInit {
   private auth = inject(Auth);
   private router = inject(Router);
 
@@ -97,18 +90,12 @@ export class DashboardLayout {
 
   protected readonly isRecruiter = computed(() => this.currentUser()?.role === 'recruiter');
 
-  protected navigateToProfile(): void {
-    this.closeProfilePanel();
-    const route = this.isRecruiter() ? '/recruiter/profile-edit' : '/profile-edit';
-    this.router.navigate([route]);
-  }
-
   protected navigateToSection(sectionLabel: string): void {
     const isRecruiter = this.isRecruiter();
 
     const routeMapping: { [key: string]: string } = isRecruiter ? {
       'Dashboard':        '/recruiter/dashboard',
-      'Mes Missions':     '/missions',
+      'Mes Missions':     '/recruiter/missions',
       'Messages':         '/messages',
       'Editer mon profil': '/recruiter/profile-edit',
       'Notifications':    '/notifications'
@@ -144,7 +131,7 @@ export class DashboardLayout {
   }
 
   // Initialize active state based on current page
-  ngOnInit(): void {
+  public ngOnInit(): void {
     const currentPath = window.location.pathname;
     if (currentPath.includes('dashboard')) {
       this.setActiveNavItem('Dashboard');

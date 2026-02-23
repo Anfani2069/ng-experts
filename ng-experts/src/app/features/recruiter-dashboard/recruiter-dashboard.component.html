@@ -85,7 +85,7 @@
                       <span class="w-2 h-2 rounded-full bg-green-400 shrink-0"></span>
                     }
                   </div>
-                  <p class="text-[11px] text-subtext truncate mb-1">{{ expert.city }}</p>
+                <p class="text-xs text-subtext truncate mb-1">{{ expert.city }} • {{ expert.availability.dailyRate }}</p>
                   <div class="flex gap-1 flex-wrap">
                     @for (skill of (expert.skills || []).slice(0, 3); track skill.id) {
                       <span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-medium rounded-full border border-primary/20">{{ skill.name }}</span>

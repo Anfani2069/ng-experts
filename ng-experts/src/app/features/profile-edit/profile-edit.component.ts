@@ -16,6 +16,7 @@ import { Timestamp } from 'firebase/firestore';
 })
 export class ProfileEdit implements OnInit {
   private auth = inject(Auth);
+  private fb = inject(FormBuilder);
 
   // User reactive forms
   protected profileForm!: FormGroup;
@@ -133,12 +134,6 @@ export class ProfileEdit implements OnInit {
   ]);
   protected readonly missionDurations = signal(['3-6 mois', '6-12 mois', '12+ mois', 'Flexible']);
   protected readonly yearsOfExperience = signal(['1-3 ans', '3-5 ans', '5-10 ans', '10+ ans']);
-  protected readonly availabilityStatuses = signal([
-    { value: true, label: 'Disponible' },
-    { value: false, label: 'Non disponible' }
-  ]);
-
-  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     // Attendre que les données utilisateur soient disponibles
@@ -317,17 +312,19 @@ export class ProfileEdit implements OnInit {
     const expert = this.expertProfile();
     if (!expert) return;
 
-    const newExperience: Experience = {
+    const newExperience: any = {
       id: Date.now().toString(),
       title: exp.title.trim(),
       company: exp.company.trim(),
-      location: 'Remote', // Default value
+      location: 'Remote',
       startDate: exp.startDate ? new Date(exp.startDate) : new Date(),
-      endDate: exp.endDate ? new Date(exp.endDate) : undefined,
       description: exp.description.trim(),
       technologies: exp.technologies,
-      isCurrent: !exp.endDate // Si pas de date de fin, c'est en cours
+      isCurrent: !exp.endDate
     };
+    if (exp.endDate) {
+      newExperience.endDate = new Date(exp.endDate);
+    }
 
     const updatedExperience = [...(expert.experience || []), newExperience];
 
@@ -385,8 +382,9 @@ export class ProfileEdit implements OnInit {
     const updatedExperience = expert.experience?.map(e => {
       if (e.id !== exp.id) return e;
 
+      const { endDate: _removed, ...rest } = e as any;
       const updated: any = {
-        ...e,
+        ...rest,
         title: exp.title.trim(),
         company: exp.company.trim(),
         description: exp.description.trim(),
@@ -395,11 +393,8 @@ export class ProfileEdit implements OnInit {
         isCurrent: !exp.endDate
       };
 
-      // Ajouter endDate seulement si elle existe
       if (exp.endDate) {
         updated.endDate = new Date(exp.endDate);
-      } else {
-        delete updated.endDate;
       }
 
       return updated;
@@ -436,16 +431,18 @@ export class ProfileEdit implements OnInit {
     const expert = this.expertProfile();
     if (!expert) return;
 
-    const newEducation: Education = {
+    const newEducation: any = {
       id: Date.now().toString(),
       degree: edu.degree.trim(),
       school: edu.school.trim(),
       fieldOfStudy: edu.fieldOfStudy.trim(),
       startDate: edu.startDate ? new Date(edu.startDate) : new Date(),
-      endDate: edu.endDate ? new Date(edu.endDate) : undefined,
       description: edu.description?.trim() || '',
       isCurrent: !edu.endDate
     };
+    if (edu.endDate) {
+      newEducation.endDate = new Date(edu.endDate);
+    }
 
     const updatedEducation = [...(expert.education || []), newEducation];
 
@@ -503,8 +500,9 @@ export class ProfileEdit implements OnInit {
     const updatedEducation = expert.education?.map(e => {
       if (e.id !== edu.id) return e;
 
+      const { endDate: _removed, ...rest } = e as any;
       const updated: any = {
-        ...e,
+        ...rest,
         degree: edu.degree.trim(),
         school: edu.school.trim(),
         fieldOfStudy: edu.fieldOfStudy.trim(),
@@ -515,8 +513,6 @@ export class ProfileEdit implements OnInit {
 
       if (edu.endDate) {
         updated.endDate = new Date(edu.endDate);
-      } else {
-        delete updated.endDate;
       }
 
       return updated;
@@ -584,7 +580,6 @@ export class ProfileEdit implements OnInit {
 
   protected onChangePassword(): void {
     if (this.passwordForm.valid) {
-      const formData = this.passwordForm.value;
       console.log('Password change requested');
       // TODO: API call to change password
       this.passwordForm.reset();
@@ -652,6 +647,7 @@ export class ProfileEdit implements OnInit {
   }
 
   protected async onYearsOfExperienceChange(years: string): Promise<void> {
+    if (!years || years.trim() === '') return;
     await this.auth.updateExpertProfile({ yearsOfExperience: years });
   }
 

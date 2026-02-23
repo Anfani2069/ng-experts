@@ -235,9 +235,8 @@
                 <select
                   (change)="onAvailabilityStatusChange($any($event.target).value === 'true')"
                   class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white">
-                  @for (status of availabilityStatuses(); track status.value) {
-                    <option [value]="status.value" [selected]="expertProfile()?.isAvailable === status.value">{{ status.label }}</option>
-                  }
+                  <option value="true" [selected]="expertProfile()?.isAvailable === true">Disponible</option>
+                  <option value="false" [selected]="expertProfile()?.isAvailable === false || expertProfile()?.isAvailable === undefined">Non disponible</option>
                 </select>
               </div>
 
@@ -246,7 +245,7 @@
                 <select
                   (change)="onYearsOfExperienceChange($any($event.target).value)"
                   class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white">
-                  <option value="">Sélectionner...</option>
+                  <option value="" [selected]="!expertProfile()?.yearsOfExperience">Sélectionner...</option>
                   @for (years of yearsOfExperience(); track years) {
                     <option [value]="years" [selected]="expertProfile()?.yearsOfExperience === years">{{ years }}</option>
                   }
