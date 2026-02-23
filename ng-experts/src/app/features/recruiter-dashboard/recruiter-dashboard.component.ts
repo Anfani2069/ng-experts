@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { DashboardLayout } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
+import { MessagingService } from '@core/services/messaging.service';
 import { Expert, Recruiter, Proposal } from '@core/models/user.model';
 
 @Component({
@@ -16,8 +17,8 @@ export class RecruiterDashboard implements OnInit {
   private auth = inject(Auth);
   private expertService = inject(ExpertService);
   private router = inject(Router);
+  private messaging = inject(MessagingService);
 
-  // Utilisateur connecté
   protected readonly currentUser = this.auth.getCurrentUser();
   protected readonly recruiter = computed(() => {
     const u = this.currentUser();
@@ -26,28 +27,19 @@ export class RecruiterDashboard implements OnInit {
   protected readonly userName = computed(() => this.currentUser()?.firstName || '');
   protected readonly isUserLoaded = computed(() => this.currentUser() !== null);
 
-  // État
   protected readonly isLoading = signal(false);
   protected readonly experts = signal<Expert[]>([]);
   protected readonly myProposals = signal<Proposal[]>([]);
   protected readonly searchQuery = signal('');
 
-  // Modal envoi proposition
   protected readonly showProposalModal = signal(false);
   protected readonly selectedExpert = signal<Expert | null>(null);
   protected readonly isSending = signal(false);
   protected readonly proposalSent = signal(false);
   protected readonly proposalError = signal<string | null>(null);
 
-  // Formulaire proposition
-  protected readonly proposalForm = signal({
-    title: '',
-    description: '',
-    budget: '',
-    startDate: ''
-  });
+  protected readonly proposalForm = signal({ title: '', description: '', budget: '', startDate: '' });
 
-  // Experts filtrés par recherche
   protected readonly filteredExperts = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
     if (!q) return this.experts();
@@ -59,30 +51,33 @@ export class RecruiterDashboard implements OnInit {
     );
   });
 
-  // Stats calculées
   protected readonly stats = computed(() => {
     const proposals = this.myProposals();
     return {
       sent: proposals.length,
       pending: proposals.filter(p => p.status === 'pending').length,
       accepted: proposals.filter(p => p.status === 'accepted').length,
+      completed: proposals.filter(p => p.status === 'completed').length,
       rejected: proposals.filter(p => p.status === 'rejected').length,
     };
   });
 
-  // Propositions récentes (4 dernières)
-  protected readonly recentProposals = computed(() =>
-    this.myProposals().slice(0, 4)
-  );
+  protected readonly recentProposals = computed(() => {
+    return [...this.myProposals()]
+      .sort((a, b) => {
+        const da = this.toDate(a.createdAt)?.getTime() ?? 0;
+        const db = this.toDate(b.createdAt)?.getTime() ?? 0;
+        return db - da;
+      })
+      .slice(0, 4);
+  });
 
   async ngOnInit() {
     this.isLoading.set(true);
     try {
-      const [experts, proposals] = await Promise.all([
-        this.expertService.getAllExperts(),
-        this.loadMyProposals()
-      ]);
+      const experts = await this.expertService.getAllExperts();
       this.experts.set(experts);
+      await this.loadMyProposals();
     } finally {
       this.isLoading.set(false);
     }
@@ -102,8 +97,8 @@ export class RecruiterDashboard implements OnInit {
       const proposals: Proposal[] = [];
       snap.forEach(d => proposals.push({ id: d.id, ...d.data() } as Proposal));
       proposals.sort((a, b) => {
-        const da = a.createdAt instanceof Date ? a.createdAt : new Date((a.createdAt as any)?.seconds * 1000 || 0);
-        const db = b.createdAt instanceof Date ? b.createdAt : new Date((b.createdAt as any)?.seconds * 1000 || 0);
+        const da = new Date((a.createdAt as any)?.seconds * 1000 || 0);
+        const db = new Date((b.createdAt as any)?.seconds * 1000 || 0);
         return db.getTime() - da.getTime();
       });
       this.myProposals.set(proposals);
@@ -137,16 +132,13 @@ export class RecruiterDashboard implements OnInit {
     const expert = this.selectedExpert();
     const user = this.currentUser();
     const form = this.proposalForm();
-
     if (!expert || !user) return;
     if (!form.title.trim() || !form.description.trim() || !form.budget.trim()) {
       this.proposalError.set('Veuillez remplir tous les champs obligatoires');
       return;
     }
-
     this.isSending.set(true);
     this.proposalError.set(null);
-
     try {
       const proposal: Omit<Proposal, 'id'> = {
         expertId: expert.id,
@@ -159,13 +151,9 @@ export class RecruiterDashboard implements OnInit {
         status: 'pending',
         createdAt: new Date()
       };
-
-      await this.expertService.addProposal(proposal);
+      await this.expertService.addProposal(proposal, `${user.firstName} ${user.lastName}`);
       this.proposalSent.set(true);
-
-      // Recharger mes propositions
       await this.loadMyProposals();
-
       setTimeout(() => this.closeProposalModal(), 2000);
     } catch (e) {
       this.proposalError.set('Erreur lors de l\'envoi. Veuillez réessayer.');
@@ -179,19 +167,41 @@ export class RecruiterDashboard implements OnInit {
     this.router.navigate(['/expert', expert.id]);
   }
 
+  protected async contactExpertFromProposal(proposal: Proposal): Promise<void> {
+    const user = this.currentUser();
+    if (!user) return;
+    try {
+      const expert = await this.expertService.getExpertById(proposal.expertId);
+      if (!expert) { this.router.navigate(['/messages']); return; }
+      await this.messaging.getOrCreateConversation(
+        user.id, expert.id,
+        { name: `${user.firstName} ${user.lastName}`, avatar: user.avatar, role: 'recruiter' },
+        { name: `${expert.firstName} ${expert.lastName}`, avatar: expert.avatar, role: 'expert' },
+        proposal.id, proposal.title
+      );
+      this.router.navigate(['/messages']);
+    } catch (e) {
+      console.error('Erreur contact expert:', e);
+    }
+  }
+
   protected getProposalStatusClass(status: Proposal['status']): string {
     switch (status) {
-      case 'pending': return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
-      case 'accepted': return 'bg-green-500/10 text-green-400 border border-green-500/20';
-      case 'rejected': return 'bg-white/5 text-subtext border border-white/10';
+      case 'pending':   return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+      case 'accepted':  return 'bg-green-500/10 text-green-400 border border-green-500/20';
+      case 'completed': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+      case 'rejected':  return 'bg-white/5 text-subtext border border-white/10';
+      default:          return 'bg-white/5 text-subtext border border-white/10';
     }
   }
 
   protected getProposalStatusLabel(status: Proposal['status']): string {
     switch (status) {
-      case 'pending': return 'En attente';
-      case 'accepted': return 'Acceptée';
-      case 'rejected': return 'Refusée';
+      case 'pending':   return 'En attente';
+      case 'accepted':  return 'Acceptée';
+      case 'completed': return 'Terminée';
+      case 'rejected':  return 'Refusée';
+      default:          return status;
     }
   }
 

@@ -18,7 +18,7 @@ export class ProfileEdit implements OnInit {
   private auth = inject(Auth);
   private fb = inject(FormBuilder);
 
-  // User reactive forms
+  // Formulaires — initialisé dans ngOnInit (même pattern que RecruiterProfileEdit)
   protected profileForm!: FormGroup;
   protected passwordForm!: FormGroup;
 
@@ -136,20 +136,27 @@ export class ProfileEdit implements OnInit {
   protected readonly yearsOfExperience = signal(['1-3 ans', '3-5 ans', '5-10 ans', '10+ ans']);
 
   ngOnInit(): void {
-    // Attendre que les données utilisateur soient disponibles
-    const user = this.currentUser();
-    if (user) {
-      this.initializeForms();
-      this.isLoading.set(false);
-    } else {
-      // Si pas d'utilisateur, initialiser avec des valeurs vides
-      this.isLoading.set(true);
-      // Réessayer après un court délai pour laisser le temps à l'auth de charger
-      setTimeout(() => {
-        this.initializeForms();
-        this.isLoading.set(false);
-      }, 500);
-    }
+    // Initialiser les formulaires IMMÉDIATEMENT (comme RecruiterProfileEdit)
+    // pour éviter que profileForm soit undefined dans le template
+    this.initializeForms();
+
+    // Puis, en arrière-plan, attendre l'auth et re-patcher le formulaire
+    this.auth.waitForUser().then(() => {
+      const expert = this.expertProfile();
+      if (expert) {
+        this.profileForm.patchValue({
+          firstName: expert.firstName || '',
+          lastName:  expert.lastName  || '',
+          company:   expert.company   || '',
+          location:  expert.location  || '',
+          city:      expert.city      || '',
+          email:     expert.email     || '',
+          phone:     expert.phone     || '',
+          address:   (expert as any).address || '',
+          bio:       expert.bio       || ''
+        });
+      }
+    });
   }
 
   /**
@@ -184,13 +191,14 @@ export class ProfileEdit implements OnInit {
 
     this.profileForm = this.fb.group({
       firstName: [expert?.firstName || '', [Validators.required]],
-      lastName: [expert?.lastName || '', [Validators.required]],
-      company: [expert?.company || ''],
-      location: [expert?.location || '', [Validators.required]],
-      city: [expert?.city || '', [Validators.required]],
-      email: [expert?.email || '', [Validators.required, Validators.email]],
-      phone: [expert?.phone || ''],
-      bio: [expert?.bio || '']
+      lastName:  [expert?.lastName || '', [Validators.required]],
+      company:   [expert?.company || ''],
+      location:  [expert?.location || '', [Validators.required]],
+      city:      [expert?.city || '', [Validators.required]],
+      email:     [expert?.email || '', [Validators.required, Validators.email]],
+      phone:     [expert?.phone || ''],
+      address:   [(expert as any)?.address || ''],
+      bio:       [expert?.bio || '']
     });
 
     this.passwordForm = this.fb.group({

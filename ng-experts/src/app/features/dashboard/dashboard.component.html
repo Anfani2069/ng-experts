@@ -1,65 +1,28 @@
 <app-dashboard-layout [showSearch]="false">
-
   <div class="px-6 md:px-8 py-6 bg-heroBg">
 
     <!-- Welcome Card -->
-    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 mb-6 text-white relative overflow-hidden">
+    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 mb-6 relative overflow-hidden">
       <div class="relative z-10 flex items-center justify-between flex-wrap gap-4">
         <div>
           @if (isUserLoaded()) {
-            <h1 class="text-2xl font-bold mb-1 tracking-tight">Bienvenue {{ userName() }} ! 👋</h1>
+            <h1 class="text-2xl font-bold text-white mb-1">Bienvenue {{ userName() }} ! 👋</h1>
           } @else {
             <div class="h-8 w-56 bg-white/5 rounded animate-pulse mb-1"></div>
           }
           <p class="text-subtext text-sm">Votre espace expert — gérez vos missions et propositions</p>
         </div>
-
-        <!-- Quick actions -->
         <div class="flex items-center gap-3">
           <a routerLink="/messages"
             class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-white hover:border-primary/40 hover:bg-primary/10 transition-all">
             <i class="fa-regular fa-envelope text-primary"></i>
             <span class="font-medium">Messages</span>
-            @if (unreadMessages() > 0) {
-              <span class="w-5 h-5 bg-primary text-white text-[10px] font-black rounded-full flex items-center justify-center">{{ unreadMessages() }}</span>
-            }
           </a>
           <a routerLink="/notifications"
             class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-white hover:border-primary/40 hover:bg-primary/10 transition-all">
             <i class="fa-regular fa-bell text-primary"></i>
             <span class="font-medium">Notifications</span>
-            @if (unreadNotifications() > 0) {
-              <span class="w-5 h-5 bg-primary text-white text-[10px] font-black rounded-full flex items-center justify-center">{{ unreadNotifications() }}</span>
-            }
           </a>
-        </div>
-      </div>
-
-      <!-- 3 mini stats utiles -->
-      <div class="grid grid-cols-3 gap-4 mt-6 max-w-lg">
-        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
-          <div class="flex items-center gap-2 mb-1">
-            <i class="fa-solid fa-paper-plane text-primary text-xs"></i>
-            <span class="text-[9px] font-bold uppercase tracking-widest text-subtext">Propositions</span>
-          </div>
-          <p class="text-xl font-black text-white">{{ pendingCount() }}</p>
-          <p class="text-[10px] text-white/30">En attente</p>
-        </div>
-        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
-          <div class="flex items-center gap-2 mb-1">
-            <i class="fa-solid fa-briefcase text-primary text-xs"></i>
-            <span class="text-[9px] font-bold uppercase tracking-widest text-subtext">Missions</span>
-          </div>
-          <p class="text-xl font-black text-white">{{ quickStats().activeMissions }}</p>
-          <p class="text-[10px] text-white/30">En cours</p>
-        </div>
-        <div class="bg-white/5 rounded-xl p-3 border border-white/5">
-          <div class="flex items-center gap-2 mb-1">
-            <i class="fa-solid fa-eye text-primary text-xs"></i>
-            <span class="text-[9px] font-bold uppercase tracking-widest text-subtext">Vues profil</span>
-          </div>
-          <p class="text-xl font-black text-white">{{ dashboardStats().profileViews }}</p>
-          <p class="text-[10px] text-white/30">7 derniers jours</p>
         </div>
       </div>
 
@@ -68,72 +31,108 @@
       </div>
     </div>
 
-    <!-- Main Content: 2 colonnes -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Stats rapides -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-list text-primary text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().total }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Total</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-clock text-yellow-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().pending }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En attente</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-check text-green-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().accepted }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En cours</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-flag-checkered text-blue-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().completed }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Terminées</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-xmark text-red-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().rejected }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Refusées</p>
+      </div>
+    </div>
 
-      <!-- PROPOSITIONS REÇUES -->
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <h3 class="font-bold text-base text-white">Propositions reçues</h3>
-            <p class="text-subtext text-[11px] mt-0.5">Offres envoyées par les recruteurs</p>
-          </div>
-          <div class="flex items-center gap-2">
-            @if (pendingCount() > 0) {
-              <span class="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-primary/20">
-                {{ pendingCount() }} nouvelle(s)
-              </span>
-            }
-            <a routerLink="/missions" class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout voir</a>
-          </div>
+    <!-- Propositions reçues -->
+    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h3 class="font-bold text-base text-white">Propositions reçues</h3>
+          <p class="text-subtext text-[11px] mt-0.5">Offres envoyées par les recruteurs</p>
         </div>
+        <div class="flex items-center gap-3">
+          @if (stats().pending > 0) {
+            <span class="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-primary/20">
+              {{ stats().pending }} nouvelle(s)
+            </span>
+          }
+          <a routerLink="/missions" class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout voir</a>
+        </div>
+      </div>
 
-        <div class="space-y-3">
-          @if (proposals().length === 0) {
-            <div class="text-center py-12 text-subtext">
-              <i class="fa-regular fa-envelope-open text-4xl mb-3 opacity-20 block"></i>
-              <p class="text-sm">Aucune proposition pour le moment</p>
-              <p class="text-[11px] text-white/20 mt-1">Complétez votre profil pour attirer des recruteurs</p>
+      <div class="space-y-3">
+        @if (isLoading()) {
+          @for (i of [1,2,3]; track i) {
+            <div class="p-4 rounded-xl border border-white/5 bg-white/[0.03] animate-pulse">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 rounded-full bg-white/10"></div>
+                <div class="flex-1">
+                  <div class="h-3 bg-white/10 rounded w-2/3 mb-2"></div>
+                  <div class="h-2 bg-white/5 rounded w-1/3"></div>
+                </div>
+              </div>
             </div>
           }
-
-          @for (proposal of proposals().slice(0, 4); track proposal.id) {
+        } @else if (recentProposals().length === 0) {
+          <div class="text-center py-12 text-subtext">
+            <i class="fa-regular fa-envelope-open text-4xl mb-3 opacity-20 block"></i>
+            <p class="text-sm">Aucune proposition pour le moment</p>
+            <p class="text-[11px] text-white/20 mt-1">Complétez votre profil pour attirer des recruteurs</p>
+          </div>
+        } @else {
+          @for (proposal of recentProposals(); track proposal.id) {
             <div class="p-4 rounded-xl border transition-all"
               [class]="proposal.status === 'pending' ? 'border-primary/20 bg-primary/5' : 'border-white/5 bg-white/[0.03]'">
 
-              <!-- Header proposition -->
               <div class="flex items-start justify-between gap-2 mb-2">
                 <div class="flex items-center gap-3">
                   <div class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                    {{ proposal.clientEmail.charAt(0).toUpperCase() }}
+                    {{ (proposal.clientEmail || '?').charAt(0).toUpperCase() }}
                   </div>
                   <div>
                     <h4 class="font-bold text-white text-sm leading-tight">{{ proposal.title }}</h4>
                     <p class="text-[11px] text-subtext">{{ proposal.clientEmail }}</p>
                   </div>
                 </div>
-                <!-- Statut badge -->
                 <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shrink-0"
-                  [class]="proposal.status === 'pending' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20' :
-                           proposal.status === 'accepted' ? 'bg-green-500/10 text-green-400 border border-green-500/20' :
-                           'bg-white/5 text-subtext border border-white/10'">
-                  {{ proposal.status === 'pending' ? 'En attente' : proposal.status === 'accepted' ? 'Acceptée' : 'Refusée' }}
+                  [class]="getStatusClass(proposal.status)">
+                  {{ getStatusLabel(proposal.status) }}
                 </span>
               </div>
 
-              <!-- Budget + date -->
               <div class="flex items-center gap-3 mb-2 pl-12">
                 <span class="text-primary font-bold text-sm">{{ proposal.budget }}</span>
-                <span class="text-white/20 text-xs">•</span>
-                <span class="text-subtext text-xs">Début : {{ proposal.startDate }}</span>
-                <span class="text-white/20 text-xs">•</span>
-                <span class="text-subtext text-xs">{{ proposal.createdAt | date:'dd MMM' }}</span>
+                @if (proposal.startDate) {
+                  <span class="text-white/20 text-xs">•</span>
+                  <span class="text-subtext text-xs">Début : {{ proposal.startDate }}</span>
+                }
+                @if (proposal.createdAt) {
+                  <span class="text-white/20 text-xs">•</span>
+                  <span class="text-subtext text-xs">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
+                }
               </div>
 
-              <!-- Description courte -->
-              <p class="text-xs text-subtext line-clamp-1 pl-12 mb-3">{{ proposal.description }}</p>
+              @if (proposal.description) {
+                <p class="text-xs text-subtext line-clamp-2 pl-12 mb-3">{{ proposal.description }}</p>
+              }
 
-              <!-- Actions si en attente -->
               @if (proposal.status === 'pending') {
                 <div class="flex items-center gap-2 pl-12">
                   <button (click)="acceptProposal(proposal)"
@@ -157,68 +156,10 @@
               }
             </div>
           }
-        </div>
-      </div>
-
-      <!-- MISSIONS RÉCENTES -->
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-5">
-          <div>
-            <h3 class="font-bold text-base text-white">Missions récentes</h3>
-            <p class="text-subtext text-[11px] mt-0.5">Vos missions acceptées et en cours</p>
-          </div>
-          <a routerLink="/missions" class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout voir</a>
-        </div>
-
-        <div class="space-y-3">
-          @if (recentMissions().length === 0) {
-            <div class="text-center py-12 text-subtext">
-              <i class="fa-solid fa-briefcase text-4xl mb-3 opacity-20 block"></i>
-              <p class="text-sm">Aucune mission pour l'instant</p>
-              <p class="text-[11px] text-white/20 mt-1">Les missions acceptées apparaîtront ici</p>
-            </div>
-          }
-
-          @for (mission of recentMissions(); track mission.id) {
-            <div class="flex items-start gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:border-primary/20 hover:bg-white/[0.05] transition-all cursor-pointer"
-              routerLink="/missions">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-primary/10 border border-primary/20">
-                <i [class]="mission.icon + ' text-primary text-sm'"></i>
-              </div>
-              <div class="flex-1 min-w-0">
-                <h4 class="font-semibold text-white text-sm mb-0.5 truncate">{{ mission.title }}</h4>
-                <p class="text-xs text-subtext mb-2 truncate">{{ mission.description }}</p>
-                <div class="flex items-center gap-2">
-                  <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
-                    [class]="getMissionStatusClass(mission.status)">
-                    {{ getMissionStatusText(mission.status) }}
-                  </span>
-                  @if (getMissionTimeText(mission)) {
-                    <span class="text-[10px] text-white/30">{{ getMissionTimeText(mission) }}</span>
-                  }
-                </div>
-              </div>
-              <span class="text-sm font-bold shrink-0"
-                [class]="mission.status === 'terminee' ? 'text-white/30' : 'text-primary'">
-                {{ formatCurrency(mission.budget) }}
-              </span>
-            </div>
-          }
-        </div>
-
-        <!-- Lien vers profil si missions vides -->
-        @if (recentMissions().length === 0) {
-          <div class="mt-4 pt-4 border-t border-white/5 text-center">
-            <a routerLink="/profile-edit"
-              class="text-[11px] font-bold uppercase tracking-widest text-primary hover:text-primary/80 transition">
-              <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>
-              Améliorer mon profil
-            </a>
-          </div>
         }
       </div>
-
     </div>
+
   </div>
 
 </app-dashboard-layout>

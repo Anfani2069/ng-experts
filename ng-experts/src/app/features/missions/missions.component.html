@@ -1,302 +1,334 @@
-<app-dashboard-layout [pageTitle]="'Mes Missions'" [pageSubtitle]="'Gérez vos propositions et vos missions en cours'"
-    [showSearch]="true">
-    <div class="p-6 md:p-8 bg-heroBg">
+<app-dashboard-layout [pageTitle]="'Mes Missions'" [pageSubtitle]="'Gérez vos propositions et missions'" [showSearch]="false">
+  <div class="p-6 md:p-8 bg-heroBg min-h-full">
 
-        <!-- Tabs Navigation -->
-        <div class="flex border-b border-white/10 mb-8">
-            <button (click)="activeTab.set('proposals')"
-                class="pb-4 px-6 font-medium text-sm transition-colors relative"
-                [class.text-primary]="activeTab() === 'proposals'" [class.text-subtext]="activeTab() !== 'proposals'">
-                Propositions reçues
-                @if (pendingProposals().length > 0) {
-                <span class="ml-2 bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest">{{
-                    pendingProposals().length }}</span>
-                }
-                @if (activeTab() === 'proposals') {
-                <div class="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
-                }
-            </button>
-
-            <button (click)="activeTab.set('active')" class="pb-4 px-6 font-medium text-sm transition-colors relative"
-                [class.text-primary]="activeTab() === 'active'" [class.text-subtext]="activeTab() !== 'active'">
-                Missions en cours
-                @if (activeMissions().length > 0) {
-                <span class="ml-2 bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest">{{
-                    activeMissions().length }}</span>
-                }
-                @if (activeTab() === 'active') {
-                <div class="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
-                }
-            </button>
-        </div>
-
-        <!-- Content Area -->
-        <div class="min-h-[400px]">
-
-            @if (isLoading()) {
-            <div class="flex flex-col items-center justify-center py-20 text-subtext">
-                <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
-                <p>Chargement des données...</p>
-            </div>
-            } @else {
-
-            <!-- PROPOSALS TAB -->
-            @if (activeTab() === 'proposals') {
-            @if (pendingProposals().length === 0) {
-            <!-- Empty State Proposals -->
-            <div class="bg-[#1a1a1a] border border-white/5 rounded-3xl p-12 text-center">
-                <div class="w-20 h-20 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-regular fa-envelope-open text-primary text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">Aucune proposition en attente</h3>
-                <p class="text-subtext max-w-sm mx-auto">
-                    Vous n'avez pas encore reçu de nouvelles propositions de mission. Complétez votre profil pour
-                    attirer plus de recruteurs.
-                </p>
-            </div>
-            } @else {
-            <!-- Proposals List -->
-            <div class="grid grid-cols-1 gap-6">
-                @for (proposal of pendingProposals(); track proposal.id) {
-                <div class="bg-[#1a1a1a] rounded-2xl p-6 shadow-sm border border-white/5 hover:shadow-md transition-all">
-                    <div class="flex flex-col md:flex-row gap-6">
-                        <!-- Client Info (Left) -->
-                        <div
-                            class="md:w-1/4 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6">
-                            <div
-                                class="w-16 h-16 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-subtext font-bold text-2xl mb-3">
-                                {{ proposal.clientEmail.charAt(0).toUpperCase() }}
-                            </div>
-                            <h4 class="font-bold text-white truncate w-full" [title]="proposal.clientEmail">{{
-                                proposal.clientEmail }}</h4>
-                            <p class="text-xs text-subtext mt-1">Recruteur</p>
-                            <button (click)="openDetails(proposal)"
-                                class="mt-4 text-sm text-primary font-medium hover:underline">
-                                Voir les détails
-                            </button>
-                        </div>
-
-                        <!-- Mission Details (Middle) -->
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">{{ proposal.title }}</h3>
-                                <span
-                                    class="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Nouvelle</span>
-                            </div>
-
-                            <div class="flex flex-wrap gap-4 text-sm text-subtext mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-calendar text-subtext"></i>
-                                    <span>Début: {{ proposal.startDate }}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-coins text-subtext"></i>
-                                    <span class="text-white font-semibold">{{ proposal.budget }}</span>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/5 rounded-xl p-4 mb-4">
-                                <p class="text-subtext text-sm leading-relaxed line-clamp-3">
-                                    {{ proposal.description }}
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- Actions (Right) -->
-                        <div class="md:w-48 flex flex-col justify-center gap-3 md:border-l border-white/5 md:pl-6">
-                            <button (click)="confirmAction('accepted', proposal)"
-                                class="w-full py-2.5 px-4 bg-primary hover:bg-primary/80 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2 shadow-sm shadow-primary/20">
-                                <i class="fa-solid fa-check"></i>
-                                Accepter
-                            </button>
-                            <button (click)="confirmAction('rejected', proposal)"
-                                class="w-full py-2.5 px-4 bg-[#1a1a1a] border border-white/10 hover:bg-red-500/10 hover:text-red-600 hover:border-red-500/30 text-subtext rounded-xl font-medium transition-all flex items-center justify-center gap-2">
-                                <i class="fa-solid fa-xmark"></i>
-                                Refuser
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                }
-            </div>
-            }
-            }
-
-            <!-- ACTIVE MISSIONS TAB -->
-            @if (activeTab() === 'active') {
-            @if (activeMissions().length === 0) {
-            <!-- Empty State Missions -->
-            <div class="bg-[#1a1a1a] rounded-2xl p-12 text-center border border-white/5">
-                <div class="w-20 h-20 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <i class="fa-solid fa-clipboard-check text-primary text-3xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-white mb-2">Aucune mission en cours</h3>
-                <p class="text-subtext max-w-sm mx-auto">
-                    Les missions que vous acceptez apparaîtront ici. Vous pourrez y suivre l'avancement et gérer les
-                    livrables.
-                </p>
-            </div>
-            } @else {
-            <!-- Active Missions List -->
-            <div class="grid grid-cols-1 gap-4">
-                @for (mission of activeMissions(); track mission.id) {
-                <div class="bg-[#1a1a1a] rounded-2xl p-6 border border-white/5 hover:border-primary/20 transition-all">
-                    <div class="flex flex-col md:flex-row gap-6">
-
-                        <!-- Client Info (Left) -->
-                        <div class="md:w-1/4 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6">
-                            <div class="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-xl mb-3">
-                                {{ mission.clientEmail.charAt(0).toUpperCase() }}
-                            </div>
-                            <h4 class="font-bold text-white text-sm truncate w-full" [title]="mission.clientEmail">
-                                {{ mission.clientEmail }}
-                            </h4>
-                            <p class="text-xs text-subtext mt-1">Recruteur</p>
-                            <button (click)="openDetails(mission)"
-                                class="mt-4 text-[11px] font-bold uppercase tracking-widest text-primary hover:text-primary/70 transition">
-                                Voir les détails
-                            </button>
-                        </div>
-
-                        <!-- Mission Details (Middle) -->
-                        <div class="flex-1">
-                            <div class="flex items-start justify-between mb-3">
-                                <h3 class="text-lg font-bold text-white">{{ mission.title }}</h3>
-                                <span class="inline-flex items-center gap-1.5 bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shrink-0 ml-3">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                                    En cours
-                                </span>
-                            </div>
-
-                            <div class="flex flex-wrap gap-4 text-sm text-subtext mb-4">
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-coins text-subtext text-xs"></i>
-                                    <span class="text-white font-semibold">{{ mission.budget }}</span>
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-calendar text-subtext text-xs"></i>
-                                    <span>Début : {{ mission.startDate }}</span>
-                                </div>
-                            </div>
-
-                            <div class="bg-white/5 rounded-xl p-4">
-                                <p class="text-subtext text-sm leading-relaxed line-clamp-2">
-                                    {{ mission.description }}
-                                </p>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-                }
-            </div>
-            }
-            }
-            }
-        </div>
+    <!-- Stats rapides -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-list text-primary text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().total }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Total</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-clock text-yellow-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().pending }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En attente</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-check text-green-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().accepted }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En cours</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-flag-checkered text-blue-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().completed }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Terminées</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-xmark text-red-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().rejected }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Refusées</p>
+      </div>
     </div>
 
-    <!-- DETAILS MODAL -->
-    @if (selectedProposal(); as proposal) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" (click)="closeDetails()"></div>
+    <!-- Filtres -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      <button (click)="activeFilter.set('all')"
+        [ngClass]="activeFilter() === 'all' ? 'bg-primary text-white' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
+        class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+        Toutes ({{ stats().total }})
+      </button>
+      <button (click)="activeFilter.set('pending')"
+        [ngClass]="activeFilter() === 'pending' ? 'bg-yellow-500 text-black' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
+        class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+        En attente ({{ stats().pending }})
+      </button>
+      <button (click)="activeFilter.set('accepted')"
+        [ngClass]="activeFilter() === 'accepted' ? 'bg-green-500 text-black' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
+        class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+        En cours ({{ stats().accepted }})
+      </button>
+      <button (click)="activeFilter.set('completed')"
+        [ngClass]="activeFilter() === 'completed' ? 'bg-blue-500 text-white' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
+        class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+        Terminées ({{ stats().completed }})
+      </button>
+      <button (click)="activeFilter.set('rejected')"
+        [ngClass]="activeFilter() === 'rejected' ? 'bg-red-500 text-white' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
+        class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+        Refusées ({{ stats().rejected }})
+      </button>
+    </div>
 
-        <!-- Modal Content -->
-        <div
-            class="bg-[#1a1a1a] rounded-3xl w-full max-w-2xl shadow-2xl relative z-10 overflow-hidden transform transition-all">
-            <div class="bg-primary px-8 py-6 text-white flex justify-between items-start">
-                <div>
-                    <h2 class="text-2xl font-bold mb-1">{{ proposal.title }}</h2>
-                    <p class="text-white/80 text-sm">Proposé par {{ proposal.clientEmail }}</p>
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="flex flex-col items-center justify-center py-20 text-subtext">
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4 text-primary"></i>
+        <p>Chargement de vos missions...</p>
+      </div>
+    } @else {
+
+      <!-- Empty state -->
+      @if (filteredProposals().length === 0) {
+        <div class="bg-[#1a1a1a] border border-white/5 rounded-3xl p-12 text-center">
+          <div class="w-20 h-20 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-briefcase text-primary text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">
+            @if (activeFilter() === 'all') { Aucune mission }
+            @else if (activeFilter() === 'pending') { Aucune proposition en attente }
+            @else if (activeFilter() === 'accepted') { Aucune mission en cours }
+            @else if (activeFilter() === 'completed') { Aucune mission terminée }
+            @else { Aucune mission refusée }
+          </h3>
+          <p class="text-subtext max-w-sm mx-auto">
+            @if (activeFilter() === 'all') {
+              Vous n'avez pas encore reçu de propositions. Complétez votre profil pour attirer les recruteurs.
+            } @else {
+              Aucune proposition ne correspond à ce filtre pour le moment.
+            }
+          </p>
+          @if (activeFilter() === 'all') {
+            <a routerLink="/profile-edit"
+              class="inline-flex items-center gap-2 mt-6 px-6 py-3 bg-primary text-white rounded-full text-sm font-bold hover:bg-primary/80 transition">
+              <i class="fa-solid fa-user-pen"></i>
+              Compléter mon profil
+            </a>
+          }
+        </div>
+      } @else {
+
+      <!-- Liste des missions -->
+      <div class="grid grid-cols-1 gap-5">
+        @for (proposal of filteredProposals(); track proposal.id) {
+          <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all">
+            <div class="flex flex-col md:flex-row gap-5">
+
+              <!-- Client Info (Gauche) -->
+              <div class="md:w-56 flex-shrink-0 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6">
+                <div class="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-xl mb-3">
+                  {{ proposal.clientEmail.charAt(0).toUpperCase() }}
                 </div>
-                <button (click)="closeDetails()" class="text-white/70 hover:text-white transition-colors">
-                    <i class="fa-solid fa-xmark text-2xl"></i>
+                <h4 class="font-bold text-white text-sm truncate w-full" [title]="proposal.clientEmail">
+                  {{ proposal.clientEmail }}
+                </h4>
+                <p class="text-xs text-subtext mt-0.5">Recruteur</p>
+                <button (click)="openDetails(proposal)"
+                  class="mt-3 text-[11px] font-bold uppercase tracking-widest text-primary hover:text-primary/70 transition">
+                  Voir les détails
                 </button>
-            </div>
+              </div>
 
-            <div class="p-8 max-h-[70vh] overflow-y-auto">
-                <div class="grid grid-cols-2 gap-6 mb-8">
-                    <div class="p-4 bg-white/5 rounded-xl">
-                        <p class="text-xs text-subtext uppercase font-bold mb-1">Budget</p>
-                        <p class="text-xl font-bold text-white">{{ proposal.budget }}</p>
-                    </div>
-                    <div class="p-4 bg-white/5 rounded-xl">
-                        <p class="text-xs text-subtext uppercase font-bold mb-1">Démarrage</p>
-                        <p class="text-xl font-bold text-white">{{ proposal.startDate }}</p>
-                    </div>
+              <!-- Mission Details (Centre) -->
+              <div class="flex-1">
+                <div class="flex items-start justify-between mb-3">
+                  <h3 class="text-lg font-bold text-white">{{ proposal.title }}</h3>
+                  <span class="inline-flex items-center gap-1.5 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shrink-0 ml-3"
+                    [class]="getStatusClass(proposal.status)">
+                    <i [class]="getStatusIcon(proposal.status) + ' text-[8px]'"></i>
+                    {{ getStatusLabel(proposal.status) }}
+                  </span>
                 </div>
 
-                <h3 class="font-bold text-white mb-3">Description du projet</h3>
-                <p class="text-subtext leading-relaxed mb-6 whitespace-pre-wrap">
-                    {{ proposal.description }}
-                </p>
-
-                @if (proposal.status === 'pending') {
-                <div class="flex gap-4 pt-6 border-t border-white/5">
-                    <button (click)="confirmAction('rejected', proposal); closeDetails()"
-                        class="flex-1 py-3 bg-white/5 border border-white/10 text-subtext font-bold rounded-xl hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-colors">
-                        Refuser
-                    </button>
-                    <button (click)="confirmAction('accepted', proposal); closeDetails()"
-                        class="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/80 transition-colors shadow-lg shadow-primary/30">
-                        Accepter
-                    </button>
+                <div class="flex flex-wrap gap-4 text-sm text-subtext mb-4">
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-coins text-subtext text-xs"></i>
+                    <span class="text-white font-semibold">{{ proposal.budget }}</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-calendar text-subtext text-xs"></i>
+                    <span>Début : {{ proposal.startDate }}</span>
+                  </div>
+                  @if (toDate(proposal.createdAt)) {
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-paper-plane text-subtext text-xs"></i>
+                      <span>Reçue le {{ toDate(proposal.createdAt) | date:'dd/MM/yyyy' }}</span>
+                    </div>
+                  }
                 </div>
-                }
+
+                <div class="bg-white/5 rounded-xl p-4 mb-4">
+                  <p class="text-subtext text-sm leading-relaxed line-clamp-2">{{ proposal.description }}</p>
+                </div>
+
+                <!-- Actions selon le statut -->
+                <div class="flex flex-wrap gap-2">
+                  @if (proposal.status === 'pending') {
+                    <button (click)="confirmAction('accepted', proposal)"
+                      class="px-4 py-2 bg-green-500/10 border border-green-500/30 text-green-400 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-green-500/20 transition-all">
+                      <i class="fa-solid fa-check mr-1.5"></i>Accepter
+                    </button>
+                    <button (click)="confirmAction('rejected', proposal)"
+                      class="px-4 py-2 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-all">
+                      <i class="fa-solid fa-xmark mr-1.5"></i>Refuser
+                    </button>
+                  }
+                  @if (proposal.status === 'accepted') {
+                    <button (click)="confirmAction('completed', proposal)"
+                      class="px-4 py-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-blue-500/20 transition-all">
+                      <i class="fa-solid fa-flag-checkered mr-1.5"></i>Clôturer la mission
+                    </button>
+                    <button (click)="contactRecruiter(proposal)"
+                      class="px-4 py-2 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:border-primary/30 hover:text-primary transition-all">
+                      <i class="fa-regular fa-envelope mr-1.5"></i>Contacter
+                    </button>
+                  }
+                  @if (proposal.status === 'completed') {
+                    <span class="px-4 py-2 bg-blue-500/10 border border-blue-500/30 text-blue-400 rounded-full text-[11px] font-bold uppercase tracking-widest">
+                      <i class="fa-solid fa-check-double mr-1.5"></i>Mission terminée
+                    </span>
+                  }
+                </div>
+              </div>
+
             </div>
-        </div>
-    </div>
+          </div>
+        }
+      </div>
+      }
     }
 
-    <!-- CONFIRMATION MODAL -->
-    @if (showConfirmModal(); as action) {
+  </div>
+
+  <!-- DETAILS MODAL -->
+  @if (selectedProposal(); as proposal) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeDetails()"></div>
+
+      <div class="bg-[#1a1a1a] rounded-3xl w-full max-w-2xl shadow-2xl relative z-10 overflow-hidden">
+        <div class="bg-primary px-8 py-6 text-white flex justify-between items-start">
+          <div>
+            <h2 class="text-2xl font-bold mb-1">{{ proposal.title }}</h2>
+            <p class="text-white/80 text-sm">Proposé par {{ proposal.clientEmail }}</p>
+          </div>
+          <button (click)="closeDetails()" class="text-white/70 hover:text-white transition">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+          </button>
+        </div>
+
+        <div class="p-8 max-h-[70vh] overflow-y-auto">
+          <div class="grid grid-cols-2 gap-6 mb-8">
+            <div class="p-4 bg-white/5 rounded-xl">
+              <p class="text-xs text-subtext uppercase font-bold mb-1">Budget</p>
+              <p class="text-xl font-bold text-white">{{ proposal.budget }}</p>
+            </div>
+            <div class="p-4 bg-white/5 rounded-xl">
+              <p class="text-xs text-subtext uppercase font-bold mb-1">Démarrage</p>
+              <p class="text-xl font-bold text-white">{{ proposal.startDate }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 mb-6">
+            <span class="text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
+              [class]="getStatusClass(proposal.status)">
+              <i [class]="getStatusIcon(proposal.status) + ' mr-1'"></i>
+              {{ getStatusLabel(proposal.status) }}
+            </span>
+            @if (toDate(proposal.createdAt)) {
+              <span class="text-xs text-subtext">
+                Reçue le {{ toDate(proposal.createdAt) | date:'dd MMMM yyyy' }}
+              </span>
+            }
+          </div>
+
+          <h3 class="font-bold text-white mb-3">Description du projet</h3>
+          <p class="text-subtext leading-relaxed mb-6 whitespace-pre-wrap">{{ proposal.description }}</p>
+
+          <!-- Actions selon statut -->
+          @if (proposal.status === 'pending') {
+            <div class="flex gap-4 pt-6 border-t border-white/5">
+              <button (click)="confirmAction('rejected', proposal); closeDetails()"
+                class="flex-1 py-3 bg-white/5 border border-white/10 text-subtext font-bold rounded-xl hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-colors">
+                Refuser
+              </button>
+              <button (click)="confirmAction('accepted', proposal); closeDetails()"
+                class="flex-1 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/80 transition-colors shadow-lg shadow-primary/30">
+                Accepter
+              </button>
+            </div>
+          }
+          @if (proposal.status === 'accepted') {
+            <div class="flex gap-4 pt-6 border-t border-white/5">
+              <button (click)="contactRecruiter(proposal)"
+                class="flex-1 py-3 bg-white/5 border border-white/10 text-subtext font-bold rounded-xl hover:bg-primary/10 hover:border-primary/30 hover:text-primary transition-colors flex items-center justify-center gap-2">
+                <i class="fa-solid fa-message"></i>
+                Contacter le recruteur
+              </button>
+              <button (click)="confirmAction('completed', proposal); closeDetails()"
+                class="flex-1 py-3 bg-blue-500 text-white font-bold rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-flag-checkered"></i>
+                Clôturer la mission
+              </button>
+            </div>
+          }
+          @if (proposal.status === 'completed') {
+            <div class="pt-6 border-t border-white/5 text-center">
+              <span class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl font-bold">
+                <i class="fa-solid fa-check-double"></i>
+                Cette mission est terminée
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- CONFIRMATION MODAL -->
+  @if (showConfirmModal(); as action) {
     <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" (click)="closeConfirmModal()">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeConfirmModal()"></div>
+
+      <div class="bg-[#1a1a1a] rounded-2xl shadow-xl w-full max-w-sm relative z-10 overflow-hidden">
+        <div class="p-6 text-center">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            [ngClass]="{
+              'bg-green-500/10 text-green-400': action.type === 'accepted',
+              'bg-blue-500/10 text-blue-400': action.type === 'completed',
+              'bg-red-500/10 text-red-400': action.type === 'rejected'
+            }">
+            @if (action.type === 'accepted') { <i class="fa-solid fa-check text-3xl"></i> }
+            @else if (action.type === 'completed') { <i class="fa-solid fa-flag-checkered text-3xl"></i> }
+            @else { <i class="fa-solid fa-xmark text-3xl"></i> }
+          </div>
+
+          <h3 class="text-xl font-bold text-white mb-2">
+            @if (action.type === 'accepted') { Accepter la mission ? }
+            @else if (action.type === 'completed') { Clôturer la mission ? }
+            @else { Refuser la mission ? }
+          </h3>
+          <p class="text-subtext mb-6">
+            @if (action.type === 'accepted') {
+              En acceptant, cette mission passera dans vos missions en cours.
+            } @else if (action.type === 'completed') {
+              La mission sera marquée comme terminée. Le recruteur sera notifié.
+            } @else {
+              Êtes-vous sûr de vouloir refuser cette opportunité ? Cette action est irréversible.
+            }
+          </p>
+
+          <div class="flex gap-3">
+            <button (click)="closeConfirmModal()"
+              class="flex-1 py-2.5 bg-white/5 border border-white/10 text-subtext font-medium rounded-xl hover:bg-white/10 transition-colors">
+              Annuler
+            </button>
+            <button (click)="executeAction()"
+              [ngClass]="{
+                'bg-green-600': action.type === 'accepted',
+                'bg-blue-600': action.type === 'completed',
+                'bg-red-600': action.type === 'rejected'
+              }"
+              class="flex-1 py-2.5 text-white font-bold rounded-xl transition-colors shadow-md flex justify-center items-center gap-2">
+              @if (processingId()) {
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+              }
+              @if (action.type === 'accepted') { Confirmer }
+              @else if (action.type === 'completed') { Clôturer }
+              @else { Refuser }
+            </button>
+          </div>
         </div>
-
-        <!-- Modal -->
-        <div
-            class="bg-[#1a1a1a] rounded-2xl shadow-xl w-full max-w-sm relative z-10 overflow-hidden scale-100 transition-all">
-            <div class="p-6 text-center">
-                <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                    [class.bg-green-100]="action.type === 'accepted'"
-                    [class.text-primary]="action.type === 'accepted'" [class.bg-red-100]="action.type === 'rejected'"
-                    [class.text-red-600]="action.type === 'rejected'">
-                    @if (action.type === 'accepted') {
-                    <i class="fa-solid fa-check text-3xl"></i>
-                    } @else {
-                    <i class="fa-solid fa-xmark text-3xl"></i>
-                    }
-                </div>
-
-                <h3 class="text-xl font-bold text-white mb-2">
-                    {{ action.type === 'accepted' ? 'Accepter la mission ?' : 'Refuser la mission ?' }}
-                </h3>
-                <p class="text-subtext mb-6">
-                    {{ action.type === 'accepted'
-                    ? 'Bravos ! En acceptant, cette mission passera dans vos missions en cours.'
-                    : 'Êtes-vous sûr de vouloir refuser cette opportunité ? Cette action est irréversible.' }}
-                </p>
-
-                <div class="flex gap-3">
-                    <button (click)="closeConfirmModal()"
-                        class="flex-1 py-2.5 bg-white/5 border border-white/10 text-subtext font-medium rounded-xl hover:bg-white/10 transition-colors">
-                        Annuler
-                    </button>
-                    <button (click)="executeAction()" [class.bg-green-600]="action.type === 'accepted'"
-                        [class.bg-red-600]="action.type === 'rejected'"
-                        class="flex-1 py-2.5 text-white font-bold rounded-xl transition-colors shadow-md flex justify-center items-center gap-2">
-                        @if (processingId()) {
-                        <i class="fa-solid fa-circle-notch fa-spin"></i>
-                        }
-                        {{ action.type === 'accepted' ? 'Confirmer' : 'Refuser' }}
-                    </button>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
-    }
+  }
 
 </app-dashboard-layout>

@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, NgZone } from '@angular/core';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -31,6 +31,7 @@ import { Router } from '@angular/router';
 })
 export class Auth {
   private router = inject(Router);
+  private zone = inject(NgZone);
 
   // État de l'authentification
   protected readonly currentUser = signal<BaseUser | null>(null);
@@ -43,15 +44,18 @@ export class Auth {
 
   /**
    * Écouter les changements d'état d'authentification
+   * IMPORTANT: onAuthStateChanged est un callback Firebase qui s'exécute HORS de la zone Angular.
+   * Sans NgZone.run(), Angular ne détecte pas le changement du signal currentUser
+   * et les composants ne se mettent pas à jour (surtout avec lazy-loaded routes).
    */
   private initAuthStateListener(): void {
     onAuthStateChanged(firebase.auth, async (firebaseUser) => {
       if (firebaseUser) {
         await this.loadUserProfile(firebaseUser);
       } else {
-        this.currentUser.set(null);
+        this.zone.run(() => this.currentUser.set(null));
       }
-      this.isLoading.set(false);
+      this.zone.run(() => this.isLoading.set(false));
     });
   }
 
@@ -67,12 +71,14 @@ export class Auth {
         const createdAt = userData['createdAt'];
         const updatedAt = userData['updatedAt'];
 
-        this.currentUser.set({
-          ...userData,
-          id: firebaseUser.uid,
-          createdAt: createdAt instanceof Timestamp ? createdAt.toDate() : new Date(),
-          updatedAt: updatedAt instanceof Timestamp ? updatedAt.toDate() : new Date()
-        } as BaseUser);
+        this.zone.run(() => {
+          this.currentUser.set({
+            ...userData,
+            id: firebaseUser.uid,
+            createdAt: createdAt instanceof Timestamp ? createdAt.toDate() : new Date(),
+            updatedAt: updatedAt instanceof Timestamp ? updatedAt.toDate() : new Date()
+          } as BaseUser);
+        });
       } else {
         // Document Firestore manquant — créer un profil recruteur minimal
         console.warn('Profil Firestore manquant pour', firebaseUser.uid, '— création d\'un profil recruteur minimal');
@@ -107,12 +113,14 @@ export class Auth {
         await setDoc(doc(firebase.firestore, 'users', firebaseUser.uid), cleanRecruiter);
         console.log('✅ Profil recruteur minimal créé pour', firebaseUser.uid);
 
-        this.currentUser.set({
-          ...cleanRecruiter,
-          id: firebaseUser.uid,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        } as BaseUser);
+        this.zone.run(() => {
+          this.currentUser.set({
+            ...cleanRecruiter,
+            id: firebaseUser.uid,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          } as BaseUser);
+        });
       }
     } catch (error) {
       console.error('Erreur lors du chargement du profil:', error);
@@ -562,4 +570,29 @@ export class Auth {
   isAuthenticated() { return this.currentUser() !== null; }
   isExpert() { return this.currentUser()?.role === 'expert'; }
   isRecruiter() { return this.currentUser()?.role === 'recruiter'; }
+
+  /**
+   * Attend que l'utilisateur soit chargé depuis Firebase Auth.
+   * Retourne l'utilisateur ou null si timeout (5s).
+   * À utiliser dans ngOnInit des composants qui dépendent de currentUser.
+   */
+  waitForUser(): Promise<BaseUser | null> {
+    // Si déjà disponible, retourner immédiatement
+    if (this.currentUser()) return Promise.resolve(this.currentUser());
+
+    return new Promise((resolve) => {
+      const maxWait = 5000;
+      const interval = 50;
+      let elapsed = 0;
+
+      const check = setInterval(() => {
+        elapsed += interval;
+        const user = this.currentUser();
+        if (user || elapsed >= maxWait) {
+          clearInterval(check);
+          resolve(user);
+        }
+      }, interval);
+    });
+  }
 }

@@ -1,0 +1,219 @@
+<app-dashboard-layout [pageTitle]="'Messages'" [pageSubtitle]="'Vos conversations'" [showSearch]="false">
+
+  <div class="flex h-[calc(100vh-73px)] bg-heroBg overflow-hidden">
+
+    <!-- ════════════════════════════════════════════
+         SIDEBAR CONVERSATIONS
+    ════════════════════════════════════════════ -->
+    <aside class="w-80 flex-shrink-0 bg-[#1a1a1a] border-r border-white/5 flex flex-col"
+      [class.hidden]="activeConversation()"
+      [class.md:flex]="activeConversation()"
+      [class.flex]="!activeConversation()">
+
+      <!-- Header sidebar -->
+      <div class="p-4 border-b border-white/5 flex-shrink-0">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-bold text-white text-base">
+            Conversations
+            @if (totalUnread() > 0) {
+              <span class="ml-2 bg-primary text-white text-[10px] font-black px-2 py-0.5 rounded-full">{{ totalUnread() }}</span>
+            }
+          </h2>
+        </div>
+        <!-- Search -->
+        <div class="relative">
+          <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-subtext text-xs"></i>
+          <input type="text" placeholder="Rechercher..."
+            [value]="searchQuery()"
+            (input)="onSearch($event)"
+            class="w-full pl-9 pr-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
+        </div>
+      </div>
+
+      <!-- Liste conversations -->
+      <div class="flex-1 overflow-y-auto">
+
+        @if (isLoadingConvs()) {
+          @for (i of [1,2,3,4]; track i) {
+            <div class="p-4 border-b border-white/5 animate-pulse flex gap-3">
+              <div class="w-11 h-11 rounded-full bg-white/5 shrink-0"></div>
+              <div class="flex-1 space-y-2">
+                <div class="h-3 bg-white/5 rounded w-2/3"></div>
+                <div class="h-2 bg-white/5 rounded w-full"></div>
+              </div>
+            </div>
+          }
+        } @else if (filteredConversations().length === 0) {
+          <div class="flex flex-col items-center justify-center py-16 text-subtext px-4 text-center">
+            <i class="fa-regular fa-comments text-4xl mb-4 opacity-20"></i>
+            @if (searchQuery()) {
+              <p class="text-sm">Aucun résultat pour "{{ searchQuery() }}"</p>
+            } @else {
+              <p class="text-sm font-medium text-white mb-1">Aucune conversation</p>
+              <p class="text-xs">Les conversations démarrent automatiquement lorsqu'une mission est acceptée ou qu'un recruteur vous contacte.</p>
+            }
+          </div>
+        } @else {
+          @for (conv of filteredConversations(); track conv.id) {
+            @let other = getOtherParticipant(conv);
+            @let unread = getUnreadCount(conv);
+            <button (click)="selectConversation(conv)"
+              [ngClass]="activeConversation()?.id === conv.id
+                ? 'bg-white/5 border-l-2 border-l-primary'
+                : 'border-l-2 border-l-transparent hover:bg-white/5'"
+              class="w-full p-4 border-b border-white/5 flex gap-3 transition-colors text-left">
+
+              <!-- Avatar -->
+              <div class="relative shrink-0">
+                <img [src]="other?.avatar || getInitialAvatar(other?.name || '?')"
+                  [alt]="other?.name || ''"
+                  class="w-11 h-11 rounded-full object-cover border border-white/10">
+                @if (unread > 0) {
+                  <span class="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-black rounded-full flex items-center justify-center">
+                    {{ unread > 9 ? '9+' : unread }}
+                  </span>
+                }
+              </div>
+
+              <!-- Infos -->
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline justify-between gap-1 mb-0.5">
+                  <p [ngClass]="unread > 0 ? 'text-white' : 'text-white/80'"
+                    class="font-semibold text-sm truncate">
+                    {{ other?.name || 'Inconnu' }}
+                  </p>
+                  <span class="text-[10px] text-subtext shrink-0">{{ formatMsgDate(conv.lastMessageAt) }}</span>
+                </div>
+                @if (conv.proposalTitle) {
+                  <p class="text-[10px] text-primary/70 truncate mb-0.5">
+                    <i class="fa-solid fa-briefcase text-[9px] mr-1"></i>{{ conv.proposalTitle }}
+                  </p>
+                }
+                <p [ngClass]="unread > 0 ? 'text-white/60' : 'text-subtext'"
+                  class="text-xs truncate">
+                  @if (conv.lastMessageSenderId === currentUser()?.id) {
+                    <span class="text-primary/60 mr-1">Vous :</span>
+                  }
+                  {{ conv.lastMessage || 'Conversation démarrée' }}
+                </p>
+              </div>
+            </button>
+          }
+        }
+      </div>
+    </aside>
+
+    <!-- ════════════════════════════════════════════
+         ZONE CHAT
+    ════════════════════════════════════════════ -->
+    <main class="flex-1 flex flex-col min-w-0">
+
+      @if (!activeConversation()) {
+        <!-- Empty state (desktop) -->
+        <div class="hidden md:flex flex-1 flex-col items-center justify-center text-subtext">
+          <div class="w-24 h-24 bg-primary/10 border border-primary/20 rounded-full flex items-center justify-center mb-6">
+            <i class="fa-solid fa-message text-primary text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">Sélectionnez une conversation</h3>
+          <p class="text-sm text-center max-w-xs">Choisissez une conversation à gauche pour commencer à échanger.</p>
+        </div>
+      } @else {
+        @let conv = activeConversation()!;
+        @let other = getOtherParticipant(conv);
+
+        <!-- Header chat -->
+        <div class="bg-[#1a1a1a] border-b border-white/5 px-4 py-3 flex items-center gap-3 flex-shrink-0">
+          <!-- Back (mobile) -->
+          <button (click)="closeConversation()"
+            class="md:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 transition text-subtext">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+
+          <!-- Avatar + Nom -->
+          <img [src]="other?.avatar || getInitialAvatar(other?.name || '?')"
+            [alt]="other?.name || ''"
+            class="w-10 h-10 rounded-full object-cover border border-white/10 shrink-0">
+
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold text-white text-sm truncate">{{ other?.name || 'Inconnu' }}</h3>
+            <p class="text-[11px] text-subtext capitalize">
+              {{ other?.role === 'recruiter' ? 'Recruteur' : 'Expert Angular' }}
+              @if (conv.proposalTitle) {
+                <span class="mx-1 text-white/20">•</span>
+                <span class="text-primary/70">{{ conv.proposalTitle }}</span>
+              }
+            </p>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div #messagesContainer
+          class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 scroll-smooth">
+
+          @if (messages().length === 0) {
+            <div class="flex flex-col items-center justify-center h-full text-subtext py-16">
+              <i class="fa-regular fa-comment-dots text-4xl mb-4 opacity-20"></i>
+              <p class="text-sm">Aucun message. Soyez le premier à écrire !</p>
+            </div>
+          }
+
+          @for (msg of messages(); track msg.id) {
+            @let isMe = isMyMessage(msg);
+            <div class="flex gap-3" [class.flex-row-reverse]="isMe">
+
+              <!-- Avatar -->
+              @if (!isMe) {
+                <img [src]="msg.senderAvatar || getInitialAvatar(msg.senderName)"
+                  [alt]="msg.senderName"
+                  class="w-8 h-8 rounded-full object-cover border border-white/10 shrink-0 mt-1 self-end">
+              }
+
+              <!-- Bulle -->
+              <div class="max-w-[70%] flex flex-col" [class.items-end]="isMe">
+                @if (!isMe) {
+                  <span class="text-[10px] text-subtext mb-1 ml-1">{{ msg.senderName }}</span>
+                }
+                <div class="px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap break-words"
+                  [ngClass]="isMe
+                    ? 'bg-primary text-white rounded-br-sm'
+                    : 'bg-white/10 text-white/90 rounded-bl-sm'">
+                  {{ msg.content }}
+                </div>
+                <span class="text-[10px] text-subtext mt-1" [class.mr-1]="isMe" [class.ml-1]="!isMe">
+                  {{ toDate(msg.createdAt) | date:'HH:mm' }}
+                </span>
+              </div>
+
+            </div>
+          }
+        </div>
+
+        <!-- Input message -->
+        <div class="bg-[#1a1a1a] border-t border-white/5 p-3 md:p-4 flex-shrink-0">
+          <div class="flex items-end gap-3">
+            <textarea
+              [value]="newMessage()"
+              (input)="newMessage.set($any($event.target).value)"
+              (keydown)="onKeydown($event)"
+              placeholder="Écrire un message... (Entrée pour envoyer)"
+              rows="1"
+              class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition resize-none max-h-32 overflow-y-auto"
+            ></textarea>
+            <button (click)="sendMessage()"
+              [disabled]="!newMessage().trim() || isSending()"
+              class="w-11 h-11 bg-primary rounded-xl flex items-center justify-center transition hover:bg-primary/80 disabled:opacity-40 disabled:cursor-not-allowed shrink-0">
+              @if (isSending()) {
+                <i class="fa-solid fa-circle-notch fa-spin text-white text-sm"></i>
+              } @else {
+                <i class="fa-solid fa-paper-plane text-white text-sm"></i>
+              }
+            </button>
+          </div>
+          <p class="text-[10px] text-subtext mt-2 ml-1">Shift+Entrée pour un saut de ligne</p>
+        </div>
+      }
+
+    </main>
+  </div>
+
+</app-dashboard-layout>

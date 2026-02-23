@@ -11,6 +11,7 @@ import { Router, RouterModule } from '@angular/router';
 import { DashboardLayout } from '@shared/components/dashboard-layout/dashboard-layout.component';
 import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
+import { MessagingService } from '@core/services/messaging.service';
 import { Proposal } from '@core/models/user.model';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { firebase } from '@core/config/firebase.config';
@@ -32,12 +33,13 @@ export class RecruiterMissions implements OnInit {
   private auth = inject(Auth);
   private expertService = inject(ExpertService);
   private router = inject(Router);
+  private messaging = inject(MessagingService);
 
   protected readonly currentUser = this.auth.getCurrentUser();
 
   // State
   protected readonly isLoading = signal(true);
-  protected readonly activeFilter = signal<'all' | 'pending' | 'accepted' | 'rejected'>('all');
+  protected readonly activeFilter = signal<'all' | 'pending' | 'accepted' | 'completed' | 'rejected'>('all');
   protected readonly allProposals = signal<ProposalWithExpert[]>([]);
   protected readonly selectedProposal = signal<ProposalWithExpert | null>(null);
 
@@ -48,6 +50,7 @@ export class RecruiterMissions implements OnInit {
       total: p.length,
       pending: p.filter(x => x.status === 'pending').length,
       accepted: p.filter(x => x.status === 'accepted').length,
+      completed: p.filter(x => x.status === 'completed').length,
       rejected: p.filter(x => x.status === 'rejected').length
     };
   });
@@ -130,27 +133,52 @@ export class RecruiterMissions implements OnInit {
     this.router.navigate(['/expert', expertId]);
   }
 
+  protected async contactExpert(proposal: ProposalWithExpert): Promise<void> {
+    const user = this.currentUser();
+    if (!user) return;
+    try {
+      await this.messaging.getOrCreateConversation(
+        user.id,
+        proposal.expertId,
+        { name: `${user.firstName} ${user.lastName}`, avatar: user.avatar, role: 'recruiter' },
+        { name: proposal.expertName || 'Expert', avatar: proposal.expertAvatar, role: 'expert' },
+        proposal.id,
+        proposal.title
+      );
+      this.closeDetails();
+      this.router.navigate(['/messages']);
+    } catch (e) {
+      console.error('Erreur contact expert:', e);
+    }
+  }
+
   protected getStatusClass(status: Proposal['status']): string {
     switch (status) {
-      case 'pending':  return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
-      case 'accepted': return 'bg-green-500/10 text-green-400 border border-green-500/20';
-      case 'rejected': return 'bg-red-500/10 text-red-400 border border-red-500/20';
+      case 'pending':   return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
+      case 'accepted':  return 'bg-green-500/10 text-green-400 border border-green-500/20';
+      case 'completed': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+      case 'rejected':  return 'bg-red-500/10 text-red-400 border border-red-500/20';
+      default:          return 'bg-white/5 text-subtext border border-white/10';
     }
   }
 
   protected getStatusIcon(status: Proposal['status']): string {
     switch (status) {
-      case 'pending':  return 'fa-solid fa-clock';
-      case 'accepted': return 'fa-solid fa-check';
-      case 'rejected': return 'fa-solid fa-xmark';
+      case 'pending':   return 'fa-solid fa-clock';
+      case 'accepted':  return 'fa-solid fa-check';
+      case 'completed': return 'fa-solid fa-flag-checkered';
+      case 'rejected':  return 'fa-solid fa-xmark';
+      default:          return 'fa-solid fa-circle';
     }
   }
 
   protected getStatusLabel(status: Proposal['status']): string {
     switch (status) {
-      case 'pending':  return 'En attente';
-      case 'accepted': return 'Acceptée';
-      case 'rejected': return 'Refusée';
+      case 'pending':   return 'En attente';
+      case 'accepted':  return 'Acceptée';
+      case 'completed': return 'Terminée';
+      case 'rejected':  return 'Refusée';
+      default:          return status;
     }
   }
 

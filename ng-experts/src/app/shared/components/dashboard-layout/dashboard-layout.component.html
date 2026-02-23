@@ -67,6 +67,11 @@
         <div class="flex items-center gap-3">
           <a routerLink="/messages" class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative" title="Messages">
             <i class="fa-regular fa-envelope text-subtext"></i>
+            @if (unreadMessagesCount() > 0) {
+              <span class="absolute top-1 right-1 w-4 h-4 bg-primary text-white text-[9px] font-black rounded-full flex items-center justify-center leading-none">
+                {{ unreadMessagesCount() > 9 ? '9+' : unreadMessagesCount() }}
+              </span>
+            }
           </a>
 
           <a routerLink="/notifications" class="w-10 h-10 rounded-lg hover:bg-white/5 flex items-center justify-center transition relative" title="Notifications">

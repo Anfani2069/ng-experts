@@ -183,6 +183,24 @@ export interface SearchPreferences {
   availability: string[];
   maxDailyRate?: number;
 }
+/**
+ * Notification applicative
+ */
+export interface AppNotification {
+  id?: string;
+  userId: string;
+  type: 'message' | 'proposal' | 'proposal_accepted' | 'proposal_rejected' | 'mission_completed' | 'system';
+  title: string;
+  body: string;
+  link?: string;
+  read: boolean;
+  createdAt: Date | any;
+  // Données contextuelles
+  refId?: string;   // ID de la proposition ou conversation liée
+  fromName?: string;
+  fromAvatar?: string;
+}
+
 export interface Proposal {
   id?: string;
   expertId: string;
@@ -192,6 +210,44 @@ export interface Proposal {
   description: string;
   budget: string;
   startDate: string;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'accepted' | 'rejected' | 'completed';
   createdAt: Date;
+  completedAt?: Date;
 }
+
+/**
+ * Message dans une conversation
+ */
+export interface ChatMessage {
+  id?: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderAvatar?: string;
+  content: string;
+  createdAt: Date | any;
+  read: boolean;
+}
+
+/**
+ * Conversation entre un expert et un recruteur
+ */
+export interface Conversation {
+  id?: string;
+  participantIds: string[];          // [expertId, recruiterId]
+  participants: {
+    [userId: string]: {
+      name: string;
+      avatar?: string;
+      role: 'expert' | 'recruiter';
+    }
+  };
+  proposalId?: string;               // Lié à une proposition si applicable
+  proposalTitle?: string;
+  lastMessage?: string;
+  lastMessageAt: Date | any;
+  lastMessageSenderId?: string;
+  unreadCount: { [userId: string]: number };
+  createdAt: Date | any;
+}
+

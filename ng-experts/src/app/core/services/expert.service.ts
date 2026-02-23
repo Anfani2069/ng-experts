@@ -1,12 +1,12 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { collection, doc, getDoc, getDocs, query, where, updateDoc, Timestamp } from 'firebase/firestore';
-import { Expert } from '@core/models/user.model';
+import { collection, doc, getDoc, getDocs, query, where, updateDoc, Timestamp, addDoc } from 'firebase/firestore';
+import { Expert, Proposal } from '@core/models/user.model';
 import { firebase } from '@core/config/firebase.config';
+import { NotificationService } from './notification.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ExpertService {
+  private notifService = inject(NotificationService);
   private experts = signal<Expert[]>([]);
   private isLoading = signal<boolean>(false);
   private error = signal<string | null>(null);
@@ -180,17 +180,23 @@ export class ExpertService {
   }
 
   /**
-   * Ajoute une proposition de mission pour un expert
+   * Ajoute une proposition + notifie l'expert
    */
-  async addProposal(proposal: Omit<import('@core/models/user.model').Proposal, 'id'>): Promise<void> {
+  async addProposal(proposal: Omit<Proposal, 'id'>, recruiterName?: string): Promise<string> {
     try {
       this.isLoading.set(true);
-      const proposalsRef = collection(firebase.firestore, 'proposals');
-      await import('firebase/firestore').then(firestore =>
-        firestore.addDoc(proposalsRef, proposal)
-      );
+      const ref = await addDoc(collection(firebase.firestore, 'proposals'), proposal);
+      try {
+        await this.notifService.notifyNewProposal(
+          proposal.expertId,
+          recruiterName || proposal.clientEmail,
+          proposal.title,
+          ref.id
+        );
+      } catch (e) { console.warn('Notif proposal failed:', e); }
+      return ref.id;
     } catch (error) {
-      console.error('Erreur lors de l\'ajout de la proposition:', error);
+      console.error('Erreur ajout proposition:', error);
       throw error;
     } finally {
       this.isLoading.set(false);
@@ -209,17 +215,21 @@ export class ExpertService {
       const querySnapshot = await getDocs(q);
       const proposals: import('@core/models/user.model').Proposal[] = [];
 
-      querySnapshot.forEach((doc) => {
-        proposals.push({
-          id: doc.id,
-          ...doc.data()
-        } as import('@core/models/user.model').Proposal);
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        // Filtrer les propositions invalides (sans titre = données corrompues)
+        if (data['title']) {
+          proposals.push({
+            id: docSnap.id,
+            ...data
+          } as import('@core/models/user.model').Proposal);
+        }
       });
 
       // Trier par date décroissante (plus récent en premier)
       return proposals.sort((a, b) => {
-        const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt);
-        const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt);
+        const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt as any);
+        const dateB = b.createdAt instanceof Date ? b.createdAt : new Date(b.createdAt as any);
         return dateB.getTime() - dateA.getTime();
       });
 
@@ -256,23 +266,41 @@ export class ExpertService {
   }
 
   /**
-   * Met à jour le statut d'une proposition (acceptée/refusée)
+   * Met à jour le statut d'une proposition + notifie le recruteur
    */
   async updateProposalStatus(
     proposalId: string,
-    status: 'accepted' | 'rejected'
+    status: 'accepted' | 'rejected' | 'completed',
+    expertName?: string
   ): Promise<void> {
     try {
       this.isLoading.set(true);
       const proposalRef = doc(firebase.firestore, 'proposals', proposalId);
+      const updateData: any = { status, updatedAt: new Date() };
+      if (status === 'completed') {
+        updateData.completedAt = new Date();
+      }
+      await updateDoc(proposalRef, updateData);
 
-      await updateDoc(proposalRef, {
-        status,
-        updatedAt: new Date()
-      });
+      // Notifier le recruteur si clientId disponible
+      try {
+        const snap = await getDoc(proposalRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          if (data['clientId'] && expertName) {
+            if (status === 'accepted') {
+              await this.notifService.notifyProposalAccepted(data['clientId'], expertName, data['title'], proposalId);
+            } else if (status === 'rejected') {
+              await this.notifService.notifyProposalRejected(data['clientId'], expertName, data['title'], proposalId);
+            } else if (status === 'completed') {
+              await this.notifService.notifyMissionCompleted(data['clientId'], expertName, data['title'], proposalId);
+            }
+          }
+        }
+      } catch (e) { console.warn('Notif status failed:', e); }
 
     } catch (error) {
-      console.error('Erreur lors de la mise à jour du statut:', error);
+      console.error('Erreur mise à jour statut proposition:', error);
       throw error;
     } finally {
       this.isLoading.set(false);
