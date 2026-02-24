@@ -64,7 +64,9 @@ export class Login {
         const waitAndRedirect = () => {
           const user = this.auth.getCurrentUser()();
           if (user) {
-            if (user.role === 'recruiter') {
+            if (user.role === 'admin') {
+              this.router.navigate(['/admin/dashboard']);
+            } else if (user.role === 'recruiter') {
               this.router.navigate(['/recruiter/dashboard']);
             } else {
               this.router.navigate(['/dashboard']);
@@ -120,8 +122,8 @@ export class Login {
         this.success.set(result.message);
         setTimeout(() => {
           const user = this.auth.getCurrentUser()();
-          if (user?.role === 'expert') {
-            this.router.navigate(['/dashboard']);
+          if (user?.role === 'admin') {
+            this.router.navigate(['/admin/dashboard']);
           } else if (user?.role === 'recruiter') {
             this.router.navigate(['/recruiter/dashboard']);
           } else {

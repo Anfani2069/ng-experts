@@ -39,7 +39,7 @@ export class RecruiterMissions implements OnInit {
 
   // State
   protected readonly isLoading = signal(true);
-  protected readonly activeFilter = signal<'all' | 'pending' | 'accepted' | 'completed' | 'rejected'>('all');
+  protected readonly activeFilter = signal<'all' | 'pending' | 'accepted' | 'completed' | 'rejected' | 'expired'>('all');
   protected readonly allProposals = signal<ProposalWithExpert[]>([]);
   protected readonly selectedProposal = signal<ProposalWithExpert | null>(null);
 
@@ -51,7 +51,8 @@ export class RecruiterMissions implements OnInit {
       pending: p.filter(x => x.status === 'pending').length,
       accepted: p.filter(x => x.status === 'accepted').length,
       completed: p.filter(x => x.status === 'completed').length,
-      rejected: p.filter(x => x.status === 'rejected').length
+      rejected: p.filter(x => x.status === 'rejected').length,
+      expired: p.filter(x => x.status === 'expired').length,
     };
   });
 
@@ -158,6 +159,7 @@ export class RecruiterMissions implements OnInit {
       case 'accepted':  return 'bg-green-500/10 text-green-400 border border-green-500/20';
       case 'completed': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
       case 'rejected':  return 'bg-red-500/10 text-red-400 border border-red-500/20';
+      case 'expired':   return 'bg-orange-500/10 text-orange-400 border border-orange-500/20';
       default:          return 'bg-white/5 text-subtext border border-white/10';
     }
   }
@@ -168,6 +170,7 @@ export class RecruiterMissions implements OnInit {
       case 'accepted':  return 'fa-solid fa-check';
       case 'completed': return 'fa-solid fa-flag-checkered';
       case 'rejected':  return 'fa-solid fa-xmark';
+      case 'expired':   return 'fa-solid fa-hourglass-end';
       default:          return 'fa-solid fa-circle';
     }
   }
@@ -178,6 +181,7 @@ export class RecruiterMissions implements OnInit {
       case 'accepted':  return 'Acceptée';
       case 'completed': return 'Terminée';
       case 'rejected':  return 'Refusée';
+      case 'expired':   return 'Expirée (non répondu)';
       default:          return status;
     }
   }

@@ -31,15 +31,16 @@ export class Navbar {
   }
 
   protected onApplyAsExpert(): void {
-    // Remonter en haut de la page
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    // Naviguer vers la page d'inscription expert (register)
-    this.router.navigate(['/register']);
+    this.router.navigate(['/register'], { queryParams: { type: 'expert' } });
   }
 
   protected onHireExpert(): void {
-    // Remonter en haut de la page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.router.navigate(['/register'], { queryParams: { type: 'recruiter' } });
+  }
+
+  protected onLogin(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     this.router.navigate(['/login']);

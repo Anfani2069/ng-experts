@@ -17,12 +17,14 @@
       <a (click)="onNavigateHome()" class="cursor-pointer hover:text-white transition-colors">Home</a>
       <a (click)="onNavigate('experts')" class="cursor-pointer hover:text-white transition-colors">Experts</a>
       <a (click)="onNavigate('features')" class="cursor-pointer hover:text-white transition-colors">Features</a>
+      <a (click)="onApplyAsExpert()" class="cursor-pointer hover:text-white transition-colors">Apply as Expert</a>
     </div>
 
     <div class="flex items-center gap-6">
-      <button (click)="onApplyAsExpert()"
-        class="hidden lg:block text-[10px] font-bold uppercase tracking-widest text-subtext">
-        Apply as Expert
+      <button (click)="onLogin()"
+        class="hidden md:flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#252525] text-white px-5 h-[36px] rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border border-white/5 shadow-lg">
+        <i class="fa-solid fa-right-to-bracket opacity-70"></i>
+        Login
       </button>
       <button (click)="onHireExpert()"
         class="btn-fixed bg-primary text-white shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] uppercase tracking-widest">

@@ -44,6 +44,17 @@ export class ExpertsSection implements OnInit {
     const selectedTypes = this.selectedAvailabilityTypes();
 
     return allExperts.filter(expert => {
+      // Masquer les profils gelés (frozenUntil dans le futur)
+      const frozenUntil = (expert as any).frozenUntil;
+      if (frozenUntil) {
+        const frozenDate = frozenUntil instanceof Date ? frozenUntil
+          : (typeof frozenUntil === 'object' && 'seconds' in frozenUntil) ? new Date(frozenUntil.seconds * 1000)
+          : null;
+        if (frozenDate && frozenDate.getTime() > Date.now()) {
+          return false;
+        }
+      }
+
       // Filtre par ville
       if (city && !expert.city.toLowerCase().includes(city)) {
         return false;

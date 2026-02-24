@@ -11,6 +11,23 @@
       </div>
 
       <form (ngSubmit)="onSubmit()" class="space-y-6">
+
+        <!-- Type de compte : badge si forcé par URL, sélecteur sinon -->
+        @if (typeFromUrl()) {
+          <div class="flex items-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-xl">
+            <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+              @if (accountType() === 'developer') {
+                <i class="fa-solid fa-code text-primary"></i>
+              } @else {
+                <i class="fa-solid fa-briefcase text-primary"></i>
+              }
+            </div>
+            <div>
+              <p class="font-bold text-white text-sm">{{ accountType() === 'developer' ? 'Compte Développeur' : 'Compte Recruteur' }}</p>
+              <p class="text-subtext text-xs">{{ accountType() === 'developer' ? 'Proposez vos services en tant qu\'expert' : 'Trouvez et recrutez les meilleurs experts' }}</p>
+            </div>
+          </div>
+        } @else {
         <div>
           <label class="block text-sm font-semibold text-white mb-3">Type de compte</label>
           <div class="grid grid-cols-2 gap-3">
@@ -57,6 +74,7 @@
             </label>
           </div>
         </div>
+        }
 
         <!-- Messages d'erreur/succès -->
         @if (error()) {

@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { DashboardLayout } from '@shared/components/dashboard-layout/dashboard-layout.component';
 import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
+import { FreezeService } from '@core/services/freeze.service';
 import { MessagingService } from '@core/services/messaging.service';
-import { Proposal } from '@core/models/user.model';
+import { Proposal, Expert } from '@core/models/user.model';
 
 @Component({
   selector: 'app-missions',
@@ -13,19 +14,24 @@ import { Proposal } from '@core/models/user.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DashboardLayout, DatePipe, RouterModule]
 })
-export class Missions implements OnInit {
+export class Missions implements OnInit, OnDestroy {
   private auth = inject(Auth);
   private expertService = inject(ExpertService);
   private messaging = inject(MessagingService);
   private router = inject(Router);
+  protected readonly freezeService = inject(FreezeService);
 
   protected readonly currentUser = this.auth.getCurrentUser();
 
   // State
   protected readonly isLoading = signal(true);
-  protected readonly activeFilter = signal<'all' | 'pending' | 'accepted' | 'completed' | 'rejected'>('all');
+  protected readonly activeFilter = signal<'all' | 'pending' | 'accepted' | 'completed' | 'rejected' | 'expired'>('all');
   protected readonly processingId = signal<string | null>(null);
   protected readonly allProposals = signal<Proposal[]>([]);
+
+  // Countdown timer
+  private _countdownInterval: any = null;
+  protected readonly countdownTick = signal(Date.now());
 
   // Modals
   protected readonly selectedProposal = signal<Proposal | null>(null);
@@ -42,7 +48,8 @@ export class Missions implements OnInit {
       pending: p.filter(x => x.status === 'pending').length,
       accepted: p.filter(x => x.status === 'accepted').length,
       completed: p.filter(x => x.status === 'completed').length,
-      rejected: p.filter(x => x.status === 'rejected').length
+      rejected: p.filter(x => x.status === 'rejected').length,
+      expired: p.filter(x => x.status === 'expired').length,
     };
   });
 
@@ -58,9 +65,22 @@ export class Missions implements OnInit {
     this.isLoading.set(true);
     try {
       await this.auth.waitForUser();
+      const user = this.currentUser();
+      if (user?.role === 'expert') {
+        await this.freezeService.init(user as Expert);
+      }
       await this.loadProposals();
+      this._countdownInterval = setInterval(() => {
+        this.countdownTick.set(Date.now());
+      }, 1000);
     } finally {
       this.isLoading.set(false);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this._countdownInterval) {
+      clearInterval(this._countdownInterval);
     }
   }
 
@@ -146,6 +166,7 @@ export class Missions implements OnInit {
       case 'accepted':  return 'bg-green-500/10 text-green-400 border border-green-500/20';
       case 'completed': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
       case 'rejected':  return 'bg-red-500/10 text-red-400 border border-red-500/20';
+      case 'expired':   return 'bg-orange-500/10 text-orange-400 border border-orange-500/20';
       default:          return 'bg-white/5 text-subtext border border-white/10';
     }
   }
@@ -156,6 +177,7 @@ export class Missions implements OnInit {
       case 'accepted':  return 'fa-solid fa-check';
       case 'completed': return 'fa-solid fa-flag-checkered';
       case 'rejected':  return 'fa-solid fa-xmark';
+      case 'expired':   return 'fa-solid fa-hourglass-end';
       default:          return 'fa-solid fa-circle';
     }
   }
@@ -166,6 +188,7 @@ export class Missions implements OnInit {
       case 'accepted':  return 'En cours';
       case 'completed': return 'Terminée';
       case 'rejected':  return 'Refusée';
+      case 'expired':   return 'Expirée';
       default:          return status;
     }
   }
@@ -175,5 +198,28 @@ export class Missions implements OnInit {
     if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
     if (typeof value === 'object' && 'seconds' in value) return new Date(value.seconds * 1000);
     return null;
+  }
+
+  // ── Countdown helpers ──────────────────────────────────────
+
+  protected getCountdown(proposal: Proposal): string {
+    this.countdownTick();
+    return this.freezeService.formatCountdown(this.freezeService.getTimeRemainingMs(proposal));
+  }
+
+  protected getCountdownPercent(proposal: Proposal): number {
+    this.countdownTick();
+    return this.freezeService.getProgressPercent(proposal);
+  }
+
+  protected isExpiringSoon(proposal: Proposal): boolean {
+    this.countdownTick();
+    const remaining = this.freezeService.getTimeRemainingMs(proposal);
+    return remaining > 0 && remaining < 15 * 60 * 1000;
+  }
+
+  protected isProposalExpired(proposal: Proposal): boolean {
+    this.countdownTick();
+    return this.freezeService.getTimeRemainingMs(proposal) <= 0;
   }
 }

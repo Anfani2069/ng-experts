@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
 
 @Component({
@@ -11,10 +11,12 @@ import { Auth } from '@core/services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule]
 })
-export class Register {
+export class Register implements OnInit {
   private auth = inject(Auth);
+  private route = inject(ActivatedRoute);
 
   protected readonly accountType = signal('developer');
+  protected readonly typeFromUrl = signal(false); // true = type forcé par l'URL, masquer le sélecteur
   protected readonly firstName = signal('');
   protected readonly lastName = signal('');
   protected readonly email = signal('');
@@ -28,6 +30,21 @@ export class Register {
   protected readonly success = signal<string | null>(null);
 
   constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      const type = params.get('type');
+      if (type === 'expert') {
+        this.accountType.set('developer');
+        this.typeFromUrl.set(true);
+      } else if (type === 'recruiter') {
+        this.accountType.set('recruiter');
+        this.typeFromUrl.set(true);
+      } else {
+        this.typeFromUrl.set(false);
+      }
+    });
+  }
 
   protected onAccountTypeChange(event: Event): void {
     const target = event.target as HTMLInputElement;

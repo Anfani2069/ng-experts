@@ -1,7 +1,7 @@
 /**
  * Types d'utilisateurs sur la plateforme Ng-Expert
  */
-export type UserRole = 'expert' | 'recruiter';
+export type UserRole = 'expert' | 'recruiter' | 'admin';
 
 /**
  * Statuts de vérification pour les experts
@@ -60,6 +60,11 @@ export interface Expert extends BaseUser {
   isAvailable: boolean;
   isPublic: boolean;
 
+  // Système de réactivité (gel de profil)
+  freezeStrikes?: number;          // Nombre de non-réponses (max 3 → gel)
+  frozenUntil?: Date | any;        // Date de fin du gel (null = pas gelé)
+  lastStrikeAt?: Date | any;       // Date du dernier strike
+
   // Statistiques
   projectsCompleted: number;
   rating?: number;
@@ -93,6 +98,15 @@ export interface Recruiter extends BaseUser {
   // Historique
   contactedExperts: string[]; // IDs des experts contactés
   savedExperts: string[]; // IDs des experts sauvegardés
+}
+
+/**
+ * Modèle Administrateur
+ * Super-utilisateur avec tous les droits de gestion
+ */
+export interface Admin extends BaseUser {
+  role: 'admin';
+  permissions?: string[];
 }
 
 /**
@@ -189,7 +203,7 @@ export interface SearchPreferences {
 export interface AppNotification {
   id?: string;
   userId: string;
-  type: 'message' | 'proposal' | 'proposal_accepted' | 'proposal_rejected' | 'mission_completed' | 'system';
+  type: 'message' | 'proposal' | 'proposal_accepted' | 'proposal_rejected' | 'mission_completed' | 'proposal_expired' | 'profile_frozen' | 'system';
   title: string;
   body: string;
   link?: string;
@@ -210,9 +224,10 @@ export interface Proposal {
   description: string;
   budget: string;
   startDate: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'completed';
+  status: 'pending' | 'accepted' | 'rejected' | 'completed' | 'expired';
   createdAt: Date;
   completedAt?: Date;
+  expiresAt?: Date | any;  // Date limite de réponse (createdAt + 1h)
 }
 
 /**

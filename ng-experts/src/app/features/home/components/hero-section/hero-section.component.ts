@@ -69,7 +69,7 @@ export class HeroSection implements OnInit, OnDestroy {
   }
 
   protected onHireExpert(): void {
-    this.router.navigate(['/login']);
+    this.router.navigate(['/register'], { queryParams: { type: 'recruiter' } });
   }
 
   protected onSearch(): void {

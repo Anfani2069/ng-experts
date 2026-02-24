@@ -185,7 +185,10 @@ export class ExpertService {
   async addProposal(proposal: Omit<Proposal, 'id'>, recruiterName?: string): Promise<string> {
     try {
       this.isLoading.set(true);
-      const ref = await addDoc(collection(firebase.firestore, 'proposals'), proposal);
+      // Ajouter la deadline de réponse (1h)
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // +1h
+      const proposalWithDeadline = { ...proposal, expiresAt };
+      const ref = await addDoc(collection(firebase.firestore, 'proposals'), proposalWithDeadline);
       try {
         await this.notifService.notifyNewProposal(
           proposal.expertId,

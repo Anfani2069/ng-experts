@@ -50,6 +50,7 @@ export class DashboardLayout implements OnInit {
   protected readonly notificationCount = computed(() => this.notifService.unreadNotifications());
   protected readonly unreadMessagesCount = computed(() => this.notifService.unreadMessages());
   protected readonly isRecruiter = computed(() => this.currentUser()?.role === 'recruiter');
+  protected readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
 
   protected readonly navItems = signal<NavigationItem[]>([
     { icon: 'fa-solid fa-home',     label: 'Dashboard',         isActive: false },
@@ -77,7 +78,13 @@ export class DashboardLayout implements OnInit {
   }
 
   protected navigateToSection(sectionLabel: string): void {
-    const routeMapping: Record<string, string> = this.isRecruiter() ? {
+    const routeMapping: Record<string, string> = this.isAdmin() ? {
+      'Dashboard':         '/admin/dashboard',
+      'Mes Missions':      '/admin/dashboard',
+      'Messages':          '/messages',
+      'Editer mon profil': '/admin/dashboard',
+      'Notifications':     '/notifications'
+    } : this.isRecruiter() ? {
       'Dashboard':         '/recruiter/dashboard',
       'Mes Missions':      '/recruiter/missions',
       'Messages':          '/messages',

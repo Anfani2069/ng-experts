@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DashboardLayout } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
-import { Proposal } from '@core/models/user.model';
+import { FreezeService } from '@core/services/freeze.service';
+import { Proposal, Expert } from '@core/models/user.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,9 +14,10 @@ import { Proposal } from '@core/models/user.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, RouterModule, DashboardLayout]
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
   private auth = inject(Auth);
   private expertService = inject(ExpertService);
+  protected readonly freezeService = inject(FreezeService);
 
   protected readonly currentUser = this.auth.getCurrentUser();
   protected readonly userName = computed(() => this.currentUser()?.firstName || '');
@@ -25,6 +27,10 @@ export class Dashboard implements OnInit {
   protected readonly proposals = signal<Proposal[]>([]);
   protected readonly processingId = signal<string | null>(null);
 
+  // Countdown timer
+  private _countdownInterval: any = null;
+  protected readonly countdownTick = signal(Date.now());
+
   protected readonly stats = computed(() => {
     const props = this.proposals();
     return {
@@ -33,6 +39,7 @@ export class Dashboard implements OnInit {
       accepted: props.filter(p => p.status === 'accepted').length,
       completed: props.filter(p => p.status === 'completed').length,
       rejected: props.filter(p => p.status === 'rejected').length,
+      expired: props.filter(p => p.status === 'expired').length,
     };
   });
 
@@ -50,10 +57,25 @@ export class Dashboard implements OnInit {
     this.isLoading.set(true);
     try {
       await this.auth.waitForUser();
+      const user = this.currentUser();
+      if (user?.role === 'expert') {
+        await this.freezeService.init(user as Expert);
+      }
       await this.loadProposals();
+      // Countdown timer — tick chaque seconde
+      this._countdownInterval = setInterval(() => {
+        this.countdownTick.set(Date.now());
+      }, 1000);
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this._countdownInterval) {
+      clearInterval(this._countdownInterval);
+    }
+    this.freezeService.stopPeriodicCheck();
   }
 
   private async loadProposals(): Promise<void> {
@@ -109,6 +131,7 @@ export class Dashboard implements OnInit {
       case 'accepted':  return 'bg-green-500/10 text-green-400 border border-green-500/20';
       case 'completed': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
       case 'rejected':  return 'bg-white/5 text-subtext border border-white/10';
+      case 'expired':   return 'bg-orange-500/10 text-orange-400 border border-orange-500/20';
       default:          return 'bg-white/5 text-subtext border border-white/10';
     }
   }
@@ -119,6 +142,7 @@ export class Dashboard implements OnInit {
       case 'accepted':  return 'Acceptée';
       case 'completed': return 'Terminée';
       case 'rejected':  return 'Refusée';
+      case 'expired':   return 'Expirée';
       default:          return status;
     }
   }
@@ -128,5 +152,39 @@ export class Dashboard implements OnInit {
     if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
     if (typeof value === 'object' && 'seconds' in value) return new Date(value.seconds * 1000);
     return null;
+  }
+
+  // ── Countdown & Freeze helpers ─────────────────────────────
+
+  protected getCountdown(proposal: Proposal): string {
+    this.countdownTick(); // force reactivity
+    return this.freezeService.formatCountdown(this.freezeService.getTimeRemainingMs(proposal));
+  }
+
+  protected getCountdownPercent(proposal: Proposal): number {
+    this.countdownTick();
+    return this.freezeService.getProgressPercent(proposal);
+  }
+
+  protected isExpiringSoon(proposal: Proposal): boolean {
+    this.countdownTick();
+    const remaining = this.freezeService.getTimeRemainingMs(proposal);
+    return remaining > 0 && remaining < 15 * 60 * 1000; // < 15 min
+  }
+
+  protected isExpired(proposal: Proposal): boolean {
+    this.countdownTick();
+    return this.freezeService.getTimeRemainingMs(proposal) <= 0;
+  }
+
+  protected getFreezeCountdown(): string {
+    this.countdownTick();
+    const ms = this.freezeService.freezeRemainingMs();
+    if (ms <= 0) return '';
+    const days = Math.floor(ms / (24 * 60 * 60 * 1000));
+    const hours = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const mins = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
+    if (days > 0) return `${days}j ${hours}h ${mins}m`;
+    return `${hours}h ${mins}m`;
   }
 }

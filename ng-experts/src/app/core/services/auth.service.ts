@@ -361,7 +361,9 @@ export class Auth {
         await this.loadUserProfile(user);
 
         const userData = this.currentUser();
-        if (userData?.role === 'expert') {
+        if (userData?.role === 'admin') {
+          this.router.navigate(['/admin/dashboard']);
+        } else if (userData?.role === 'expert') {
           this.router.navigate(['/dashboard']);
         } else if (userData?.role === 'recruiter') {
           this.router.navigate(['/recruiter/dashboard']);
@@ -570,6 +572,7 @@ export class Auth {
   isAuthenticated() { return this.currentUser() !== null; }
   isExpert() { return this.currentUser()?.role === 'expert'; }
   isRecruiter() { return this.currentUser()?.role === 'recruiter'; }
+  isAdmin() { return this.currentUser()?.role === 'admin'; }
 
   /**
    * Attend que l'utilisateur soit chargé depuis Firebase Auth.

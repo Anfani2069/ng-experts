@@ -188,6 +188,43 @@ export class NotificationService {
     });
   }
 
+  /** Notifie le recruteur que l'expert n'a pas répondu à temps */
+  async notifyProposalExpired(recruiterId: string, expertName: string, proposalTitle: string, proposalId: string): Promise<void> {
+    await this.pushNotif({
+      userId:   recruiterId,
+      type:     'proposal_expired',
+      title:    'Proposition expirée ⏰',
+      body:     `${expertName} n'a pas répondu dans le délai d'1h à : "${proposalTitle}"`,
+      link:     '/recruiter/missions',
+      refId:    proposalId,
+      fromName: expertName
+    });
+  }
+
+  /** Notifie l'expert qu'il a reçu un strike pour non-réponse */
+  async notifyProposalExpiredExpert(expertId: string, proposalTitle: string, strikeCount: number, proposalId: string): Promise<void> {
+    await this.pushNotif({
+      userId:   expertId,
+      type:     'proposal_expired',
+      title:    `⚠️ Non-réponse (${strikeCount}/3)`,
+      body:     `Vous n'avez pas répondu à temps à "${proposalTitle}". ${3 - strikeCount > 0 ? `Encore ${3 - strikeCount} non-réponse(s) avant le gel de votre profil.` : 'Votre profil a été gelé.'}`,
+      link:     '/missions',
+      refId:    proposalId
+    });
+  }
+
+  /** Notifie l'expert que son profil est gelé */
+  async notifyProfileFrozen(expertId: string, frozenUntil: Date): Promise<void> {
+    const dateStr = frozenUntil.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+    await this.pushNotif({
+      userId:   expertId,
+      type:     'profile_frozen',
+      title:    '🧊 Profil gelé pendant 7 jours',
+      body:     `Suite à 3 non-réponses consécutives, votre profil est invisible jusqu'au ${dateStr}. Répondez à temps pour maintenir votre visibilité.`,
+      link:     '/dashboard'
+    });
+  }
+
   // ── Marquer comme lu ───────────────────────────────────────────────────────
 
   async markAsRead(notificationId: string): Promise<void> {
@@ -232,6 +269,8 @@ export class NotificationService {
       case 'proposal_accepted':  return 'fa-solid fa-circle-check';
       case 'proposal_rejected':  return 'fa-solid fa-circle-xmark';
       case 'mission_completed':  return 'fa-solid fa-flag-checkered';
+      case 'proposal_expired':   return 'fa-solid fa-clock';
+      case 'profile_frozen':     return 'fa-solid fa-snowflake';
       case 'system':             return 'fa-solid fa-bell';
     }
   }
@@ -243,6 +282,8 @@ export class NotificationService {
       case 'proposal_accepted':  return 'text-green-400 bg-green-500/10 border-green-500/20';
       case 'proposal_rejected':  return 'text-red-400 bg-red-500/10 border-red-500/20';
       case 'mission_completed':  return 'text-blue-400 bg-blue-500/10 border-blue-500/20';
+      case 'proposal_expired':   return 'text-orange-400 bg-orange-500/10 border-orange-500/20';
+      case 'profile_frozen':     return 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20';
       case 'system':             return 'text-yellow-400 bg-yellow-500/10 border-yellow-500/20';
     }
   }

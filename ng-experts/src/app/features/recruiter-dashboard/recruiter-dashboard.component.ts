@@ -42,8 +42,19 @@ export class RecruiterDashboard implements OnInit {
 
   protected readonly filteredExperts = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
-    if (!q) return this.experts();
-    return this.experts().filter(e =>
+    // Filtrer les profils gelés
+    const visibleExperts = this.experts().filter(e => {
+      const frozenUntil = (e as any).frozenUntil;
+      if (frozenUntil) {
+        const frozenDate = frozenUntil instanceof Date ? frozenUntil
+          : (typeof frozenUntil === 'object' && 'seconds' in frozenUntil) ? new Date(frozenUntil.seconds * 1000)
+          : null;
+        if (frozenDate && frozenDate.getTime() > Date.now()) return false;
+      }
+      return true;
+    });
+    if (!q) return visibleExperts;
+    return visibleExperts.filter(e =>
       `${e.firstName} ${e.lastName}`.toLowerCase().includes(q) ||
       e.skills?.some(s => s.name.toLowerCase().includes(q)) ||
       e.bio?.toLowerCase().includes(q) ||
@@ -191,6 +202,7 @@ export class RecruiterDashboard implements OnInit {
       case 'accepted':  return 'bg-green-500/10 text-green-400 border border-green-500/20';
       case 'completed': return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
       case 'rejected':  return 'bg-white/5 text-subtext border border-white/10';
+      case 'expired':   return 'bg-orange-500/10 text-orange-400 border border-orange-500/20';
       default:          return 'bg-white/5 text-subtext border border-white/10';
     }
   }
@@ -201,6 +213,7 @@ export class RecruiterDashboard implements OnInit {
       case 'accepted':  return 'Acceptée';
       case 'completed': return 'Terminée';
       case 'rejected':  return 'Refusée';
+      case 'expired':   return 'Expirée';
       default:          return status;
     }
   }

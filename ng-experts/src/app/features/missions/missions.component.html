@@ -2,7 +2,7 @@
   <div class="p-6 md:p-8 bg-heroBg min-h-full">
 
     <!-- Stats rapides -->
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-8">
+    <div class="grid grid-cols-2 sm:grid-cols-6 gap-4 mb-8">
       <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
         <i class="fa-solid fa-list text-primary text-lg mb-2 block"></i>
         <p class="text-2xl font-black text-white">{{ stats().total }}</p>
@@ -27,6 +27,11 @@
         <i class="fa-solid fa-xmark text-red-400 text-lg mb-2 block"></i>
         <p class="text-2xl font-black text-white">{{ stats().rejected }}</p>
         <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Refusées</p>
+      </div>
+      <div class="bg-[#1a1a1a] border border-orange-500/10 rounded-2xl p-4 text-center">
+        <i class="fa-solid fa-hourglass-end text-orange-400 text-lg mb-2 block"></i>
+        <p class="text-2xl font-black text-white">{{ stats().expired }}</p>
+        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Expirées</p>
       </div>
     </div>
 
@@ -56,6 +61,11 @@
         [ngClass]="activeFilter() === 'rejected' ? 'bg-red-500 text-white' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
         class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
         Refusées ({{ stats().rejected }})
+      </button>
+      <button (click)="activeFilter.set('expired')"
+        [ngClass]="activeFilter() === 'expired' ? 'bg-orange-500 text-white' : 'bg-white/5 border border-white/10 text-subtext hover:bg-white/10'"
+        class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all">
+        Expirées ({{ stats().expired }})
       </button>
     </div>
 
@@ -100,7 +110,57 @@
       <!-- Liste des missions -->
       <div class="grid grid-cols-1 gap-5">
         @for (proposal of filteredProposals(); track proposal.id) {
-          <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 hover:border-white/10 transition-all">
+          <div class="bg-[#1a1a1a] rounded-2xl p-6 transition-all"
+            [class]="proposal.status === 'expired' ? 'border border-orange-500/20 opacity-70'
+              : proposal.status === 'pending' && isExpiringSoon(proposal) ? 'border-2 border-red-500/40 shadow-[0_0_30px_-5px_rgba(239,68,68,0.15)]'
+              : 'border border-white/5 hover:border-white/10'">
+
+            <!-- ⏰ COUNTDOWN BANNER pour pending -->
+            @if (proposal.status === 'pending') {
+              <div class="mb-4 p-3 rounded-xl"
+                [class]="isExpiringSoon(proposal) ? 'bg-red-500/10 border border-red-500/20' : 'bg-yellow-500/5 border border-yellow-500/10'">
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-stopwatch"
+                      [class]="isExpiringSoon(proposal) ? 'text-red-400 animate-pulse' : 'text-yellow-400'"></i>
+                    <span class="text-[11px] font-bold uppercase tracking-widest"
+                      [class]="isExpiringSoon(proposal) ? 'text-red-400' : 'text-yellow-400'">
+                      Délai de réponse : 1 heure
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-black text-base tracking-wider"
+                      [class]="isExpiringSoon(proposal) ? 'text-red-400' : 'text-yellow-300'">
+                      {{ getCountdown(proposal) }}
+                    </span>
+                  </div>
+                </div>
+                <div class="w-full bg-white/5 rounded-full h-2 overflow-hidden">
+                  <div class="h-full rounded-full transition-all duration-1000"
+                    [class]="isExpiringSoon(proposal) ? 'bg-red-400' : 'bg-yellow-400'"
+                    [style.width.%]="getCountdownPercent(proposal)">
+                  </div>
+                </div>
+                @if (isExpiringSoon(proposal)) {
+                  <p class="text-[10px] text-red-400/70 mt-1.5">
+                    <i class="fa-solid fa-triangle-exclamation mr-1"></i>
+                    Dépêchez-vous ! Non-réponse = strike ({{ freezeService.freezeStrikes() }}/3 avant gel du profil)
+                  </p>
+                }
+              </div>
+            }
+
+            <!-- EXPIRED banner -->
+            @if (proposal.status === 'expired') {
+              <div class="mb-4 p-3 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center gap-3">
+                <i class="fa-solid fa-hourglass-end text-orange-400 text-lg"></i>
+                <div>
+                  <span class="text-orange-400 text-[11px] font-bold uppercase tracking-widest">Délai dépassé — Non répondu</span>
+                  <p class="text-orange-300/50 text-[10px] mt-0.5">Un strike a été comptabilisé sur votre profil.</p>
+                </div>
+              </div>
+            }
+
             <div class="flex flex-col md:flex-row gap-5">
 
               <!-- Client Info (Gauche) -->
@@ -152,7 +212,7 @@
 
                 <!-- Actions selon le statut -->
                 <div class="flex flex-wrap gap-2">
-                  @if (proposal.status === 'pending') {
+                  @if (proposal.status === 'pending' && !isProposalExpired(proposal)) {
                     <button (click)="confirmAction('accepted', proposal)"
                       class="px-4 py-2 bg-green-500/10 border border-green-500/30 text-green-400 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-green-500/20 transition-all">
                       <i class="fa-solid fa-check mr-1.5"></i>Accepter
@@ -161,6 +221,11 @@
                       class="px-4 py-2 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-all">
                       <i class="fa-solid fa-xmark mr-1.5"></i>Refuser
                     </button>
+                  }
+                  @if (proposal.status === 'expired') {
+                    <span class="px-4 py-2 bg-orange-500/10 border border-orange-500/20 text-orange-400 rounded-full text-[11px] font-bold uppercase tracking-widest">
+                      <i class="fa-solid fa-hourglass-end mr-1.5"></i>Proposition expirée
+                    </span>
                   }
                   @if (proposal.status === 'accepted') {
                     <button (click)="confirmAction('completed', proposal)"
