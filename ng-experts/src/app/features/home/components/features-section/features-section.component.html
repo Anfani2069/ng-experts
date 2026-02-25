@@ -1,148 +1,214 @@
-<section id="features" class="py-12 bg-expertSectionBg border-b border-white/5">
+<section id="features" class="py-20 bg-expertSectionBg border-b border-white/5 overflow-hidden">
   <div class="container mx-auto px-10 md:px-20 max-w-7xl">
+
     <!-- Section Header -->
-    <div class="text-center mb-10">
+    <div class="text-center mb-16">
       <div class="inline-block mb-4">
-        <span
-          class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">Fonctionnalités</span>
+        <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">Fonctionnalités</span>
       </div>
       <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
         Ng-Expert est conçu pour<br>
         <span class="text-primary italic font-serif font-normal">simplifier le recrutement.</span>
       </h2>
+      <p class="text-lg text-subtext max-w-xl mx-auto font-medium leading-relaxed">
+        Tout ce dont vous avez besoin pour trouver, contacter et collaborer avec les meilleurs experts Angular.
+      </p>
     </div>
 
-    <!-- Feature 1 - Image Right -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center mb-32">
-      <div class="space-y-8">
-        <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight">
-          Recherchez des experts <span class="text-primary">Angular</span> qualifiés
-        </h3>
-        <p class="text-lg text-subtext leading-relaxed font-medium">
-          Filtrez par ville, technologie et disponibilité pour trouver le profil parfait. Notre plateforme vous permet
-          d'accéder à une base de données d'experts vérifiés.
-        </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-              <i class="fa-solid fa-search"></i>
-            </div>
-            <div>
-              <h4 class="font-bold text-white mb-1">Recherche avancée</h4>
-              <p class="text-sm text-subtext">Filtres multiples pour cibler précisément</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-              <i class="fa-solid fa-shield-halved"></i>
-            </div>
-            <div>
-              <h4 class="font-bold text-white mb-1">Profils vérifiés</h4>
-              <p class="text-sm text-subtext">Tous les experts sont validés</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="relative">
-        <div class="expert-card p-8 rounded-3xl border border-white/10">
-          <div class="noise-overlay"></div>
-          <div class="relative z-10 space-y-6">
-            <div class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5">
-              <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                <i class="fa-solid fa-user"></i>
-              </div>
-              <div class="flex-1">
-                <div class="font-bold text-white">Expert Angular</div>
-                <div class="text-xs text-subtext">5+ ans d'expérience</div>
-              </div>
-              <div
-                class="px-3 py-1 bg-green-500/10 text-green-400 text-[10px] rounded-full font-bold uppercase tracking-widest">
-                Disponible</div>
-            </div>
-            <div class="flex gap-2">
-              <span
-                class="px-3 py-1 bg-white/5 text-primary text-[10px] rounded-full font-bold uppercase tracking-widest border border-primary/20">Angular</span>
-              <span
-                class="px-3 py-1 bg-white/5 text-primary text-[10px] rounded-full font-bold uppercase tracking-widest border border-primary/20">TypeScript</span>
-            </div>
-            <div class="pt-4 border-t border-white/5">
-              <div
-                class="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-subtext">
-                <span><i class="fa-solid fa-location-dot text-primary mr-2"></i>Paris</span>
-                <span><i class="fa-solid fa-briefcase text-primary mr-2"></i>Freelance</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Bento Grid — 2-col, no empty cells -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
-    <!-- Feature 2 - Image Left -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-      <div class="relative order-2 lg:order-1">
-        <div class="expert-card p-8 rounded-3xl border border-white/10">
-          <div class="noise-overlay"></div>
-          <div class="relative z-10 space-y-6">
-            <div class="flex items-center justify-between mb-4">
-              <h4 class="font-bold text-white uppercase tracking-widest text-[10px]">Tableau de bord</h4>
-              <span
-                class="px-3 py-1 bg-primary/20 text-primary text-[10px] font-bold uppercase tracking-widest rounded-full">Live</span>
+      <!-- ROW 1 — Full width: Recherche -->
+      <div class="feature-card group relative lg:col-span-2 p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+        <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+             style="background: radial-gradient(ellipse at 20% 50%, rgba(236,72,153,0.07) 0%, transparent 65%)"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row gap-10 items-center">
+          <!-- Text -->
+          <div class="flex-1 space-y-5">
+            <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+              <i class="fa-solid fa-magnifying-glass text-primary"></i>
             </div>
-            <div class="grid grid-cols-3 gap-4">
-              <div class="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-                <div class="text-2xl font-bold text-primary mb-1">127</div>
-                <div class="text-[8px] text-subtext uppercase tracking-widest">Experts</div>
+            <h3 class="text-2xl font-bold text-white tracking-tight">Recherchez des experts <span class="text-primary">Angular</span> qualifiés</h3>
+            <p class="text-subtext text-sm leading-relaxed">Filtrez par ville, technologie et disponibilité. Accédez à une base d'experts vérifiés en quelques secondes.</p>
+            <div class="flex flex-wrap gap-3 pt-1">
+              <div class="flex items-center gap-2 text-xs text-subtext">
+                <i class="fa-solid fa-check text-primary text-[10px]"></i> Recherche avancée multi-critères
               </div>
-              <div class="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-                <div class="text-2xl font-bold text-primary mb-1">45</div>
-                <div class="text-[8px] text-subtext uppercase tracking-widest">Missions</div>
-              </div>
-              <div class="bg-white/5 rounded-2xl p-4 text-center border border-white/5">
-                <div class="text-2xl font-bold text-primary mb-1">98%</div>
-                <div class="text-[8px] text-subtext uppercase tracking-widest">Satisf.</div>
+              <div class="flex items-center gap-2 text-xs text-subtext">
+                <i class="fa-solid fa-check text-primary text-[10px]"></i> Profils 100% vérifiés
               </div>
             </div>
-            <div class="pt-4">
-              <div class="flex items-center gap-2 mb-2">
-                <div class="w-full bg-white/5 rounded-full h-1.5">
-                  <div class="bg-primary h-1.5 rounded-full" style="width: 85%"></div>
-                </div>
-                <span class="text-[10px] font-bold text-white">85%</span>
+          </div>
+          <!-- Mock expert card -->
+          <div class="w-full lg:w-72 flex-shrink-0 bg-white/[0.03] border border-white/5 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center gap-3">
+              <img src="https://i.pravatar.cc/150?img=7" class="w-11 h-11 rounded-xl object-cover border border-white/10" alt="Expert">
+              <div class="flex-1 min-w-0">
+                <div class="font-bold text-white text-sm truncate">Thomas M.</div>
+                <div class="text-[11px] text-subtext">Lead Angular · 6 ans</div>
               </div>
-              <p class="text-[10px] text-subtext uppercase tracking-widest">Taux de matching</p>
+              <span class="flex-shrink-0 px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20">Dispo</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2.5 py-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-wider rounded-md border border-primary/20">Angular 17</span>
+              <span class="px-2.5 py-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-wider rounded-md border border-primary/20">RxJS</span>
+              <span class="px-2.5 py-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-wider rounded-md border border-primary/20">NgRx</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-subtext pt-1 border-t border-white/5">
+              <span><i class="fa-solid fa-location-dot text-primary mr-1.5 text-[9px]"></i>Paris</span>
+              <span class="font-bold text-white">650€<span class="font-normal text-subtext">/j</span></span>
             </div>
           </div>
         </div>
       </div>
-      <div class="space-y-8 order-1 lg:order-2">
-        <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight">
-          Gérez vos recrutements <span class="text-primary italic">efficacement.</span>
-        </h3>
-        <p class="text-lg text-subtext leading-relaxed font-medium">
-          Suivez l'avancement de vos recherches, gérez vos candidats et communiquez directement avec les experts depuis
-          une interface intuitive.
-        </p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-              <i class="fa-solid fa-chart-line"></i>
+
+      <!-- ROW 2 LEFT — Dashboard -->
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+        <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+             style="background: radial-gradient(circle at 20% 80%, rgba(236,72,153,0.07) 0%, transparent 60%)"></div>
+        <div class="relative z-10 space-y-5">
+          <div class="flex items-center justify-between">
+            <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+              <i class="fa-solid fa-chart-line text-primary"></i>
             </div>
-            <div>
-              <h4 class="font-bold text-white mb-1">Suivi en temps réel</h4>
-              <p class="text-sm text-subtext">Visualisez vos statistiques</p>
+            <span class="px-2.5 py-1 bg-primary/20 text-primary text-[9px] font-bold uppercase tracking-widest rounded-full border border-primary/30 animate-pulse">● Live</span>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Tableau de bord</h3>
+            <p class="text-subtext text-sm leading-relaxed">Suivez vos recherches et statistiques en temps réel.</p>
+          </div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="bg-white/[0.03] rounded-xl p-3 text-center border border-white/5">
+              <div class="text-xl font-black text-primary">127</div>
+              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">Experts</div>
+            </div>
+            <div class="bg-white/[0.03] rounded-xl p-3 text-center border border-white/5">
+              <div class="text-xl font-black text-primary">45</div>
+              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">Missions</div>
+            </div>
+            <div class="bg-white/[0.03] rounded-xl p-3 text-center border border-white/5">
+              <div class="text-xl font-black text-primary">98%</div>
+              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">Satisf.</div>
             </div>
           </div>
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 text-primary">
-              <i class="fa-solid fa-comments"></i>
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-[10px] text-subtext uppercase tracking-widest">Taux de matching</span>
+              <span class="text-[10px] font-bold text-white">85%</span>
             </div>
-            <div>
-              <h4 class="font-bold text-white mb-1">Communication directe</h4>
-              <p class="text-sm text-subtext">Messagerie intégrée</p>
+            <div class="w-full bg-white/5 rounded-full h-1.5">
+              <div class="bg-gradient-to-r from-primary to-primary/60 h-1.5 rounded-full bar-animate" style="width: 85%"></div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- ROW 2 RIGHT — Profils vérifiés -->
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+        <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+             style="background: radial-gradient(circle at 80% 20%, rgba(236,72,153,0.08) 0%, transparent 60%)"></div>
+        <div class="relative z-10 space-y-5">
+          <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+            <i class="fa-solid fa-shield-halved text-primary"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Profils vérifiés</h3>
+            <p class="text-subtext text-sm leading-relaxed">Chaque expert est validé manuellement par notre équipe avant d'apparaître sur la plateforme.</p>
+          </div>
+          <div class="space-y-2.5 pt-1">
+            <div class="flex items-center gap-3 text-xs">
+              <div class="w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-check text-green-400 text-[8px]"></i>
+              </div>
+              <span class="text-subtext">Identité confirmée</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <div class="w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-check text-green-400 text-[8px]"></i>
+              </div>
+              <span class="text-subtext">Compétences validées</span>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <div class="w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-check text-green-400 text-[8px]"></i>
+              </div>
+              <span class="text-subtext">Références vérifiées</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 3 LEFT — Messagerie -->
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+        <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+             style="background: radial-gradient(circle at 50% 100%, rgba(236,72,153,0.07) 0%, transparent 60%)"></div>
+        <div class="relative z-10 space-y-5">
+          <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+            <i class="fa-solid fa-comments text-primary"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Messagerie intégrée</h3>
+            <p class="text-subtext text-sm leading-relaxed">Contactez les experts en direct, sans intermédiaire.</p>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-end gap-2">
+              <img src="https://i.pravatar.cc/150?img=12" class="w-6 h-6 rounded-full object-cover flex-shrink-0" alt="">
+              <div class="bg-white/5 border border-white/5 rounded-2xl rounded-bl-sm px-3 py-2 text-[11px] text-subtext max-w-[75%]">
+                Disponible à partir du 1er mars ✅
+              </div>
+            </div>
+            <div class="flex items-end gap-2 flex-row-reverse">
+              <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-white text-[9px] font-bold">R</div>
+              <div class="bg-primary/15 border border-primary/20 rounded-2xl rounded-br-sm px-3 py-2 text-[11px] text-white max-w-[75%]">
+                Parfait, envoyons un contrat 🚀
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 3 RIGHT — Pipeline de recrutement -->
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+        <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+             style="background: radial-gradient(ellipse at 80% 50%, rgba(236,72,153,0.07) 0%, transparent 65%)"></div>
+        <div class="relative z-10 space-y-5">
+          <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+            <i class="fa-solid fa-briefcase text-primary"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Gérez vos recrutements <span class="text-primary italic font-serif font-normal">efficacement.</span></h3>
+            <p class="text-subtext text-sm leading-relaxed">Suivez l'avancement de vos recherches et gérez vos candidats depuis une interface intuitive.</p>
+          </div>
+          <div class="space-y-2">
+            <div class="text-[10px] font-bold text-subtext uppercase tracking-widest mb-1">Pipeline de recrutement</div>
+            <div class="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3">
+              <img src="https://i.pravatar.cc/150?img=3" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" alt="">
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-white truncate">Sarah K.</div>
+                <div class="text-[10px] text-subtext">Entretien planifié</div>
+              </div>
+              <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-yellow-500/20 flex-shrink-0">En cours</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3">
+              <img src="https://i.pravatar.cc/150?img=5" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" alt="">
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-white truncate">Marc D.</div>
+                <div class="text-[10px] text-subtext">Proposition envoyée</div>
+              </div>
+              <span class="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-blue-500/20 flex-shrink-0">Proposé</span>
+            </div>
+            <div class="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3">
+              <img src="https://i.pravatar.cc/150?img=9" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" alt="">
+              <div class="flex-1 min-w-0">
+                <div class="text-xs font-bold text-white truncate">Julie R.</div>
+                <div class="text-[10px] text-subtext">Mission démarrée</div>
+              </div>
+              <span class="px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20 flex-shrink-0">Signé</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>

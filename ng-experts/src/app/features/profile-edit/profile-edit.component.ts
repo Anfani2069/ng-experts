@@ -100,16 +100,25 @@ export class ProfileEdit implements OnInit {
     return expert?.certifications || [];
   });
 
+  private toTimestamp(value: any): number {
+    if (!value) return 0;
+    if (value instanceof Date) return value.getTime();
+    if (typeof value === 'object' && 'seconds' in value) return value.seconds * 1000;
+    return new Date(value).getTime() || 0;
+  }
+
   // Expériences depuis le profil expert ou valeurs par défaut
   protected readonly experiences = computed(() => {
     const expert = this.expertProfile();
-    return expert?.experience || [];
+    const exp = expert?.experience || [];
+    return [...exp].sort((a, b) => this.toTimestamp(b.startDate) - this.toTimestamp(a.startDate));
   });
 
   // Éducation depuis le profil expert ou valeurs par défaut
   protected readonly education = computed(() => {
     const expert = this.expertProfile();
-    return expert?.education || [];
+    const edu = expert?.education || [];
+    return [...edu].sort((a, b) => this.toTimestamp(b.startDate) - this.toTimestamp(a.startDate));
   });
 
   // Disponibilité depuis le profil expert ou valeurs par défaut
@@ -123,6 +132,15 @@ export class ProfileEdit implements OnInit {
       missionDuration: ''
     };
   });
+
+  // Toggle TJM visible publiquement
+  protected readonly showDailyRate = signal(true);
+
+  protected initShowDailyRate(): void {
+    // Si le profil a un TJM, on l'affiche par défaut
+    const rate = this.availability().dailyRate;
+    this.showDailyRate.set(!!rate);
+  }
 
 
   protected readonly countries = signal(['France', 'Belgique', 'Suisse', 'Canada']);
@@ -147,6 +165,7 @@ export class ProfileEdit implements OnInit {
         this.profileForm.patchValue({
           firstName: expert.firstName || '',
           lastName:  expert.lastName  || '',
+          title:     expert.title     || '',
           company:   expert.company   || '',
           location:  expert.location  || '',
           city:      expert.city      || '',
@@ -192,6 +211,7 @@ export class ProfileEdit implements OnInit {
     this.profileForm = this.fb.group({
       firstName: [expert?.firstName || '', [Validators.required]],
       lastName:  [expert?.lastName || '', [Validators.required]],
+      title:     [expert?.title || ''],
       company:   [expert?.company || ''],
       location:  [expert?.location || '', [Validators.required]],
       city:      [expert?.city || '', [Validators.required]],
@@ -563,6 +583,7 @@ export class ProfileEdit implements OnInit {
       const expertUpdate: Partial<Expert> = {
         firstName: formData.firstName,
         lastName: formData.lastName,
+        title: formData.title || undefined,
         company: formData.company,
         location: formData.location,
         city: formData.city,

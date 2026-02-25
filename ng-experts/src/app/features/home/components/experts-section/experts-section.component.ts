@@ -22,13 +22,10 @@ export class ExpertsSection implements OnInit {
 
   // Types de disponibilité disponibles
   protected readonly availabilityTypes = [
+    { value: 'freelance', label: 'Freelance' },
     { value: 'consulting', label: 'Conférence' },
     { value: 'mentoring', label: 'Mentoring' },
-    { value: 'freelance', label: 'Freelance' },
     { value: 'cdi', label: 'CDI' },
-    { value: 'coffee', label: 'Coffee chat' },
-    { value: 'pair', label: 'Pair programming' },
-    { value: 'review', label: 'Relecture CV' }
   ];
 
   // Données des experts depuis Firebase

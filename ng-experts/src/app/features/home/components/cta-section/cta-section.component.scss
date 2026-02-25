@@ -1,2 +1,11 @@
 // Styles spécifiques à la section CTA
 // Les styles globaux sont gérés par TailwindCSS
+
+.cta-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(236, 72, 153, 0.08);
+  }
+}

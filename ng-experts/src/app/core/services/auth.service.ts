@@ -197,6 +197,9 @@ export class Auth {
         console.warn('Email de vérification non envoyé:', e)
       );
 
+      // Se déconnecter immédiatement après la création du compte
+      await signOut(firebase.auth);
+
       return {
         success: true,
         message: 'Compte expert créé avec succès. Vérifiez votre email pour activer votre compte.'
@@ -284,6 +287,10 @@ export class Auth {
       sendEmailVerification(userCredential.user).catch(e =>
         console.warn('Email de vérification non envoyé:', e)
       );
+
+      // Se déconnecter immédiatement après la création du compte
+      // pour éviter que onAuthStateChanged charge un profil incomplet
+      await signOut(firebase.auth);
 
       return {
         success: true,

@@ -5,6 +5,9 @@ import { CompaniesSection } from './components/companies-section/companies-secti
 import { ExpertsSection } from './components/experts-section/experts-section.component';
 import { FeaturesSection } from './components/features-section/features-section.component';
 import { CtaSection } from './components/cta-section/cta-section.component';
+import { HowItWorksSection } from './components/how-it-works-section/how-it-works-section.component';
+import { WhyNgExpertsSection } from './components/why-ng-experts-section/why-ng-experts-section.component';
+import { FaqSection } from './components/faq-section/faq-section.component';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +20,9 @@ import { CtaSection } from './components/cta-section/cta-section.component';
     CompaniesSection,
     ExpertsSection,
     FeaturesSection,
+    HowItWorksSection,
+    WhyNgExpertsSection,
+    FaqSection,
     CtaSection
   ]
 })

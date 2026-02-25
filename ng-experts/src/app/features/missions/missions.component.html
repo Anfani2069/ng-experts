@@ -166,10 +166,10 @@
               <!-- Client Info (Gauche) -->
               <div class="md:w-56 flex-shrink-0 flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-white/5 pb-4 md:pb-0 md:pr-6">
                 <div class="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-xl mb-3">
-                  {{ proposal.clientEmail.charAt(0).toUpperCase() }}
+                  {{ (proposal.clientName || 'R').charAt(0).toUpperCase() }}
                 </div>
-                <h4 class="font-bold text-white text-sm truncate w-full" [title]="proposal.clientEmail">
-                  {{ proposal.clientEmail }}
+                <h4 class="font-bold text-white text-sm truncate w-full" [title]="proposal.clientName || 'Recruteur'">
+                  {{ proposal.clientName || 'Recruteur' }}
                 </h4>
                 <p class="text-xs text-subtext mt-0.5">Recruteur</p>
                 <button (click)="openDetails(proposal)"
@@ -190,10 +190,20 @@
                 </div>
 
                 <div class="flex flex-wrap gap-4 text-sm text-subtext mb-4">
-                  <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-coins text-subtext text-xs"></i>
-                    <span class="text-white font-semibold">{{ proposal.budget }}</span>
-                  </div>
+                  @if (proposal.priority && proposal.priority !== 'normal') {
+                    <div class="flex items-center">
+                      <span class="text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border"
+                        [class]="proposal.priority === 'urgent' ? 'bg-red-500/10 text-red-400 border-red-500/20' : proposal.priority === 'high' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'">
+                        {{ proposal.priority === 'urgent' ? '🔴 Urgent' : proposal.priority === 'high' ? '🟠 Élevé' : '🟢 Faible' }}
+                      </span>
+                    </div>
+                  }
+                  @if (proposal.budget) {
+                    <div class="flex items-center gap-2">
+                      <i class="fa-solid fa-coins text-subtext text-xs"></i>
+                      <span class="text-white font-semibold">{{ proposal.budget }}</span>
+                    </div>
+                  }
                   <div class="flex items-center gap-2">
                     <i class="fa-solid fa-calendar text-subtext text-xs"></i>
                     <span>Début : {{ proposal.startDate }}</span>
@@ -263,7 +273,7 @@
         <div class="bg-primary px-8 py-6 text-white flex justify-between items-start">
           <div>
             <h2 class="text-2xl font-bold mb-1">{{ proposal.title }}</h2>
-            <p class="text-white/80 text-sm">Proposé par {{ proposal.clientEmail }}</p>
+            <p class="text-white/80 text-sm">Proposé par {{ proposal.clientName || 'Recruteur' }}</p>
           </div>
           <button (click)="closeDetails()" class="text-white/70 hover:text-white transition">
             <i class="fa-solid fa-xmark text-2xl"></i>

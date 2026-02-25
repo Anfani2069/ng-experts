@@ -149,7 +149,7 @@ export class Missions implements OnInit, OnDestroy {
         user.id,
         proposal.clientId,
         { name: `${user.firstName} ${user.lastName}`, avatar: user.avatar, role: 'expert' },
-        { name: proposal.clientEmail || 'Recruteur', avatar: undefined, role: 'recruiter' },
+        { name: proposal.clientName?.trim() || proposal.clientEmail || 'Recruteur', avatar: undefined, role: 'recruiter' },
         proposal.id,
         proposal.title
       );

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
 
 @Component({
@@ -13,6 +13,7 @@ import { Auth } from '@core/services/auth.service';
 })
 export class Login {
   private auth = inject(Auth);
+  private route = inject(ActivatedRoute);
 
   protected readonly email = signal('');
   protected readonly password = signal('');
@@ -24,6 +25,30 @@ export class Login {
   protected readonly success = signal<string | null>(null);
 
   constructor(private router: Router) {}
+
+  /** Returns the returnUrl query param if present */
+  private getReturnUrl(): string | null {
+    return this.route.snapshot.queryParamMap.get('returnUrl');
+  }
+
+  /** Redirects after successful login, honoring returnUrl for pending proposals */
+  private redirectAfterLogin(role: string): void {
+    const returnUrl = this.getReturnUrl();
+    const action = this.route.snapshot.queryParamMap.get('action');
+
+    if (returnUrl && action === 'proposal' && role === 'recruiter') {
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
+    if (role === 'admin') {
+      this.router.navigate(['/admin/dashboard']);
+    } else if (role === 'recruiter') {
+      this.router.navigate(['/recruiter/dashboard']);
+    } else {
+      this.router.navigate(['/dashboard']);
+    }
+  }
 
   protected onEmailChange(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -64,13 +89,7 @@ export class Login {
         const waitAndRedirect = () => {
           const user = this.auth.getCurrentUser()();
           if (user) {
-            if (user.role === 'admin') {
-              this.router.navigate(['/admin/dashboard']);
-            } else if (user.role === 'recruiter') {
-              this.router.navigate(['/recruiter/dashboard']);
-            } else {
-              this.router.navigate(['/dashboard']);
-            }
+            this.redirectAfterLogin(user.role);
           } else if (attempts < 20) {
             // Réessayer jusqu'à 20 fois (max 2 secondes)
             attempts++;
@@ -122,13 +141,8 @@ export class Login {
         this.success.set(result.message);
         setTimeout(() => {
           const user = this.auth.getCurrentUser()();
-          if (user?.role === 'admin') {
-            this.router.navigate(['/admin/dashboard']);
-          } else if (user?.role === 'recruiter') {
-            this.router.navigate(['/recruiter/dashboard']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
+          if (user) this.redirectAfterLogin(user.role);
+          else this.router.navigate(['/dashboard']);
         }, 1000);
       } else {
         this.error.set(result.message);

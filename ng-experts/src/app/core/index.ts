@@ -4,3 +4,5 @@ export * from './services/admin.service';
 export * from './models/user.model';
 export * from './config/firebase.config';
 export * from './guards/admin.guard';
+export * from './guards/auth.guard';
+export * from './guards/recruiter.guard';

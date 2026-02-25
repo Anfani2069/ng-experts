@@ -36,6 +36,7 @@ export interface Expert extends BaseUser {
   role: 'expert';
 
   // Informations professionnelles
+  title?: string; // Titre professionnel personnalisé (ex: "Développeur Full-Stack Angular")
   company?: string;
   location: string;
   city: string;
@@ -166,7 +167,7 @@ export interface Education {
  * Disponibilité expert
  */
 export interface Availability {
-  types: ('freelance' | 'mentoring' | 'consulting')[];
+  types: ('freelance' | 'cdi' | 'mentoring' | 'consulting')[];
   startDate: string;
   dailyRate: string;
   workPreference: 'remote' | 'hybrid' | 'onsite' | 'flexible';
@@ -220,10 +221,12 @@ export interface Proposal {
   expertId: string;
   clientId?: string; // ID of the logged in user if any, or null/generated
   clientEmail: string;
+  clientName?: string; // Nom/prénom ou entreprise du recruteur
   title: string;
   description: string;
-  budget: string;
+  budget?: string; // Optionnel (ex: CDI sans budget défini)
   startDate: string;
+  priority?: 'urgent' | 'high' | 'normal' | 'low'; // Niveau d'urgence
   status: 'pending' | 'accepted' | 'rejected' | 'completed' | 'expired';
   createdAt: Date;
   completedAt?: Date;

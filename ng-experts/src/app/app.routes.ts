@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from '@core/guards/admin.guard';
+import { authGuard } from '@core/guards/auth.guard';
+import { recruiterGuard } from '@core/guards/recruiter.guard';
 
 export const routes: Routes = [
   {
@@ -14,51 +16,55 @@ export const routes: Routes = [
     path: 'register',
     loadComponent: () => import('./features/auth/register/register.component').then(m => m.Register)
   },
+  // Expert dashboard & profile (expert role)
   {
     path: 'dashboard',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.Dashboard)
   },
+  {
+    path: 'missions',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/missions/missions.component').then(m => m.Missions)
+  },
+  {
+    path: 'messages',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/messages/messages.component').then(m => m.Messages)
+  },
+  {
+    path: 'notifications',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/notifications/notifications.component').then(m => m.Notifications)
+  },
+  {
+    path: 'profile-edit',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/profile-edit/profile-edit.component').then(m => m.ProfileEdit)
+  },
+  // Recruiter routes
+  {
+    path: 'recruiter/dashboard',
+    canActivate: [recruiterGuard],
+    loadComponent: () => import('./features/recruiter-dashboard/recruiter-dashboard.component').then(m => m.RecruiterDashboard)
+  },
+  {
+    path: 'recruiter/profile-edit',
+    canActivate: [recruiterGuard],
+    loadComponent: () => import('./features/recruiter-profile-edit/recruiter-profile-edit.component').then(m => m.RecruiterProfileEdit)
+  },
+  {
+    path: 'recruiter/missions',
+    canActivate: [recruiterGuard],
+    loadComponent: () => import('./features/recruiter-missions/recruiter-missions.component').then(m => m.RecruiterMissions)
+  },
+  // Admin routes
   {
     path: 'admin/dashboard',
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboard)
   },
-  {
-    path: 'recruiter/dashboard',
-    loadComponent: () => import('./features/recruiter-dashboard/recruiter-dashboard.component').then(m => m.RecruiterDashboard)
-  },
-  {
-    path: 'recruiter/profile-edit',
-    loadComponent: () => import('./features/recruiter-profile-edit/recruiter-profile-edit.component').then(m => m.RecruiterProfileEdit)
-  },
-  {
-    path: 'recruiter/missions',
-    loadComponent: () => import('./features/recruiter-missions/recruiter-missions.component').then(m => m.RecruiterMissions)
-  },
-  {
-    path: 'missions',
-    loadComponent: () => import('./features/missions/missions.component').then(m => m.Missions)
-  },
-  {
-    path: 'messages',
-    loadComponent: () => import('./features/messages/messages.component').then(m => m.Messages)
-  },
-  {
-    path: 'notifications',
-    loadComponent: () => import('./features/notifications/notifications.component').then(m => m.Notifications)
-  },
-  {
-    path: 'profile-edit',
-    loadComponent: () => import('./features/profile-edit/profile-edit.component').then(m => m.ProfileEdit)
-  },
-  {
-    path: 'profile-test',
-    loadComponent: () => import('./features/profile-test/profile-test.component').then(m => m.ProfileTest)
-  },
-  {
-    path: 'test-firebase',
-    loadComponent: () => import('./features/test/firebase-test.component').then(m => m.FirebaseTest)
-  },
+  // Public routes
   {
     path: 'profile/:id',
     loadComponent: () => import('./features/profile/profile.component').then(m => m.Profile)

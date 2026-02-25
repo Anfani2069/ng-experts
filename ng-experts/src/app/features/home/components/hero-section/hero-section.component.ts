@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
 })
 export class HeroSection implements OnInit, OnDestroy {
   private router = inject(Router);
-  protected readonly searchQuery = signal('');
 
   // Pool d'avatars
   private avatarPool = [
@@ -72,13 +71,10 @@ export class HeroSection implements OnInit, OnDestroy {
     this.router.navigate(['/register'], { queryParams: { type: 'recruiter' } });
   }
 
-  protected onSearch(): void {
-    // TODO: Implement search functionality
-    console.log('Search:', this.searchQuery());
-  }
-
-  protected onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    this.searchQuery.set(target.value);
+  protected scrollToExperts(): void {
+    const section = document.getElementById('experts');
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 }

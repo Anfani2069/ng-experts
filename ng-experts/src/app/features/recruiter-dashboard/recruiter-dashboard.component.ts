@@ -34,11 +34,20 @@ export class RecruiterDashboard implements OnInit {
 
   protected readonly showProposalModal = signal(false);
   protected readonly selectedExpert = signal<Expert | null>(null);
+  protected readonly selectedExperts = signal<Expert[]>([]); // multi-select
   protected readonly isSending = signal(false);
   protected readonly proposalSent = signal(false);
+  protected readonly proposalSentCount = signal(0);
   protected readonly proposalError = signal<string | null>(null);
 
-  protected readonly proposalForm = signal({ title: '', description: '', budget: '', startDate: '' });
+  protected readonly priorityOptions = [
+    { value: 'urgent', label: '🔴 Urgent', desc: 'Besoin immédiat' },
+    { value: 'high',   label: '🟠 Élevé',  desc: 'Dans les 2 semaines' },
+    { value: 'normal', label: '🟡 Normal', desc: 'Sans contrainte' },
+    { value: 'low',    label: '🟢 Faible', desc: 'Besoin à long terme' },
+  ];
+
+  protected readonly proposalForm = signal({ title: '', description: '', budget: '', startDate: '', priority: 'normal' as 'urgent' | 'high' | 'normal' | 'low' });
 
   protected readonly filteredExperts = computed(() => {
     const q = this.searchQuery().toLowerCase().trim();
@@ -124,7 +133,12 @@ export class RecruiterDashboard implements OnInit {
 
   protected openProposalModal(expert: Expert): void {
     this.selectedExpert.set(expert);
-    this.proposalForm.set({ title: '', description: '', budget: '', startDate: '' });
+    // Ajouter l'expert à la sélection s'il n'y est pas déjà
+    const current = this.selectedExperts();
+    if (!current.find(e => e.id === expert.id)) {
+      this.selectedExperts.set([...current, expert]);
+    }
+    this.proposalForm.set({ title: '', description: '', budget: '', startDate: '', priority: 'normal' });
     this.proposalSent.set(false);
     this.proposalError.set(null);
     this.showProposalModal.set(true);
@@ -133,6 +147,21 @@ export class RecruiterDashboard implements OnInit {
   protected closeProposalModal(): void {
     this.showProposalModal.set(false);
     this.selectedExpert.set(null);
+    this.selectedExperts.set([]);
+  }
+
+  protected toggleExpertSelection(expert: Expert): void {
+    const current = this.selectedExperts();
+    const exists = current.find(e => e.id === expert.id);
+    if (exists) {
+      this.selectedExperts.set(current.filter(e => e.id !== expert.id));
+    } else {
+      this.selectedExperts.set([...current, expert]);
+    }
+  }
+
+  protected isExpertSelected(expertId: string): boolean {
+    return this.selectedExperts().some(e => e.id === expertId);
   }
 
   protected updateForm(field: string, value: string): void {
@@ -140,32 +169,43 @@ export class RecruiterDashboard implements OnInit {
   }
 
   protected async sendProposal(): Promise<void> {
-    const expert = this.selectedExpert();
+    const targets = this.selectedExperts();
     const user = this.currentUser();
     const form = this.proposalForm();
-    if (!expert || !user) return;
-    if (!form.title.trim() || !form.description.trim() || !form.budget.trim()) {
-      this.proposalError.set('Veuillez remplir tous les champs obligatoires');
+    if (!targets.length || !user) return;
+    if (!form.title.trim() || !form.description.trim()) {
+      this.proposalError.set('Le titre et la description sont obligatoires.');
       return;
     }
     this.isSending.set(true);
     this.proposalError.set(null);
     try {
-      const proposal: Omit<Proposal, 'id'> = {
-        expertId: expert.id,
-        clientId: user.id,
-        clientEmail: user.email,
-        title: form.title.trim(),
-        description: form.description.trim(),
-        budget: form.budget.trim(),
-        startDate: form.startDate || 'À définir',
-        status: 'pending',
-        createdAt: new Date()
-      };
-      await this.expertService.addProposal(proposal, `${user.firstName} ${user.lastName}`);
+      const recruiter = this.recruiter();
+      const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ').trim();
+      const company = recruiter?.company !== 'Non renseigné' ? recruiter?.company : undefined;
+      const clientName = (fullName && company)
+        ? `${fullName} — ${company}`
+        : fullName || company || user.email;
+      await Promise.all(targets.map(expert => {
+        const proposal: Omit<Proposal, 'id'> = {
+          expertId: expert.id,
+          clientId: user.id,
+          clientEmail: user.email,
+          clientName,
+          title: form.title.trim(),
+          description: form.description.trim(),
+          budget: form.budget.trim() || undefined,
+          startDate: form.startDate || 'À définir',
+          priority: form.priority,
+          status: 'pending',
+          createdAt: new Date()
+        };
+        return this.expertService.addProposal(proposal, clientName);
+      }));
+      this.proposalSentCount.set(targets.length);
       this.proposalSent.set(true);
       await this.loadMyProposals();
-      setTimeout(() => this.closeProposalModal(), 2000);
+      setTimeout(() => this.closeProposalModal(), 2500);
     } catch (e) {
       this.proposalError.set('Erreur lors de l\'envoi. Veuillez réessayer.');
       console.error(e);

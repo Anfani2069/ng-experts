@@ -67,3 +67,32 @@
   }
 }
 
+// Cascading wave for double chevron
+@keyframes arrow-wave {
+  0% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  40% {
+    transform: translateY(7px);
+    opacity: 1;
+  }
+  80%, 100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+}
+
+.scroll-arrow-1 {
+  animation: arrow-wave 1.2s ease-in-out infinite;
+}
+
+.scroll-arrow-2 {
+  animation: arrow-wave 1.2s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+
+.scroll-arrow-btn {
+  margin-top: 2px;
+}
+

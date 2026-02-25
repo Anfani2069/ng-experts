@@ -229,6 +229,23 @@ export class ExpertService {
         }
       });
 
+      // Enrichir les propositions dont clientName est vide/whitespace
+      // en allant chercher le nom du recruteur dans son document Firestore
+      await Promise.all(proposals.map(async (proposal) => {
+        const needsEnrichment = !proposal.clientName?.trim() || proposal.clientName.includes('Non renseigné');
+        if (needsEnrichment && proposal.clientId) {
+          try {
+            const recruiterDoc = await getDoc(doc(firebase.firestore, 'users', proposal.clientId));
+            if (recruiterDoc.exists()) {
+              const rd = recruiterDoc.data();
+              const fullName = [rd['firstName'], rd['lastName']].filter(Boolean).join(' ').trim();
+              const company = rd['company'] !== 'Non renseigné' ? rd['company'] : undefined;
+              proposal.clientName = fullName || company || proposal.clientEmail;
+            }
+          } catch { /* silently ignore */ }
+        }
+      }));
+
       // Trier par date décroissante (plus récent en premier)
       return proposals.sort((a, b) => {
         const dateA = a.createdAt instanceof Date ? a.createdAt : new Date(a.createdAt as any);

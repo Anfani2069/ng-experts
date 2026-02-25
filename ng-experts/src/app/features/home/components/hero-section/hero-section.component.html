@@ -37,17 +37,16 @@
         </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row gap-6 mb-20">
-        <div class="relative flex-1 max-w-md group">
-          <i
-            class="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-subtext group-focus-within:text-white transition-colors"></i>
-          <input type="text" placeholder="Saisir une ville..." [value]="searchQuery()"
-            (input)="onSearchInput($event)"
-            class="w-full bg-transparent border border-border rounded-full py-2.5 px-14 text-white placeholder:text-subtext focus:outline-none focus:border-white/20 transition">
-        </div>
-        <button (click)="onSearch()"
-          class="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-colors duration-300">
-          Explorer Experts
+      <div class="flex flex-col items-center w-full gap-6 mb-20">
+        <button (click)="scrollToExperts()"
+          class="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-colors duration-300 flex items-center gap-2"
+          aria-label="Explorer les experts">
+          <i class="fa-solid fa-magnifying-glass text-xs"></i>
+          Explorer les Experts
+        </button>
+        <button (click)="scrollToExperts()" class="flex flex-col items-center gap-0 scroll-arrow-btn cursor-pointer focus:outline-none" aria-label="Voir les experts">
+          <i class="fa-solid fa-chevron-down text-primary text-base scroll-arrow-1"></i>
+          <i class="fa-solid fa-chevron-down text-primary/50 text-base scroll-arrow-2"></i>
         </button>
       </div>
 

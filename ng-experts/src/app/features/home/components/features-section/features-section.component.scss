@@ -1,2 +1,21 @@
 // Styles spécifiques à la section Features
 // Les styles globaux sont gérés par TailwindCSS
+
+.bar-animate {
+  animation: growBar 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: left;
+}
+
+@keyframes growBar {
+  from { width: 0 }
+  to   { width: 85% }
+}
+
+.feature-card {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(236, 72, 153, 0.08);
+  }
+}

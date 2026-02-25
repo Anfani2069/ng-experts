@@ -146,6 +146,16 @@
                 }
               </div>
 
+              <div class="md:col-span-2">
+                <label class="block text-sm font-semibold text-subtext mb-2">Titre professionnel <span class="text-subtext/50 font-normal text-xs">(affiché sur votre profil public)</span></label>
+                <input
+                  type="text"
+                  formControlName="title"
+                  placeholder="Ex: Développeur Full-Stack Angular • Expert React • Lead Dev Java"
+                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white placeholder:text-subtext"
+                >
+              </div>
+
               <div>
                 <label class="block text-sm font-semibold text-subtext mb-2">Entreprise / Titre</label>
                 <input
@@ -735,17 +745,35 @@
                   >
                 </div>
                 <div>
-                  <label class="block text-sm font-semibold text-subtext mb-2">Taux journalier (TJM)</label>
-                  <div class="relative">
-                    <input
-                      type="text"
-                      [value]="availability().dailyRate"
-                      (change)="onAvailabilityFieldChange('dailyRate', $any($event.target).value)"
-                      placeholder="Ex: 500-600"
-                      class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white text-white placeholder:text-subtext"
-                    >
-                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-subtext text-sm">€/jour</span>
+                  <div class="flex items-center justify-between mb-2">
+                    <label class="block text-sm font-semibold text-subtext">Taux journalier (TJM)</label>
+                    <button type="button" (click)="showDailyRate.set(!showDailyRate()); !showDailyRate() && onAvailabilityFieldChange('dailyRate', '')"
+                      class="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest transition"
+                      [class]="showDailyRate() ? 'text-primary' : 'text-subtext hover:text-white'">
+                      <div class="w-8 h-4 rounded-full transition-all relative"
+                        [class]="showDailyRate() ? 'bg-primary' : 'bg-white/10'">
+                        <div class="w-3 h-3 bg-white rounded-full absolute top-0.5 transition-all"
+                          [class]="showDailyRate() ? 'left-4' : 'left-0.5'"></div>
+                      </div>
+                      {{ showDailyRate() ? 'Visible' : 'Masqué' }}
+                    </button>
                   </div>
+                  @if (showDailyRate()) {
+                    <div class="relative">
+                      <input
+                        type="text"
+                        [value]="availability().dailyRate"
+                        (change)="onAvailabilityFieldChange('dailyRate', $any($event.target).value)"
+                        placeholder="Ex: 500-600"
+                        class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition text-sm text-white placeholder:text-subtext"
+                      >
+                      <span class="absolute right-4 top-1/2 -translate-y-1/2 text-subtext text-sm">€/jour</span>
+                    </div>
+                  } @else {
+                    <div class="px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-subtext text-sm italic">
+                      TJM masqué sur votre profil public
+                    </div>
+                  }
                 </div>
                 <div>
                   <label class="block text-sm font-semibold text-subtext mb-2">Préférence de travail</label>

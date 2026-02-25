@@ -26,6 +26,7 @@ export class Dashboard implements OnInit, OnDestroy {
   protected readonly isLoading = signal(false);
   protected readonly proposals = signal<Proposal[]>([]);
   protected readonly processingId = signal<string | null>(null);
+  protected readonly pendingRejectProposal = signal<Proposal | null>(null);
 
   // Countdown timer
   private _countdownInterval: any = null;
@@ -107,8 +108,17 @@ export class Dashboard implements OnInit, OnDestroy {
     }
   }
 
+  protected confirmReject(proposal: Proposal): void {
+    this.pendingRejectProposal.set(proposal);
+  }
+
+  protected cancelReject(): void {
+    this.pendingRejectProposal.set(null);
+  }
+
   protected async rejectProposal(proposal: Proposal): Promise<void> {
     if (!proposal.id || this.processingId()) return;
+    this.pendingRejectProposal.set(null);
     this.processingId.set(proposal.id);
     try {
       await this.expertService.updateProposalStatus(
