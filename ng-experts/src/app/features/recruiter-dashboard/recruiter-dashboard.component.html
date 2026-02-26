@@ -6,9 +6,9 @@
       <div class="relative z-10 flex items-center justify-between flex-wrap gap-4">
         <div>
           @if (isUserLoaded()) {
-            <h1 class="text-2xl font-bold text-white mb-1">Bonjour {{ userName() }} 👋</h1>
+          <h1 class="text-xl font-bold text-white mb-1">Bonjour {{ userName() }} 👋</h1>
           } @else {
-            <div class="h-8 w-56 bg-white/5 rounded animate-pulse mb-1"></div>
+          <div class="h-8 w-56 bg-white/5 rounded animate-pulse mb-1"></div>
           }
           <p class="text-subtext text-sm">Trouvez l'expert Angular idéal pour votre projet</p>
         </div>
@@ -64,78 +64,90 @@
           </div>
           <div class="flex items-center gap-3">
             @if (selectedExperts().length > 0) {
-              <button (click)="showProposalModal.set(true); proposalSent.set(false); proposalError.set(null)"
-                class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-primary/80 transition shadow-[0_0_15px_-5px_rgba(236,72,153,0.5)]">
-                <i class="fa-solid fa-paper-plane text-[9px]"></i>
-                Proposer ({{ selectedExperts().length }})
-              </button>
+            <button (click)="showProposalModal.set(true); proposalSent.set(false); proposalError.set(null)"
+              class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-primary/80 transition shadow-[0_0_15px_-5px_rgba(236,72,153,0.5)]">
+              <i class="fa-solid fa-paper-plane text-[9px]"></i>
+              Proposer ({{ selectedExperts().length }})
+            </button>
             }
-            <a routerLink="/" fragment="experts" class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Voir tout</a>
+            <a routerLink="/" fragment="experts"
+              class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Voir
+              tout</a>
           </div>
         </div>
         <div class="relative mb-4">
           <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-subtext text-xs"></i>
-          <input type="text" placeholder="Nom, compétence, ville..."
-            [value]="searchQuery()" (input)="onSearch($event)"
+          <input type="text" placeholder="Nom, compétence, ville..." [value]="searchQuery()" (input)="onSearch($event)"
             class="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
         </div>
         @if (isLoading()) {
-          <div class="flex items-center justify-center py-12 text-subtext">
-            <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
-          </div>
+        <div class="flex items-center justify-center py-12 text-subtext">
+          <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
+        </div>
         } @else if (filteredExperts().length === 0) {
-          <div class="text-center py-10 text-subtext">
-            <i class="fa-solid fa-user-slash text-3xl mb-3 opacity-20 block"></i>
-            <p class="text-sm">Aucun expert trouvé</p>
-          </div>
+        <div class="text-center py-10 text-subtext">
+          <i class="fa-solid fa-user-slash text-3xl mb-3 opacity-20 block"></i>
+          <p class="text-sm">Aucun expert trouvé</p>
+        </div>
         } @else {
-          <div class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
-            @for (expert of filteredExperts(); track expert.id) {
-              <div class="flex items-center gap-3 p-3 rounded-xl border transition-all cursor-pointer"
-                [class]="isExpertSelected(expert.id) ? 'bg-primary/5 border-primary/40' : 'bg-white/[0.03] border-white/5 hover:border-primary/20 hover:bg-white/[0.06]'"
-                (click)="toggleExpertSelection(expert)">
-                <!-- Checkbox -->
-                <div class="w-5 h-5 rounded border-2 shrink-0 flex items-center justify-center transition-all"
-                  [class]="isExpertSelected(expert.id) ? 'bg-primary border-primary' : 'border-white/20'">
-                  @if (isExpertSelected(expert.id)) {
-                    <i class="fa-solid fa-check text-white text-[9px]"></i>
+        <div class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+          @for (expert of filteredExperts(); track expert.id) {
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer"
+            [class]="isExpertSelected(expert.id) ? 'bg-primary/5 border-primary/40' : 'bg-white/[0.03] border-white/5 hover:border-primary/20 hover:bg-white/[0.06]'"
+            (click)="toggleExpertSelection(expert)">
+
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+              <!-- Checkbox -->
+              <div class="w-5 h-5 rounded border-2 shrink-0 flex items-center justify-center transition-all"
+                [class]="isExpertSelected(expert.id) ? 'bg-primary border-primary' : 'border-white/20'">
+                @if (isExpertSelected(expert.id)) {
+                <i class="fa-solid fa-check text-white text-[9px]"></i>
+                }
+              </div>
+              <img
+                [src]="expert.avatar || 'https://ui-avatars.com/api/?name=' + expert.firstName + '+' + expert.lastName + '&background=EC4899&color=fff'"
+                class="w-11 h-11 rounded-full object-cover border border-white/10 shrink-0">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <h4 class="font-bold text-white text-sm truncate">{{ expert.firstName }} {{ expert.lastName }}</h4>
+                  @if (expert.isAvailable) {
+                  <span class="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0"></span>
                   }
                 </div>
-                <img [src]="expert.avatar || 'https://ui-avatars.com/api/?name=' + expert.firstName + '+' + expert.lastName + '&background=EC4899&color=fff'"
-                  class="w-11 h-11 rounded-full object-cover border border-white/10 shrink-0">
-                <div class="flex-1 min-w-0">
-                  <div class="flex items-center gap-2 mb-0.5">
-                    <h4 class="font-bold text-white text-sm truncate">{{ expert.firstName }} {{ expert.lastName }}</h4>
-                    @if (expert.isAvailable) {
-                      <span class="w-2 h-2 rounded-full bg-green-400 shrink-0"></span>
-                    }
-                  </div>
-                  <p class="text-xs text-subtext truncate mb-1">
-                    {{ expert.city }}
-                    @if (expert.availability.dailyRate) { • {{ expert.availability.dailyRate }}€/j }
-                    @if (expert.yearsOfExperience) {<span class="text-white/30"> • </span>{{ expert.yearsOfExperience }}}
-                  </p>
-                  <div class="flex gap-1 flex-wrap mb-1">
-                    @for (t of (expert.availability.types || []); track t) {
-                      <span class="px-1.5 py-0.5 text-[9px] font-bold rounded-full border"
-                        [class]="t === 'freelance' ? 'bg-primary/10 text-primary border-primary/20' : t === 'cdi' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'">
-                        {{ t === 'freelance' ? 'Freelance' : t === 'cdi' ? 'CDI' : 'Mentoring' }}
-                      </span>
-                    }
-                  </div>
-                  <div class="flex gap-1 flex-wrap">
-                    @for (skill of (expert.skills || []).slice(0, 3); track skill.id) {
-                      <span class="px-2 py-0.5 bg-white/5 text-subtext text-[10px] font-medium rounded-full border border-white/10">{{ skill.name }}</span>
-                    }
-                  </div>
-                </div>
-                <button (click)="viewExpert(expert); $event.stopPropagation()"
-                  class="px-3 py-1.5 bg-white/5 border border-white/10 text-subtext text-[10px] font-bold uppercase tracking-widest rounded-full hover:border-primary/30 hover:text-primary transition whitespace-nowrap shrink-0">
-                  Profil
-                </button>
+                <p class="text-xs text-subtext truncate">
+                  {{ expert.city }}
+                  @if (expert.availability.dailyRate) { • {{ expert.availability.dailyRate }}€/j }
+                  @if (expert.yearsOfExperience) { • {{ expert.yearsOfExperience }} }
+                </p>
               </div>
-            }
+            </div>
+
+            <div class="flex-1 min-w-0 w-full sm:w-auto">
+              <div class="flex gap-1 flex-wrap mb-2">
+                @for (t of (expert.availability.types || []); track t) {
+                <span class="px-1.5 py-0.5 text-[9px] font-bold rounded-full border whitespace-nowrap"
+                  [class]="t === 'freelance' ? 'bg-primary/10 text-primary border-primary/20' : t === 'cdi' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'">
+                  {{ t === 'freelance' ? 'Freelance' : t === 'cdi' ? 'CDI' : 'Mentoring' }}
+                </span>
+                }
+              </div>
+              <div class="flex gap-1 flex-wrap">
+                @for (skill of (expert.skills || []).slice(0, 3); track skill.id) {
+                <span
+                  class="px-2 py-0.5 bg-white/5 text-subtext text-[10px] font-medium rounded-full border border-white/10 whitespace-nowrap">{{
+                  skill.name }}</span>
+                }
+              </div>
+            </div>
+
+            <button (click)="viewExpert(expert); $event.stopPropagation()"
+              class="w-full sm:w-auto px-4 py-2 bg-white/5 border border-white/10 text-subtext text-[10px] font-bold uppercase tracking-widest rounded-full hover:border-primary/30 hover:text-primary transition">
+              Profil
+            </button>
           </div>
+          }
+        </div>
         }
       </div>
 
@@ -148,63 +160,66 @@
           </div>
           <div class="flex items-center gap-3">
             @if (stats().pending > 0) {
-              <span class="bg-yellow-500/10 text-yellow-400 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-yellow-500/20">
-                {{ stats().pending }} en attente
-              </span>
+            <span
+              class="bg-yellow-500/10 text-yellow-400 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-yellow-500/20">
+              {{ stats().pending }} en attente
+            </span>
             }
-            <a routerLink="/recruiter/missions" class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout voir</a>
+            <a routerLink="/recruiter/missions"
+              class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout
+              voir</a>
           </div>
         </div>
         <div class="space-y-3">
           @if (myProposals().length === 0) {
-            <div class="text-center py-12 text-subtext">
-              <i class="fa-solid fa-paper-plane text-4xl mb-3 opacity-20 block"></i>
-              <p class="text-sm">Aucune proposition envoyée</p>
-              <p class="text-[11px] text-white/20 mt-1">Trouvez un expert et envoyez votre première offre</p>
-            </div>
+          <div class="text-center py-12 text-subtext">
+            <i class="fa-solid fa-paper-plane text-4xl mb-3 opacity-20 block"></i>
+            <p class="text-sm">Aucune proposition envoyée</p>
+            <p class="text-[11px] text-white/20 mt-1">Trouvez un expert et envoyez votre première offre</p>
+          </div>
           }
           @for (proposal of recentProposals(); track proposal.id) {
-            <div class="p-4 rounded-xl border transition-all"
-              [ngClass]="{
+          <div class="p-4 rounded-xl border transition-all" [ngClass]="{
                 'border-green-500/20 bg-green-500/5': proposal.status === 'accepted',
                 'border-blue-500/20 bg-blue-500/5': proposal.status === 'completed',
                 'border-white/5 bg-white/[0.03]': proposal.status === 'pending',
                 'border-white/5 bg-white/[0.02] opacity-60': proposal.status === 'rejected'
               }">
-              <div class="flex items-start justify-between gap-2 mb-2">
-                <h4 class="font-bold text-white text-sm leading-tight">{{ proposal.title }}</h4>
-                <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shrink-0"
-                  [class]="getProposalStatusClass(proposal.status)">
-                  {{ getProposalStatusLabel(proposal.status) }}
-                </span>
-              </div>
-              <div class="flex items-center gap-3 mb-2">
-                @if (proposal.budget) {
-                  <span class="text-primary font-bold text-sm">{{ proposal.budget }}</span>
-                  <span class="text-white/20 text-xs">•</span>
-                }
-                <span class="text-subtext text-xs">{{ proposal.startDate }}</span>
-                @if (toDate(proposal.createdAt)) {
-                  <span class="text-white/20 text-xs">•</span>
-                  <span class="text-subtext text-xs">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
-                }
-              </div>
-              <p class="text-xs text-subtext line-clamp-1">{{ proposal.description }}</p>
-              @if (proposal.status === 'accepted') {
-                <div class="mt-3 pt-3 border-t border-green-500/20">
-                  <button (click)="contactExpertFromProposal(proposal)" class="flex items-center gap-1.5 text-green-400 text-[11px] font-bold uppercase tracking-widest hover:text-green-300 transition">
-                    <i class="fa-regular fa-envelope text-[10px]"></i> Contacter l'expert
-                  </button>
-                </div>
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h4 class="font-bold text-white text-sm leading-tight">{{ proposal.title }}</h4>
+              <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shrink-0"
+                [class]="getProposalStatusClass(proposal.status)">
+                {{ getProposalStatusLabel(proposal.status) }}
+              </span>
+            </div>
+            <div class="flex items-center gap-3 mb-2">
+              @if (proposal.budget) {
+              <span class="text-primary font-bold text-sm">{{ proposal.budget }}</span>
+              <span class="text-white/20 text-xs">•</span>
               }
-              @if (proposal.status === 'completed') {
-                <div class="mt-3 pt-3 border-t border-blue-500/20">
-                  <span class="flex items-center gap-1.5 text-blue-400 text-[11px] font-bold uppercase tracking-widest">
-                    <i class="fa-solid fa-check-double text-[10px]"></i> Mission terminée
-                  </span>
-                </div>
+              <span class="text-subtext text-xs">{{ proposal.startDate }}</span>
+              @if (toDate(proposal.createdAt)) {
+              <span class="text-white/20 text-xs">•</span>
+              <span class="text-subtext text-xs">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
               }
             </div>
+            <p class="text-xs text-subtext line-clamp-1">{{ proposal.description }}</p>
+            @if (proposal.status === 'accepted') {
+            <div class="mt-3 pt-3 border-t border-green-500/20">
+              <button (click)="contactExpertFromProposal(proposal)"
+                class="flex items-center gap-1.5 text-green-400 text-[11px] font-bold uppercase tracking-widest hover:text-green-300 transition">
+                <i class="fa-regular fa-envelope text-[10px]"></i> Contacter l'expert
+              </button>
+            </div>
+            }
+            @if (proposal.status === 'completed') {
+            <div class="mt-3 pt-3 border-t border-blue-500/20">
+              <span class="flex items-center gap-1.5 text-blue-400 text-[11px] font-bold uppercase tracking-widest">
+                <i class="fa-solid fa-check-double text-[10px]"></i> Mission terminée
+              </span>
+            </div>
+            }
+          </div>
           }
         </div>
       </div>
@@ -214,129 +229,133 @@
 
   <!-- MODAL PROPOSITION -->
   @if (showProposalModal()) {
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeProposalModal()"></div>
-      <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-lg relative z-10 overflow-hidden">
-        <!-- Header -->
-        <div class="flex items-center justify-between p-5 border-b border-white/5">
-          <div>
-            <h3 class="font-bold text-white">Envoyer une proposition</h3>
-            <p class="text-xs text-subtext mt-0.5">
-              @if (selectedExperts().length === 1) {
-                À {{ selectedExperts()[0].firstName }} {{ selectedExperts()[0].lastName }}
-              } @else {
-                À {{ selectedExperts().length }} experts sélectionnés
-              }
-            </p>
-          </div>
-          <button (click)="closeProposalModal()" class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center transition">
-            <i class="fa-solid fa-xmark text-subtext"></i>
-          </button>
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeProposalModal()"></div>
+    <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-lg relative z-10 overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between p-5 border-b border-white/5">
+        <div>
+          <h3 class="font-bold text-white">Envoyer une proposition</h3>
+          <p class="text-xs text-subtext mt-0.5">
+            @if (selectedExperts().length === 1) {
+            À {{ selectedExperts()[0].firstName }} {{ selectedExperts()[0].lastName }}
+            } @else {
+            À {{ selectedExperts().length }} experts sélectionnés
+            }
+          </p>
         </div>
+        <button (click)="closeProposalModal()"
+          class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-subtext"></i>
+        </button>
+      </div>
 
-        <!-- Experts sélectionnés (pills) -->
-        @if (selectedExperts().length > 1) {
-          <div class="px-5 pt-4 flex flex-wrap gap-2">
-            @for (e of selectedExperts(); track e.id) {
-              <span class="flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 border border-primary/20 rounded-full text-[11px] text-primary font-medium">
-                {{ e.firstName }} {{ e.lastName }}
-                <button (click)="toggleExpertSelection(e)" class="text-primary/60 hover:text-primary">
-                  <i class="fa-solid fa-xmark text-[9px]"></i>
-                </button>
-              </span>
-            }
-          </div>
-        }
-
-        @if (proposalSent()) {
-          <div class="p-8 text-center">
-            <div class="w-16 h-16 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fa-solid fa-check text-green-400 text-2xl"></i>
-            </div>
-            <h4 class="text-lg font-bold text-white mb-2">
-              @if (proposalSentCount() > 1) {
-                {{ proposalSentCount() }} propositions envoyées !
-              } @else {
-                Proposition envoyée !
-              }
-            </h4>
-            <p class="text-subtext text-sm">Les experts recevront votre offre et pourront l'accepter ou la refuser.</p>
-          </div>
-        } @else {
-          <div class="p-5 space-y-4">
-            @if (proposalError()) {
-              <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-                <i class="fa-solid fa-exclamation-circle mr-2"></i>{{ proposalError() }}
-              </div>
-            }
-
-            <!-- Titre -->
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Titre *</label>
-              <input type="text" placeholder="Ex: Développement application Angular"
-                [value]="proposalForm().title" (input)="updateForm('title', $any($event.target).value)"
-                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
-            </div>
-
-            <!-- Urgence -->
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Urgence</label>
-              <div class="grid grid-cols-4 gap-2">
-                @for (opt of priorityOptions; track opt.value) {
-                  <button type="button" (click)="updateForm('priority', opt.value)"
-                    class="py-2 px-2 rounded-lg border text-[10px] font-bold text-center transition-all"
-                    [class]="proposalForm().priority === opt.value ? 'border-primary bg-primary/10 text-white' : 'border-white/10 bg-white/5 text-subtext hover:border-white/20'">
-                    <div>{{ opt.label }}</div>
-                    <div class="text-[9px] font-normal opacity-70">{{ opt.desc }}</div>
-                  </button>
-                }
-              </div>
-            </div>
-
-            <!-- Budget + Date -->
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Budget <span class="text-white/30">(optionnel)</span></label>
-                <input type="text" placeholder="Ex: 500€/jour ou CDI"
-                  [value]="proposalForm().budget" (input)="updateForm('budget', $any($event.target).value)"
-                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
-              </div>
-              <div>
-                <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Date de début</label>
-                <input type="date" [value]="proposalForm().startDate"
-                  (input)="updateForm('startDate', $any($event.target).value)"
-                  class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-primary/50 transition">
-              </div>
-            </div>
-
-            <!-- Description -->
-            <div>
-              <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Description *</label>
-              <textarea rows="3" placeholder="Décrivez votre projet, les technologies, le contexte..."
-                [value]="proposalForm().description" (input)="updateForm('description', $any($event.target).value)"
-                class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition resize-none"></textarea>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex gap-3 pt-1">
-              <button (click)="closeProposalModal()"
-                class="flex-1 py-3 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
-                Annuler
-              </button>
-              <button (click)="sendProposal()" [disabled]="isSending() || selectedExperts().length === 0"
-                class="flex-1 py-3 bg-primary text-white rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-primary/80 transition shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] disabled:opacity-50 flex items-center justify-center gap-2">
-                @if (isSending()) {
-                  <i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Envoi...
-                } @else {
-                  <i class="fa-solid fa-paper-plane text-xs"></i>
-                  Envoyer @if (selectedExperts().length > 1) { ({{ selectedExperts().length }}) }
-                }
-              </button>
-            </div>
-          </div>
+      <!-- Experts sélectionnés (pills) -->
+      @if (selectedExperts().length > 1) {
+      <div class="px-5 pt-4 flex flex-wrap gap-2">
+        @for (e of selectedExperts(); track e.id) {
+        <span
+          class="flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 border border-primary/20 rounded-full text-[11px] text-primary font-medium">
+          {{ e.firstName }} {{ e.lastName }}
+          <button (click)="toggleExpertSelection(e)" class="text-primary/60 hover:text-primary">
+            <i class="fa-solid fa-xmark text-[9px]"></i>
+          </button>
+        </span>
         }
       </div>
+      }
+
+      @if (proposalSent()) {
+      <div class="p-8 text-center">
+        <div
+          class="w-16 h-16 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fa-solid fa-check text-green-400 text-2xl"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">
+          @if (proposalSentCount() > 1) {
+          {{ proposalSentCount() }} propositions envoyées !
+          } @else {
+          Proposition envoyée !
+          }
+        </h4>
+        <p class="text-subtext text-sm">Les experts recevront votre offre et pourront l'accepter ou la refuser.</p>
+      </div>
+      } @else {
+      <div class="p-5 space-y-4">
+        @if (proposalError()) {
+        <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+          <i class="fa-solid fa-exclamation-circle mr-2"></i>{{ proposalError() }}
+        </div>
+        }
+
+        <!-- Titre -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Titre *</label>
+          <input type="text" placeholder="Ex: Développement application Angular" [value]="proposalForm().title"
+            (input)="updateForm('title', $any($event.target).value)"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
+        </div>
+
+        <!-- Urgence -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Urgence</label>
+          <div class="grid grid-cols-4 gap-2">
+            @for (opt of priorityOptions; track opt.value) {
+            <button type="button" (click)="updateForm('priority', opt.value)"
+              class="py-2 px-2 rounded-lg border text-[10px] font-bold text-center transition-all"
+              [class]="proposalForm().priority === opt.value ? 'border-primary bg-primary/10 text-white' : 'border-white/10 bg-white/5 text-subtext hover:border-white/20'">
+              <div>{{ opt.label }}</div>
+              <div class="text-[9px] font-normal opacity-70">{{ opt.desc }}</div>
+            </button>
+            }
+          </div>
+        </div>
+
+        <!-- Budget + Date -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Budget <span
+                class="text-white/30">(optionnel)</span></label>
+            <input type="text" placeholder="Ex: 500€/jour ou CDI" [value]="proposalForm().budget"
+              (input)="updateForm('budget', $any($event.target).value)"
+              class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
+          </div>
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Date de début</label>
+            <input type="date" [value]="proposalForm().startDate"
+              (input)="updateForm('startDate', $any($event.target).value)"
+              class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-primary/50 transition">
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Description *</label>
+          <textarea rows="3" placeholder="Décrivez votre projet, les technologies, le contexte..."
+            [value]="proposalForm().description" (input)="updateForm('description', $any($event.target).value)"
+            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition resize-none"></textarea>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 pt-1">
+          <button (click)="closeProposalModal()"
+            class="flex-1 py-3 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
+            Annuler
+          </button>
+          <button (click)="sendProposal()" [disabled]="isSending() || selectedExperts().length === 0"
+            class="flex-1 py-3 bg-primary text-white rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-primary/80 transition shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] disabled:opacity-50 flex items-center justify-center gap-2">
+            @if (isSending()) {
+            <i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Envoi...
+            } @else {
+            <i class="fa-solid fa-paper-plane text-xs"></i>
+            Envoyer @if (selectedExperts().length > 1) { ({{ selectedExperts().length }}) }
+            }
+          </button>
+        </div>
+      </div>
+      }
     </div>
+  </div>
   }
 
 </app-dashboard-layout>

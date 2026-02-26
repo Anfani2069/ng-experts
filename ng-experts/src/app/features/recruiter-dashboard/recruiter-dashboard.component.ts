@@ -173,8 +173,8 @@ export class RecruiterDashboard implements OnInit {
     const user = this.currentUser();
     const form = this.proposalForm();
     if (!targets.length || !user) return;
-    if (!form.title.trim() || !form.description.trim()) {
-      this.proposalError.set('Le titre et la description sont obligatoires.');
+    if (!form.title.trim()) {
+      this.proposalError.set('Le titre est obligatoire.');
       return;
     }
     this.isSending.set(true);
@@ -187,6 +187,7 @@ export class RecruiterDashboard implements OnInit {
         ? `${fullName} — ${company}`
         : fullName || company || user.email;
       await Promise.all(targets.map(expert => {
+        const budgetValue = form.budget.trim();
         const proposal: Omit<Proposal, 'id'> = {
           expertId: expert.id,
           clientId: user.id,
@@ -194,7 +195,7 @@ export class RecruiterDashboard implements OnInit {
           clientName,
           title: form.title.trim(),
           description: form.description.trim(),
-          budget: form.budget.trim() || undefined,
+          ...(budgetValue ? { budget: budgetValue } : {}),
           startDate: form.startDate || 'À définir',
           priority: form.priority,
           status: 'pending',

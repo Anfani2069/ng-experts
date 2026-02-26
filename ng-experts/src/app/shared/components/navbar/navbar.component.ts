@@ -1,19 +1,26 @@
 import { Component, signal, inject, ChangeDetectorRef, afterNextRender, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { Auth } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  imports: [CommonModule]
+  imports: [CommonModule, RouterModule]
 })
 export class Navbar {
   private router = inject(Router);
+  private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
+  protected readonly currentUser = this.auth.getCurrentUser();
+  protected readonly isLoggedIn = signal(false); // Will be updated by effect/init if needed, but currentUser is reactive
+  protected readonly dashboardRoute = signal('/dashboard');
+
   protected readonly isScrolled = signal(false);
+  protected readonly mobileMenuOpen = signal(false);
 
   constructor() {
     afterNextRender(() => {
@@ -30,6 +37,10 @@ export class Navbar {
     });
   }
 
+  protected toggleMobileMenu(): void {
+    this.mobileMenuOpen.set(!this.mobileMenuOpen());
+  }
+
   protected onApplyAsExpert(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.router.navigate(['/register'], { queryParams: { type: 'expert' } });
@@ -42,22 +53,26 @@ export class Navbar {
 
   protected onLogin(): void {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-
     this.router.navigate(['/login']);
   }
 
+  protected onNavigateDashboard(): void {
+    const user = this.currentUser();
+    const route = user?.role === 'recruiter' ? '/recruiter/dashboard' : '/dashboard';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.router.navigate([route]);
+    this.mobileMenuOpen.set(false);
+  }
+
   protected onNavigateHome(): void {
-    // Remonter en haut et naviguer vers la page d'accueil
     window.scrollTo({ top: 0, behavior: 'smooth' });
     this.router.navigate(['/']);
   }
 
   protected onNavigate(section: string): void {
-    // Vérifier si on est sur la page d'accueil
     const currentUrl = this.router.url;
 
     if (currentUrl === '/' || currentUrl === '') {
-      // On est déjà sur la page d'accueil, scroll vers la section
       setTimeout(() => {
         const element = document.getElementById(section);
         if (element) {
@@ -65,9 +80,7 @@ export class Navbar {
         }
       }, 100);
     } else {
-      // On est sur une autre page, naviguer d'abord vers la page d'accueil
       this.router.navigate(['/']).then(() => {
-        // Attendre que la page soit chargée puis scroller
         setTimeout(() => {
           const element = document.getElementById(section);
           if (element) {

@@ -67,10 +67,66 @@ body {
 
 /* 3. TYPO & BOUTONS */
 .mega-title {
-  font-size: 96px;
+  font-size: 68px;
   line-height: 1.1;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   font-weight: 700;
+}
+
+.hero-title {
+  font-size: 42px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 700;
+}
+
+@media (min-width: 640px) {
+  .hero-title {
+    font-size: 56px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-title {
+    font-size: 68px;
+    letter-spacing: -0.04em;
+  }
+}
+
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.hero-highlight {
+  position: relative;
+  color: #0a0a0a;
+  background: rgba(255,255,255,0.92);
+  padding: 2px 14px 6px 14px;
+  border-radius: 10px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline;
+}
+
+.hero-highlight-outline {
+  position: relative;
+  color: #ffffff;
+  background: rgba(255,255,255,0.08);
+  padding: 2px 14px 6px 14px;
+  border-radius: 10px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  color: #ec4899;
+  font-weight: 300;
+  animation: blink 0.8s step-end infinite;
+  margin-left: 1px;
 }
 
 .btn-fixed {

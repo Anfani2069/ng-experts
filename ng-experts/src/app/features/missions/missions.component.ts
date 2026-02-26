@@ -89,6 +89,11 @@ export class Missions implements OnInit, OnDestroy {
     if (!user || user.role !== 'expert') return;
     try {
       const data = await this.expertService.getProposalsForExpert(user.id);
+      data.sort((a, b) => {
+        const da = this.toDate(a.createdAt)?.getTime() ?? 0;
+        const db = this.toDate(b.createdAt)?.getTime() ?? 0;
+        return db - da;
+      });
       this.allProposals.set(data);
     } catch (e) {
       console.error('Erreur chargement missions expert:', e);

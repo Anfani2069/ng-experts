@@ -27,6 +27,7 @@ export class Dashboard implements OnInit, OnDestroy {
   protected readonly proposals = signal<Proposal[]>([]);
   protected readonly processingId = signal<string | null>(null);
   protected readonly pendingRejectProposal = signal<Proposal | null>(null);
+  protected readonly pendingAcceptProposal = signal<Proposal | null>(null);
 
   // Countdown timer
   private _countdownInterval: any = null;
@@ -84,14 +85,32 @@ export class Dashboard implements OnInit, OnDestroy {
     if (!user || user.role !== 'expert') return;
     try {
       const props = await this.expertService.getProposalsForExpert(user.id);
+      props.sort((a, b) => {
+        const toMs = (v: any) => {
+          if (!v) return 0;
+          if (v instanceof Date) return v.getTime();
+          if (typeof v === 'object' && 'seconds' in v) return v.seconds * 1000;
+          return 0;
+        };
+        return toMs(b.createdAt) - toMs(a.createdAt);
+      });
       this.proposals.set(props);
     } catch (e) {
       console.error('Erreur chargement propositions:', e);
     }
   }
 
+  protected confirmAccept(proposal: Proposal): void {
+    this.pendingAcceptProposal.set(proposal);
+  }
+
+  protected cancelAccept(): void {
+    this.pendingAcceptProposal.set(null);
+  }
+
   protected async acceptProposal(proposal: Proposal): Promise<void> {
     if (!proposal.id || this.processingId()) return;
+    this.pendingAcceptProposal.set(null);
     this.processingId.set(proposal.id);
     try {
       await this.expertService.updateProposalStatus(

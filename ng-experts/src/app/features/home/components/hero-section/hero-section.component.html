@@ -1,77 +1,79 @@
 <!-- HERO SECTION (BG #121212 + BRUIT) -->
 <section class="relative bg-heroBg pt-8 pb-12 border-b border-white/5 overflow-hidden">
-  <!-- Noise calqué sur le Hero uniquement -->
   <div class="noise-overlay"></div>
 
-  <div class="container mx-auto px-10 md:px-20 max-w-7xl relative z-10 pt-20">
+  <div class="container mx-auto px-6 md:px-20 max-w-7xl relative z-10 pt-4 md:pt-6">
     <div class="max-w-6xl">
+
+      <!-- Badge typewriter -->
       <div
-        class="font-mono text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-12 flex items-center gap-3">
-        <span class="w-12 h-[1px] bg-white/20"></span> Network de 150+ Experts Angular
+        class="font-mono text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-8 md:mb-12 flex items-center justify-center gap-3">
+        <span class="w-8 md:w-12 h-[1px] bg-white/20"></span>
+        {{ typewriterText() }}<span class="typewriter-cursor">|</span>
       </div>
 
-      <h1 class="mega-title mb-10">
-        <span class="text-white">Discover the best jobs in</span> <br>
-        <span class="text-white/40">Artificial Intelligence.</span>
+      <!-- Titre -->
+      <h1 class="hero-title mb-6 md:mb-10 text-center">
+        <span class="text-white">Recrutez votre Développeur Angular</span><br>
+        <span class="text-white/40">en
+          <span class="text-highlight">60 minutes</span>
+          chrono.
+        </span>
       </h1>
 
-      <div class="flex items-start gap-8 mb-12">
-        <p class="text-lg text-subtext max-w-xl leading-relaxed font-medium">
-          Trouvez les meilleurs consultants et développeurs Angular pour vos projets les plus ambitieux.
-        </p>
+      <!-- Sous-titre -->
+      <p
+        class="text-sm md:text-base text-subtext max-w-md leading-relaxed font-medium mb-8 md:mb-10 text-center mx-auto">
+        Pour maintenir une qualité irréprochable, tout profil sans réponse est automatiquement mis en pause.
+      </p>
 
-        <!-- Avatars empilés -->
-        <div class="flex items-center gap-4 flex-shrink-0">
-          <div class="flex -space-x-3">
-            @for (avatar of visibleAvatars(); track avatar; let i = $index) {
-              <div class="w-12 h-12 rounded-full border-2 border-heroBg overflow-hidden transition-all duration-500 transform hover:scale-110 hover:z-10 avatar-card"
-                   [style.animation-delay.ms]="i * 100">
-                <img [src]="avatar" [alt]="'Expert ' + (i + 1)" class="w-full h-full object-cover">
-              </div>
-            }
-          </div>
-          <div class="text-subtext">
-            <span class="text-white font-semibold">Join 1,000+ professionals</span><br>
-            <span class="text-sm">already on Ng-Expert</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex flex-col items-center w-full gap-6 mb-20">
+      <!-- CTA Boutons -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 mb-8 md:mb-10 justify-center">
         <button (click)="scrollToExperts()"
-          class="bg-primary hover:bg-primary-hover text-white px-8 py-3 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-colors duration-300 flex items-center gap-2"
+          class="bg-primary hover:bg-primary-hover text-white px-7 py-3 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-colors duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
           aria-label="Explorer les experts">
           <i class="fa-solid fa-magnifying-glass text-xs"></i>
           Explorer les Experts
         </button>
-        <button (click)="scrollToExperts()" class="flex flex-col items-center gap-0 scroll-arrow-btn cursor-pointer focus:outline-none" aria-label="Voir les experts">
-          <i class="fa-solid fa-chevron-down text-primary text-base scroll-arrow-1"></i>
-          <i class="fa-solid fa-chevron-down text-primary/50 text-base scroll-arrow-2"></i>
+        <button (click)="scrollToExperts()"
+          class="border border-white/20 hover:border-white/40 text-white/70 hover:text-white px-7 py-3 rounded-full font-bold uppercase tracking-widest text-[10px] transition-colors duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
+          aria-label="Voir comment ça marche">
+          <i class="fa-solid fa-play text-xs"></i>
+          Comment ça marche
         </button>
       </div>
 
-      <!-- Stats -->
-      <div class="mt-20 flex flex-wrap gap-14 border-t border-white/5 pt-12">
-        <div>
-          <div class="text-4xl font-black text-white mb-2 tracking-tighter">150+</div>
-          <div class="text-[10px] text-subtext font-bold uppercase tracking-[0.3em]">Experts vérifiés</div>
+      <!-- Avatars + social proof -->
+      <div class="flex items-center justify-center gap-4 mb-16 md:mb-20">
+        <div class="flex -space-x-3">
+          @for (avatar of visibleAvatars(); track avatar; let i = $index) {
+          <div class="w-9 h-9 md:w-10 md:h-10 rounded-full border-2 border-heroBg overflow-hidden avatar-card"
+            [style.animation-delay.ms]="i * 100">
+            <img [src]="avatar" [alt]="'Expert ' + (i + 1)" class="w-full h-full object-cover">
+          </div>
+          }
         </div>
-        <div>
-          <div class="text-4xl font-black text-white mb-2 tracking-tighter">450+</div>
-          <div class="text-[10px] text-subtext font-bold uppercase tracking-[0.3em]">Missions réussies</div>
-        </div>
-        <div>
-          <div class="text-4xl font-black text-white mb-2 tracking-tighter">24h</div>
-          <div class="text-[10px] text-subtext font-bold uppercase tracking-[0.3em]">Délai de réponse</div>
-        </div>
+        <p class="text-xs text-white/50 leading-snug">
+          Rejoignez <span class="text-white font-bold">+50 recruteurs</span><br class="sm:hidden"> déjà sur la
+          plateforme
+        </p>
       </div>
+
+      <!-- Scroll arrow -->
+      <button (click)="scrollToExperts()"
+        class="flex flex-col items-center gap-0 scroll-arrow-btn cursor-pointer focus:outline-none mb-4 mx-auto w-fit"
+        aria-label="Voir les experts">
+        <i class="fa-solid fa-chevron-down text-primary text-base scroll-arrow-1"></i>
+        <i class="fa-solid fa-chevron-down text-primary/50 text-base scroll-arrow-2"></i>
+      </button>
+
     </div>
   </div>
-
 
   <!-- Decorative Mono-spaced text vertical -->
   <div
     class="absolute right-10 top-1/2 -translate-y-1/2 rotate-90 origin-right pointer-events-none hidden xl:block opacity-20">
-    <span class="text-[10px] font-bold uppercase tracking-[1.5em] text-white">ANGULAR EXPERT NETWORK // 2024</span>
+    <span class="text-[10px] font-bold uppercase tracking-[1.5em] text-white">ANGULAR EXPERT NETWORK // REPONSE EN 60
+      MIN</span>
   </div>
 </section>

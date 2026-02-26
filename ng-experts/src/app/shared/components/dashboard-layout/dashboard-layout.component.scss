@@ -117,6 +117,7 @@
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;
@@ -126,14 +127,7 @@
 // Responsive design
 @media (max-width: 1024px) {
   aside {
-    transform: translateX(-100%);
-    position: fixed;
-    z-index: 50;
-    height: 100vh;
-
-    &.mobile-open {
-      transform: translateX(0);
-    }
+    border-radius: 0;
   }
 }
 

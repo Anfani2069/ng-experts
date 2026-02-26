@@ -1,10 +1,11 @@
 <nav
   [class]="'z-50 transition-all duration-300 w-full overflow-hidden' + (isScrolled() ? ' fixed top-0 left-0 right-0 bg-[#121212]/95 backdrop-blur-md shadow-2xl' : ' relative')"
   style="background: #121212;">
-  <!-- Noise overlay synchronized with Hero -->
+  <!-- Noise overlay -->
   <div class="noise-overlay"></div>
 
   <div class="container mx-auto px-6 py-5 flex justify-between items-center max-w-7xl relative z-10">
+    <!-- Logo -->
     <a href="/" class="flex items-center gap-3">
       <img src="/img/ng-expert-logo.png" alt="Ng-Expert Logo" class="w-10 h-10 rounded-full object-cover">
       <span class="text-[14px] font-bold uppercase tracking-widest">
@@ -13,23 +14,109 @@
       </span>
     </a>
 
+    <!-- Desktop nav links -->
     <div class="hidden md:flex space-x-10 text-[10px] font-bold uppercase tracking-widest text-subtext">
       <a (click)="onNavigateHome()" class="cursor-pointer hover:text-white transition-colors">Home</a>
       <a (click)="onNavigate('experts')" class="cursor-pointer hover:text-white transition-colors">Experts</a>
       <a (click)="onNavigate('features')" class="cursor-pointer hover:text-white transition-colors">Features</a>
+      @if (currentUser()) {
+      <a (click)="onNavigateDashboard()"
+        class="cursor-pointer text-primary hover:text-primary/80 transition-colors">Dashboard</a>
+      } @else {
       <a (click)="onApplyAsExpert()" class="cursor-pointer hover:text-white transition-colors">Apply as Expert</a>
+      }
     </div>
 
-    <div class="flex items-center gap-6">
+    <!-- Desktop CTA buttons -->
+    <div class="flex items-center gap-4">
+      @if (currentUser()) {
+      <button (click)="onNavigateDashboard()"
+        class="hidden md:flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-5 h-[36px] rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border border-primary/20 shadow-lg">
+        <i class="fa-solid fa-gauge-high"></i>
+        Mon Dashboard
+      </button>
+      } @else {
       <button (click)="onLogin()"
         class="hidden md:flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#252525] text-white px-5 h-[36px] rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border border-white/5 shadow-lg">
         <i class="fa-solid fa-right-to-bracket opacity-70"></i>
         Login
       </button>
       <button (click)="onHireExpert()"
-        class="btn-fixed bg-primary text-white shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] uppercase tracking-widest">
+        class="hidden md:flex btn-fixed bg-primary text-white shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] uppercase tracking-widest">
         Hire an Expert
+      </button>
+      }
+
+      <!-- Burger button (mobile only) -->
+      <button (click)="toggleMobileMenu()" class="md:hidden burger-btn" [class.open]="mobileMenuOpen()"
+        aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
     </div>
   </div>
 </nav>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-overlay md:hidden" [class.visible]="mobileMenuOpen()" (click)="toggleMobileMenu()">
+</div>
+
+<!-- Mobile menu drawer -->
+<div class="mobile-drawer md:hidden" [class.open]="mobileMenuOpen()">
+
+  <!-- Header -->
+  <div class="drawer-header">
+    <span class="text-[14px] font-bold uppercase tracking-widest">
+      <span class="text-white">Ng-</span><span style="color: #EC4899;">Expert</span><span class="text-white">.</span>
+    </span>
+    <button (click)="toggleMobileMenu()" class="close-btn" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="drawer-nav">
+    <a (click)="onNavigateHome(); toggleMobileMenu()" class="drawer-link">
+      <i class="fa-solid fa-house"></i>
+      Home
+    </a>
+    <a (click)="onNavigate('experts'); toggleMobileMenu()" class="drawer-link">
+      <i class="fa-solid fa-users"></i>
+      Experts
+    </a>
+    <a (click)="onNavigate('features'); toggleMobileMenu()" class="drawer-link">
+      <i class="fa-solid fa-star"></i>
+      Features
+    </a>
+    @if (currentUser()) {
+    <a (click)="onNavigateDashboard()" class="drawer-link text-primary">
+      <i class="fa-solid fa-gauge-high"></i>
+      Dashboard
+    </a>
+    } @else {
+    <a (click)="onApplyAsExpert(); toggleMobileMenu()" class="drawer-link">
+      <i class="fa-solid fa-pen-to-square"></i>
+      Apply as Expert
+    </a>
+    }
+  </nav>
+
+  <!-- CTA buttons -->
+  <div class="drawer-footer">
+    @if (currentUser()) {
+    <button (click)="onNavigateDashboard()" class="drawer-btn-hire w-full">
+      <i class="fa-solid fa-gauge-high mr-2"></i>
+      Accéder au Dashboard
+    </button>
+    } @else {
+    <button (click)="onLogin(); toggleMobileMenu()" class="drawer-btn-login">
+      <i class="fa-solid fa-right-to-bracket"></i>
+      Login
+    </button>
+    <button (click)="onHireExpert(); toggleMobileMenu()" class="drawer-btn-hire">
+      Hire an Expert
+    </button>
+    }
+  </div>
+</div>

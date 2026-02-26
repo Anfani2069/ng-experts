@@ -37,18 +37,61 @@ export class HeroSection implements OnInit, OnDestroy {
   ]);
 
   private intervalId: any;
+  private typewriterInterval: any;
+
+  private readonly phrases = [
+    "Un r\u00e9seau d'experts actifs et disponibles",
+    "Avec un taux de r\u00e9ponse garanti en moins d'1h."
+  ];
+  private phraseIndex = 0;
+  protected readonly typewriterText = signal('');
+  protected readonly showCursor = signal(true);
 
   ngOnInit() {
     // Rotation des avatars toutes les 3 secondes
     this.intervalId = setInterval(() => {
       this.rotateAvatars();
     }, 3000);
+
+    // Typewriter effect
+    this.startTypewriter();
   }
 
   ngOnDestroy() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    if (this.intervalId) clearInterval(this.intervalId);
+    if (this.typewriterInterval) clearInterval(this.typewriterInterval);
+  }
+
+  private startTypewriter(): void {
+    let i = 0;
+    let deleting = false;
+    let pauseCount = 0;
+    const PAUSE_FRAMES = 55;
+
+    this.typewriterInterval = setInterval(() => {
+      const current = this.phrases[this.phraseIndex];
+      if (!deleting) {
+        if (i <= current.length) {
+          this.typewriterText.set(current.slice(0, i));
+          i++;
+        } else {
+          pauseCount++;
+          if (pauseCount >= PAUSE_FRAMES) {
+            deleting = true;
+            pauseCount = 0;
+          }
+        }
+      } else {
+        if (i > 0) {
+          i--;
+          this.typewriterText.set(current.slice(0, i));
+        } else {
+          deleting = false;
+          pauseCount = 0;
+          this.phraseIndex = (this.phraseIndex + 1) % this.phrases.length;
+        }
+      }
+    }, 55);
   }
 
   private rotateAvatars() {

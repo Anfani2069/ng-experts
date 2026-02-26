@@ -27,7 +27,9 @@ export class DashboardLayout implements OnInit {
   pageSubtitle = input<string>('');
 
   protected readonly isProfilePanelOpen = signal(false);
+  protected readonly isSidebarOpen = signal(false);
   protected readonly currentUser = this.auth.getCurrentUser();
+
 
   protected readonly isUserLoaded = computed(() => this.currentUser() !== null);
 
@@ -53,9 +55,9 @@ export class DashboardLayout implements OnInit {
   protected readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
 
   protected readonly navItems = signal<NavigationItem[]>([
-    { icon: 'fa-solid fa-home',     label: 'Dashboard',         isActive: false },
-    { icon: 'fa-solid fa-briefcase',label: 'Mes Missions',      isActive: false },
-    { icon: 'fa-solid fa-message',  label: 'Messages',          isActive: false },
+    { icon: 'fa-solid fa-home', label: 'Dashboard', isActive: false },
+    { icon: 'fa-solid fa-briefcase', label: 'Mes Missions', isActive: false },
+    { icon: 'fa-solid fa-message', label: 'Messages', isActive: false },
     { icon: 'fa-solid fa-user-pen', label: 'Editer mon profil', isActive: false }
   ]);
 
@@ -65,11 +67,11 @@ export class DashboardLayout implements OnInit {
 
   ngOnInit(): void {
     const path = window.location.pathname;
-    if      (path.includes('profile-edit'))   this.setActiveNavItem('Editer mon profil');
-    else if (path.includes('missions'))       this.setActiveNavItem('Mes Missions');
-    else if (path.includes('messages'))       this.setActiveNavItem('Messages');
-    else if (path.includes('notifications'))  this.setActiveNavItem('Notifications');
-    else if (path.includes('dashboard'))      this.setActiveNavItem('Dashboard');
+    if (path.includes('profile-edit')) this.setActiveNavItem('Editer mon profil');
+    else if (path.includes('missions')) this.setActiveNavItem('Mes Missions');
+    else if (path.includes('messages')) this.setActiveNavItem('Messages');
+    else if (path.includes('notifications')) this.setActiveNavItem('Notifications');
+    else if (path.includes('dashboard')) this.setActiveNavItem('Dashboard');
   }
 
   protected setActiveNavItem(activeLabel: string): void {
@@ -79,33 +81,42 @@ export class DashboardLayout implements OnInit {
 
   protected navigateToSection(sectionLabel: string): void {
     const routeMapping: Record<string, string> = this.isAdmin() ? {
-      'Dashboard':         '/admin/dashboard',
-      'Mes Missions':      '/admin/dashboard',
-      'Messages':          '/messages',
+      'Dashboard': '/admin/dashboard',
+      'Mes Missions': '/admin/dashboard',
+      'Messages': '/messages',
       'Editer mon profil': '/admin/dashboard',
-      'Notifications':     '/notifications'
+      'Notifications': '/notifications'
     } : this.isRecruiter() ? {
-      'Dashboard':         '/recruiter/dashboard',
-      'Mes Missions':      '/recruiter/missions',
-      'Messages':          '/messages',
+      'Dashboard': '/recruiter/dashboard',
+      'Mes Missions': '/recruiter/missions',
+      'Messages': '/messages',
       'Editer mon profil': '/recruiter/profile-edit',
-      'Notifications':     '/notifications'
+      'Notifications': '/notifications'
     } : {
-      'Dashboard':         '/dashboard',
-      'Mes Missions':      '/missions',
-      'Messages':          '/messages',
+      'Dashboard': '/dashboard',
+      'Mes Missions': '/missions',
+      'Messages': '/messages',
       'Editer mon profil': '/profile-edit',
-      'Notifications':     '/notifications'
+      'Notifications': '/notifications'
     };
     const route = routeMapping[sectionLabel];
     if (route) {
       this.setActiveNavItem(sectionLabel);
+      this.isSidebarOpen.set(false); // ferme le menu mobile après navigation
       this.router.navigate([route]);
     }
   }
 
   protected toggleProfilePanel(): void {
     this.isProfilePanelOpen.update(v => !v);
+  }
+
+  protected toggleSidebar(): void {
+    this.isSidebarOpen.update(v => !v);
+  }
+
+  protected closeSidebar(): void {
+    this.isSidebarOpen.set(false);
   }
 
   protected closeProfilePanel(): void {

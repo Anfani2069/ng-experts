@@ -242,8 +242,16 @@ export class ExpertDetails implements OnInit {
     description: '',
     budget: '',
     email: '',
-    startDate: ''
+    startDate: '',
+    priority: 'normal' as 'urgent' | 'high' | 'normal' | 'low'
   });
+
+  protected readonly priorityOptions = [
+    { value: 'urgent', label: '🔴 Urgent',  desc: 'ASAP' },
+    { value: 'high',   label: '🟠 Élevé',   desc: 'Rapide' },
+    { value: 'normal', label: '🟡 Normal',  desc: 'Standard' },
+    { value: 'low',    label: '🟢 Faible',  desc: 'Flexible' },
+  ];
 
   /** True when the logged-in user is a recruiter */
   protected readonly isRecruiter = computed(() => this.auth.isRecruiter());
@@ -268,10 +276,10 @@ export class ExpertDetails implements OnInit {
         this.proposalForm.set(JSON.parse(savedDraft));
         sessionStorage.removeItem(draftKey);
       } catch {
-        this.proposalForm.set({ title: '', description: '', budget: '', email: '', startDate: '' });
+        this.proposalForm.set({ title: '', description: '', budget: '', email: '', startDate: '', priority: 'normal' });
       }
     } else {
-      this.proposalForm.set({ title: '', description: '', budget: '', email: '', startDate: '' });
+      this.proposalForm.set({ title: '', description: '', budget: '', email: '', startDate: '', priority: 'normal' });
     }
 
     this.showProposalModal.set(true);
@@ -315,6 +323,7 @@ export class ExpertDetails implements OnInit {
 
     try {
       const clientName = [currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ').trim() || currentUser.email;
+      const budgetValue = form.budget.trim();
       const proposal: Omit<import('@core/models/user.model').Proposal, 'id'> = {
         expertId: expert.id,
         clientId: currentUser.id,
@@ -322,8 +331,9 @@ export class ExpertDetails implements OnInit {
         clientName,
         title: form.title.trim(),
         description: form.description.trim(),
-        budget: form.budget.trim(),
+        ...(budgetValue ? { budget: budgetValue } : {}),
         startDate: form.startDate || 'À définir',
+        priority: form.priority,
         status: 'pending',
         createdAt: new Date()
       };
