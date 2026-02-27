@@ -125,9 +125,15 @@
 }
 
 // Responsive design
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   aside {
     border-radius: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mobile-burger {
+    display: none !important;
   }
 }
 

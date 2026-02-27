@@ -8,100 +8,114 @@ nav {
   -webkit-backdrop-filter: blur(20px);
 }
 
-// ─── Burger Button ────────────────────────────────────────────────────────────
-.burger-btn {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 5px;
-  width: 36px;
-  height: 36px;
-  padding: 4px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.2s;
+// ─── Mobile Only Styles (up to 1023px) ─────────────────────────────────────────
+@media (max-width: 1023px) {
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.08);
+  // ─── Burger Button ────────────────────────────────────────────────────────────
+  .burger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    span {
+      display: block;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+
+      &:nth-child(1) {
+        width: 22px;
+      }
+
+      &:nth-child(2) {
+        width: 16px;
+      }
+
+      &:nth-child(3) {
+        width: 22px;
+      }
+    }
+
+    // Animated to X when open
+    &.open {
+      span:nth-child(1) {
+        width: 22px;
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+        transform: scaleX(0);
+      }
+
+      span:nth-child(3) {
+        width: 22px;
+        transform: translateY(-7px) rotate(-45deg);
+      }
+    }
   }
 
-  span {
-    display: block;
-    height: 2px;
-    background: #fff;
-    border-radius: 2px;
-    transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+  // ─── Overlay ──────────────────────────────────────────────────────────────────
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
 
-    &:nth-child(1) {
-      width: 22px;
-    }
-
-    &:nth-child(2) {
-      width: 16px;
-    }
-
-    &:nth-child(3) {
-      width: 22px;
+    &.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
   }
 
-  // Animated to X when open
-  &.open {
-    span:nth-child(1) {
-      width: 22px;
-      transform: translateY(7px) rotate(45deg);
-    }
+  // ─── Drawer ───────────────────────────────────────────────────────────────────
+  .mobile-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    background: #0f0f0f;
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
 
-    span:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0);
-    }
-
-    span:nth-child(3) {
-      width: 22px;
-      transform: translateY(-7px) rotate(-45deg);
+    &.open {
+      transform: translateX(0);
     }
   }
 }
 
-// ─── Overlay ──────────────────────────────────────────────────────────────────
-.mobile-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  z-index: 90;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
+// ─── Hide mobile-only elements on desktop by default in CSS ────────────────────
+@media (min-width: 1024px) {
 
-  &.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-// ─── Drawer ───────────────────────────────────────────────────────────────────
-.mobile-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 280px;
-  background: #0f0f0f;
-  border-left: 1px solid rgba(255, 255, 255, 0.06);
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(100%);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
-
-  &.open {
-    transform: translateX(0);
+  .burger-btn,
+  .mobile-overlay,
+  .mobile-drawer {
+    display: none !important;
   }
 }
 
