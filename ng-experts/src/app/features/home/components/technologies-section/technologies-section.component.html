@@ -1,0 +1,46 @@
+<section class="py-10 overflow-hidden border-y border-white/5" style="background: linear-gradient(180deg, #0F172A 0%, #1E293B 100%);">
+  <div class="text-center mb-6 px-4">
+    <p class="text-sm font-semibold uppercase tracking-widest" style="color: #E91E63;">
+      Écosystème Angular couvert
+    </p>
+    <h2 class="text-xl font-heading font-bold text-white mt-1">
+      Des experts maîtrisant l'ensemble de la stack
+    </h2>
+  </div>
+
+  <div class="relative">
+    <!-- Gradient gauche -->
+    <div class="absolute left-0 top-0 h-full w-24 z-10 pointer-events-none"
+         style="background: linear-gradient(to right, #0F172A, transparent);"></div>
+    <!-- Gradient droite -->
+    <div class="absolute right-0 top-0 h-full w-24 z-10 pointer-events-none"
+         style="background: linear-gradient(to left, #0F172A, transparent);"></div>
+
+    <div class="flex animate-scroll-tech">
+      <!-- Premier set -->
+      <div class="flex items-center gap-6 px-6 flex-shrink-0">
+        @for (tech of technologies; track tech.name) {
+          <div class="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all group cursor-default select-none"
+               style="min-width: max-content;">
+            <i [class]="tech.icon + ' text-base'" [style.color]="tech.color"></i>
+            <span class="text-sm font-semibold text-white/70 group-hover:text-white transition-colors tracking-wide">
+              {{ tech.name }}
+            </span>
+          </div>
+        }
+      </div>
+      <!-- Duplication pour effet infini -->
+      <div class="flex items-center gap-6 px-6 flex-shrink-0">
+        @for (tech of technologies; track tech.name) {
+          <div class="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all group cursor-default select-none"
+               style="min-width: max-content;">
+            <i [class]="tech.icon + ' text-base'" [style.color]="tech.color"></i>
+            <span class="text-sm font-semibold text-white/70 group-hover:text-white transition-colors tracking-wide">
+              {{ tech.name }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -8,7 +8,7 @@
   <div class="container mx-auto px-10 md:px-20 max-w-7xl relative z-10">
 
     <!-- Top label -->
-    <div class="flex justify-center mb-12">
+    <div class="flex justify-center mb-12" appAnimateOnScroll animClass="anim-fade-up">
       <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest border border-primary/20">
         Rejoignez ng-experts
       </span>
@@ -18,7 +18,8 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
       <!-- Card Expert -->
-      <div class="cta-card relative rounded-3xl border border-white/5 bg-white/[0.02] p-10 overflow-hidden group hover:border-primary/25 transition-all duration-500">
+      <div class="cta-card relative rounded-3xl border border-white/5 bg-white/[0.02] p-10 overflow-hidden group hover:border-primary/25 transition-all duration-500"
+           appAnimateOnScroll animClass="anim-fade-left" [animDelay]="100">
         <!-- inner glow -->
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(ellipse at 10% 90%, rgba(236,72,153,0.08) 0%, transparent 60%)"></div>
@@ -82,7 +83,8 @@
       </div>
 
       <!-- Card Recruteur -->
-      <div class="cta-card relative rounded-3xl border border-white/5 bg-white/[0.02] p-10 overflow-hidden group hover:border-primary/25 transition-all duration-500">
+      <div class="cta-card relative rounded-3xl border border-white/5 bg-white/[0.02] p-10 overflow-hidden group hover:border-primary/25 transition-all duration-500"
+           appAnimateOnScroll animClass="anim-fade-right" [animDelay]="200">
         <!-- inner glow -->
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(ellipse at 90% 10%, rgba(236,72,153,0.08) 0%, transparent 60%)"></div>

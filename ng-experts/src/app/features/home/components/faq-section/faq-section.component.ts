@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AnimateOnScroll } from '@shared/directives/animate-on-scroll.directive';
 
 interface FaqItem {
   question: string;
@@ -11,7 +12,7 @@ interface FaqItem {
   templateUrl: './faq-section.component.html',
   styleUrls: ['./faq-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule]
+  imports: [CommonModule, AnimateOnScroll]
 })
 export class FaqSection {
   protected readonly openIndex = signal<number | null>(null);

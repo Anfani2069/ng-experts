@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AnimateOnScroll } from '@shared/directives/animate-on-scroll.directive';
 
 @Component({
   selector: 'app-how-it-works-section',
   templateUrl: './how-it-works-section.component.html',
   styleUrls: ['./how-it-works-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule]
+  imports: [CommonModule, AnimateOnScroll]
 })
 export class HowItWorksSection {
   protected readonly steps = [

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AnimateOnScroll } from '@shared/directives/animate-on-scroll.directive';
 
 @Component({
   selector: 'app-why-ng-experts-section',
   templateUrl: './why-ng-experts-section.component.html',
   styleUrls: ['./why-ng-experts-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule]
+  imports: [CommonModule, AnimateOnScroll]
 })
 export class WhyNgExpertsSection {
   protected readonly advantages = [

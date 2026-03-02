@@ -2,7 +2,7 @@
   <div class="container mx-auto px-10 md:px-20 max-w-7xl">
 
     <!-- Header -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-16" appAnimateOnScroll animClass="anim-fade-up">
       <div class="inline-block mb-4">
         <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">
           Comment ça marche
@@ -24,7 +24,8 @@
       <div class="absolute top-[52px] left-[calc(12.5%+24px)] right-[calc(12.5%+24px)] h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent hidden lg:block pointer-events-none"></div>
 
       @for (step of steps; track step.number; let i = $index) {
-      <div class="step-card relative group p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/30 hover:bg-primary/[0.03] transition-all duration-300">
+      <div class="step-card relative group p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/30 hover:bg-primary/[0.03] transition-all duration-300"
+           appAnimateOnScroll animClass="anim-scale-up" [animDelay]="i * 100">
         <!-- Glow -->
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
              style="background: radial-gradient(circle at 50% 0%, rgba(236,72,153,0.06) 0%, transparent 70%)"></div>
@@ -53,7 +54,7 @@
     </div>
 
     <!-- Bottom CTA -->
-    <div class="mt-16 text-center">
+    <div class="mt-16 text-center" appAnimateOnScroll animClass="anim-fade-up" [animDelay]="200">
       <p class="text-subtext text-sm mb-6">Prêt à démarrer ? C'est gratuit et sans engagement.</p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
         <a href="/register?type=recruiter"

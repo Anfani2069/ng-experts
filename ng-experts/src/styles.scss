@@ -294,6 +294,51 @@ app-root {
   animation: scaleIn 0.5s ease-out;
 }
 
+/* =============================================
+   ANIMATE ON SCROLL — directive appAnimateOnScroll
+   ============================================= */
+
+/* État initial : invisible, prêt à animer */
+.anim-hidden {
+  opacity: 0 !important;
+}
+
+/* fadeInUp — header de section, textes */
+@keyframes animFadeUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.anim-fade-up {
+  animation: animFadeUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* fadeInLeft — éléments gauche */
+@keyframes animFadeLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0);      }
+}
+.anim-fade-left {
+  animation: animFadeLeft 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* fadeInRight — éléments droite */
+@keyframes animFadeRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+.anim-fade-right {
+  animation: animFadeRight 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* scaleUp — cartes, badges */
+@keyframes animScaleUp {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+.anim-scale-up {
+  animation: animScaleUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 .glass-effect {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);

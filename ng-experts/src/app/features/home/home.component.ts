@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeroSection } from './components/hero-section/hero-section.component';
-import { CompaniesSection } from './components/companies-section/companies-section.component';
 import { ExpertsSection } from './components/experts-section/experts-section.component';
 import { FeaturesSection } from './components/features-section/features-section.component';
 import { CtaSection } from './components/cta-section/cta-section.component';
@@ -17,7 +16,6 @@ import { FaqSection } from './components/faq-section/faq-section.component';
   imports: [
     CommonModule,
     HeroSection,
-    CompaniesSection,
     ExpertsSection,
     FeaturesSection,
     HowItWorksSection,

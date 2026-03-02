@@ -2,7 +2,7 @@
   <div class="container mx-auto px-10 md:px-20 max-w-7xl">
 
     <!-- Section Header -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-16" appAnimateOnScroll animClass="anim-fade-up">
       <div class="inline-block mb-4">
         <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">Fonctionnalités</span>
       </div>
@@ -19,7 +19,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
       <!-- ROW 1 — Full width: Recherche -->
-      <div class="feature-card group relative lg:col-span-2 p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+      <div class="feature-card group relative lg:col-span-2 p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden" appAnimateOnScroll animClass="anim-fade-up" [animDelay]="100">
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(ellipse at 20% 50%, rgba(236,72,153,0.07) 0%, transparent 65%)"></div>
         <div class="relative z-10 flex flex-col lg:flex-row gap-10 items-center">
@@ -63,7 +63,7 @@
       </div>
 
       <!-- ROW 2 LEFT — Dashboard -->
-      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden" appAnimateOnScroll animClass="anim-scale-up" [animDelay]="150">
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(circle at 20% 80%, rgba(236,72,153,0.07) 0%, transparent 60%)"></div>
         <div class="relative z-10 space-y-5">
@@ -104,7 +104,7 @@
       </div>
 
       <!-- ROW 2 RIGHT — Profils vérifiés -->
-      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden" appAnimateOnScroll animClass="anim-scale-up" [animDelay]="250">
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(circle at 80% 20%, rgba(236,72,153,0.08) 0%, transparent 60%)"></div>
         <div class="relative z-10 space-y-5">
@@ -139,7 +139,7 @@
       </div>
 
       <!-- ROW 3 LEFT — Messagerie -->
-      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden" appAnimateOnScroll animClass="anim-scale-up" [animDelay]="150">
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(circle at 50% 100%, rgba(236,72,153,0.07) 0%, transparent 60%)"></div>
         <div class="relative z-10 space-y-5">
@@ -168,7 +168,7 @@
       </div>
 
       <!-- ROW 3 RIGHT — Pipeline de recrutement -->
-      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden">
+      <div class="feature-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden" appAnimateOnScroll animClass="anim-scale-up" [animDelay]="250">
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(ellipse at 80% 50%, rgba(236,72,153,0.07) 0%, transparent 65%)"></div>
         <div class="relative z-10 space-y-5">

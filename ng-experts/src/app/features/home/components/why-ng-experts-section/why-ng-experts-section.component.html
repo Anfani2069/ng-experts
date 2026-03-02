@@ -2,7 +2,7 @@
   <div class="container mx-auto px-10 md:px-20 max-w-7xl">
 
     <!-- Header -->
-    <div class="text-center mb-16">
+    <div class="text-center mb-16" appAnimateOnScroll animClass="anim-fade-up">
       <div class="inline-block mb-4">
         <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">
           Pourquoi nous choisir
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Stats banner -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16" appAnimateOnScroll animClass="anim-fade-up" [animDelay]="100">
       @for (stat of stats; track stat.label) {
       <div class="expert-card p-6 rounded-2xl border border-white/5 text-center group hover:border-primary/30 transition-all duration-300">
         <div class="noise-overlay opacity-5"></div>
@@ -32,8 +32,9 @@
 
     <!-- Advantages grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (adv of advantages; track adv.title) {
-      <div class="advantage-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-300 overflow-hidden">
+      @for (adv of advantages; track adv.title; let i = $index) {
+      <div class="advantage-card group relative p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/30 hover:bg-primary/[0.02] transition-all duration-300 overflow-hidden"
+           appAnimateOnScroll animClass="anim-scale-up" [animDelay]="i * 80">
         <!-- Glow effect on hover -->
         <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
              style="background: radial-gradient(circle at 30% 107%, rgba(236,72,153,0.05) 0%, transparent 60%)"></div>
@@ -57,7 +58,8 @@
     </div>
 
     <!-- Bottom trust bar -->
-    <div class="mt-16 p-8 rounded-3xl border border-white/5 bg-white/[0.02] flex flex-col md:flex-row items-center justify-between gap-6">
+    <div class="mt-16 p-8 rounded-3xl border border-white/5 bg-white/[0.02] flex flex-col md:flex-row items-center justify-between gap-6"
+         appAnimateOnScroll animClass="anim-fade-up" [animDelay]="150">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
           <i class="fa-solid fa-award text-primary"></i>

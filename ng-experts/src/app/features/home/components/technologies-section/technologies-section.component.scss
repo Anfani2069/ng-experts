@@ -1,0 +1,14 @@
+@keyframes scroll-tech {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-scroll-tech {
+  display: flex;
+  width: max-content;
+  animation: scroll-tech 30s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
