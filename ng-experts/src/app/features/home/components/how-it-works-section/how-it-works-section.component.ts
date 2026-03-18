@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AnimateOnScroll } from '@shared/directives/animate-on-scroll.directive';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-how-it-works-section',
@@ -10,34 +11,12 @@ import { AnimateOnScroll } from '@shared/directives/animate-on-scroll.directive'
   imports: [CommonModule, AnimateOnScroll]
 })
 export class HowItWorksSection {
-  protected readonly steps = [
-    {
-      number: '01',
-      icon: 'fa-solid fa-user-plus',
-      title: 'Créez votre compte',
-      description: 'Inscrivez-vous en tant que recruteur ou expert Angular en quelques secondes. Aucune carte bancaire requise.',
-      detail: 'Gratuit pour commencer'
-    },
-    {
-      number: '02',
-      icon: 'fa-solid fa-magnifying-glass',
-      title: 'Recherchez & filtrez',
-      description: 'Parcourez notre réseau d\'experts vérifiés. Filtrez par ville, technologie, disponibilité et TJM.',
-      detail: '150+ experts disponibles'
-    },
-    {
-      number: '03',
-      icon: 'fa-solid fa-comments',
-      title: 'Contactez directement',
-      description: 'Envoyez une proposition de mission à l\'expert de votre choix via notre messagerie intégrée.',
-      detail: 'Réponse sous 24h'
-    },
-    {
-      number: '04',
-      icon: 'fa-solid fa-rocket',
-      title: 'Lancez votre projet',
-      description: 'Collaborez avec les meilleurs talents Angular et démarrez votre mission dans les meilleurs délais.',
-      detail: 'Mission lancée !'
-    }
-  ];
+  protected readonly lang = inject(LanguageService);
+
+  protected readonly steps = computed(() => this.lang.get<Array<{title:string;description:string;detail:string}>>('howItWorks.steps').map((s, i) => ({
+    ...s,
+    number: ['01','02','03','04'][i],
+    icon: ['fa-solid fa-user-plus','fa-solid fa-magnifying-glass','fa-solid fa-comments','fa-solid fa-rocket'][i]
+  })));
+
 }

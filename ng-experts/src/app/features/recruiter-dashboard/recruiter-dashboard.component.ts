@@ -6,6 +6,7 @@ import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
 import { MessagingService } from '@core/services/messaging.service';
 import { Expert, Recruiter, Proposal } from '@core/models/user.model';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-recruiter-dashboard',
@@ -18,6 +19,7 @@ export class RecruiterDashboard implements OnInit {
   private expertService = inject(ExpertService);
   private router = inject(Router);
   private messaging = inject(MessagingService);
+  protected readonly lang = inject(LanguageService);
 
   protected readonly currentUser = this.auth.getCurrentUser();
   protected readonly recruiter = computed(() => {

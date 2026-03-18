@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
+import { LanguageService } from '@core/services/language.service';
 
 export interface NavigationItem {
   icon: string;
+  key: string;
   label: string;
   isActive: boolean;
   badge?: number;
@@ -21,6 +23,7 @@ export class DashboardLayout implements OnInit {
   private auth = inject(Auth);
   private router = inject(Router);
   protected readonly notifService = inject(NotificationService);
+  protected readonly lang = inject(LanguageService);
 
   showSearch = input<boolean>(true);
   pageTitle = input<string>('');
@@ -40,7 +43,12 @@ export class DashboardLayout implements OnInit {
 
   protected readonly userRole = computed(() => {
     const user = this.currentUser();
-    return user?.role === 'expert' ? 'Expert Angular' : user?.role === 'recruiter' ? 'Recruteur' : '';
+    if (!user) return '';
+    return user.role === 'expert'
+      ? this.lang.t('dashboardLayout.expertRole')
+      : user.role === 'recruiter'
+      ? this.lang.t('dashboardLayout.recruiterRole')
+      : '';
   });
 
   protected readonly userAvatar = computed(() => {
@@ -54,55 +62,52 @@ export class DashboardLayout implements OnInit {
   protected readonly isRecruiter = computed(() => this.currentUser()?.role === 'recruiter');
   protected readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
 
-  protected readonly navItems = signal<NavigationItem[]>([
-    { icon: 'fa-solid fa-home', label: 'Dashboard', isActive: false },
-    { icon: 'fa-solid fa-briefcase', label: 'Mes Missions', isActive: false },
-    { icon: 'fa-solid fa-message', label: 'Messages', isActive: false },
-    { icon: 'fa-solid fa-user-pen', label: 'Editer mon profil', isActive: false }
+  private readonly _activeKey = signal<string>('dashboard');
+
+  protected readonly navItems = computed<NavigationItem[]>(() => [
+    { icon: 'fa-solid fa-home', key: 'dashboard', label: this.lang.t('dashboardLayout.dashboard'), isActive: this._activeKey() === 'dashboard' },
+    { icon: 'fa-solid fa-briefcase', key: 'missions', label: this.lang.t('dashboardLayout.missions'), isActive: this._activeKey() === 'missions' },
+    { icon: 'fa-solid fa-message', key: 'messages', label: this.lang.t('dashboardLayout.messages'), isActive: this._activeKey() === 'messages' },
+    { icon: 'fa-solid fa-user-pen', key: 'editProfile', label: this.lang.t('dashboardLayout.editProfile'), isActive: this._activeKey() === 'editProfile' }
   ]);
 
-  protected readonly settingsItems = signal<NavigationItem[]>([
-    { icon: 'fa-solid fa-bell', label: 'Notifications', isActive: false }
+  protected readonly settingsItems = computed<NavigationItem[]>(() => [
+    { icon: 'fa-solid fa-bell', key: 'notifications', label: this.lang.t('dashboardLayout.notifications'), isActive: this._activeKey() === 'notifications' }
   ]);
 
   ngOnInit(): void {
     const path = window.location.pathname;
-    if (path.includes('profile-edit')) this.setActiveNavItem('Editer mon profil');
-    else if (path.includes('missions')) this.setActiveNavItem('Mes Missions');
-    else if (path.includes('messages')) this.setActiveNavItem('Messages');
-    else if (path.includes('notifications')) this.setActiveNavItem('Notifications');
-    else if (path.includes('dashboard')) this.setActiveNavItem('Dashboard');
+    if (path.includes('profile-edit')) this._activeKey.set('editProfile');
+    else if (path.includes('missions')) this._activeKey.set('missions');
+    else if (path.includes('messages')) this._activeKey.set('messages');
+    else if (path.includes('notifications')) this._activeKey.set('notifications');
+    else if (path.includes('dashboard')) this._activeKey.set('dashboard');
   }
 
-  protected setActiveNavItem(activeLabel: string): void {
-    this.navItems.update(items => items.map(item => ({ ...item, isActive: item.label === activeLabel })));
-    this.settingsItems.update(items => items.map(item => ({ ...item, isActive: item.label === activeLabel })));
-  }
-
-  protected navigateToSection(sectionLabel: string): void {
+  protected navigateToSection(key: string): void {
     const routeMapping: Record<string, string> = this.isAdmin() ? {
-      'Dashboard': '/admin/dashboard',
-      'Mes Missions': '/admin/dashboard',
-      'Messages': '/messages',
-      'Editer mon profil': '/admin/dashboard',
-      'Notifications': '/notifications'
+      dashboard: '/admin/dashboard',
+      missions: '/admin/dashboard',
+      messages: '/messages',
+      editProfile: '/admin/dashboard',
+      notifications: '/notifications'
     } : this.isRecruiter() ? {
-      'Dashboard': '/recruiter/dashboard',
-      'Mes Missions': '/recruiter/missions',
-      'Messages': '/messages',
-      'Editer mon profil': '/recruiter/profile-edit',
-      'Notifications': '/notifications'
+      dashboard: '/recruiter/dashboard',
+      missions: '/recruiter/missions',
+      messages: '/messages',
+      editProfile: '/recruiter/profile-edit',
+      notifications: '/notifications'
     } : {
-      'Dashboard': '/dashboard',
-      'Mes Missions': '/missions',
-      'Messages': '/messages',
-      'Editer mon profil': '/profile-edit',
-      'Notifications': '/notifications'
+      dashboard: '/dashboard',
+      missions: '/missions',
+      messages: '/messages',
+      editProfile: '/profile-edit',
+      notifications: '/notifications'
     };
-    const route = routeMapping[sectionLabel];
+    const route = routeMapping[key];
     if (route) {
-      this.setActiveNavItem(sectionLabel);
-      this.isSidebarOpen.set(false); // ferme le menu mobile après navigation
+      this._activeKey.set(key);
+      this.isSidebarOpen.set(false);
       this.router.navigate([route]);
     }
   }

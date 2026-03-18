@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-register',
@@ -14,6 +15,7 @@ import { Auth } from '@core/services/auth.service';
 export class Register implements OnInit {
   private auth = inject(Auth);
   private route = inject(ActivatedRoute);
+  protected readonly lang = inject(LanguageService);
 
   protected readonly accountType = signal('developer');
   protected readonly typeFromUrl = signal(false); // true = type forcé par l'URL, masquer le sélecteur

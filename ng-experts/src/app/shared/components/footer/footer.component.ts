@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-footer',
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
 })
 export class Footer {
   protected readonly currentYear = new Date().getFullYear();
+  protected readonly lang = inject(LanguageService);
 
   constructor(private router: Router) {}
 

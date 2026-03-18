@@ -1,5 +1,7 @@
 // Barrel file pour core (services globaux)
 export * from './services/auth.service';
+export * from './services/language.service';
+export * from './i18n/translations';
 export * from './services/admin.service';
 export * from './models/user.model';
 export * from './config/firebase.config';

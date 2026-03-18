@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-hero-section',
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
 })
 export class HeroSection implements OnInit, OnDestroy {
   private router = inject(Router);
+  protected readonly lang = inject(LanguageService);
 
   // Pool d'avatars
   private avatarPool = [
@@ -39,10 +41,7 @@ export class HeroSection implements OnInit, OnDestroy {
   private intervalId: any;
   private typewriterInterval: any;
 
-  private readonly phrases = [
-    "Un r\u00e9seau d'experts actifs et disponibles",
-    "Avec un taux de r\u00e9ponse garanti en moins d'1h."
-  ];
+  private get phrases(): string[] { return [this.lang.t('hero.phrase1'), this.lang.t('hero.phrase2')]; }
   private phraseIndex = 0;
   protected readonly typewriterText = signal('');
   protected readonly showCursor = signal(true);

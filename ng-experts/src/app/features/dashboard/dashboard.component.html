@@ -1,326 +1,427 @@
 <app-dashboard-layout [showSearch]="false">
-  <div class="px-6 md:px-8 py-6 bg-heroBg">
+  <div class="px-6 md:px-8 py-6" style="background:#0F0C15;min-height:100%;">
 
     <!-- 🧊 BANNIÈRE DE GEL DE PROFIL -->
     @if (freezeService.isFrozen()) {
-    <div
-      class="bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-cyan-500/20 border border-cyan-500/30 rounded-2xl p-6 mb-6 relative overflow-hidden animate-pulse-slow">
-      <div class="relative z-10 flex items-center gap-5">
-        <div
-          class="w-16 h-16 rounded-2xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center shrink-0">
-          <i class="fa-solid fa-snowflake text-cyan-400 text-3xl animate-spin" style="animation-duration: 8s"></i>
+    <div class="animate-pulse-slow" style="background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(59,130,246,.12),rgba(6,182,212,.12));border:1px solid rgba(6,182,212,.25);border-radius:14px;padding:20px 22px;margin-bottom:18px;position:relative;overflow:hidden;">
+      <div class="flex items-center gap-4" style="position:relative;z-index:1;">
+        <div style="width:52px;height:52px;border-radius:12px;background:rgba(6,182,212,.15);border:1px solid rgba(6,182,212,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <i class="fa-solid fa-snowflake text-cyan-400 text-2xl animate-spin" style="animation-duration:8s"></i>
         </div>
         <div class="flex-1">
-          <h2 class="text-lg font-black text-cyan-300 mb-1">
-            <i class="fa-solid fa-lock mr-2"></i>Profil gelé — Invisible pour les recruteurs
+          <h2 style="font-size:14px;font-weight:700;color:rgb(103,232,249);margin-bottom:4px;">
+            <i class="fa-solid fa-lock mr-2"></i>{{ lang.t('expertDashboard.frozenTitle') }}
           </h2>
-          <p class="text-cyan-200/70 text-sm mb-2">
-            Suite à 3 non-réponses dans le délai d'1 heure, votre profil est gelé pendant 7 jours.
-            Vous ne recevrez aucune nouvelle proposition durant cette période.
+          <p style="font-size:12px;color:rgba(207,250,254,.6);margin-bottom:8px;">
+            {{ lang.t('expertDashboard.frozenSubtitle') }}
           </p>
           <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2 bg-black/30 px-4 py-2 rounded-full">
-              <i class="fa-solid fa-hourglass-half text-cyan-400 text-sm"></i>
-              <span class="text-cyan-300 font-mono font-bold text-sm tracking-wider">{{ getFreezeCountdown() }}</span>
+            <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,0,0,.3);padding:5px 14px;border-radius:99px;">
+              <i class="fa-solid fa-hourglass-half text-cyan-400 text-xs"></i>
+              <span style="color:rgb(103,232,249);font-family:monospace;font-weight:800;font-size:13px;letter-spacing:.08em;">{{ getFreezeCountdown() }}</span>
             </div>
-            <span class="text-[10px] text-cyan-400/50 uppercase tracking-widest font-bold">avant déblocage</span>
+            <span style="font-size:10px;color:rgba(103,232,249,.4);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">{{ lang.t('expertDashboard.frozenUnlock') }}</span>
           </div>
         </div>
       </div>
-      <div class="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-transparent to-cyan-500/5"></div>
     </div>
     }
 
     <!-- ⚠️ BANNIÈRE WARNING STRIKES -->
     @if (!freezeService.isFrozen() && freezeService.freezeStrikes() > 0) {
-    <div class="bg-orange-500/10 border border-orange-500/20 rounded-2xl p-4 mb-6 flex items-center gap-4">
-      <div
-        class="w-12 h-12 rounded-xl bg-orange-500/20 border border-orange-500/30 flex items-center justify-center shrink-0">
-        <i class="fa-solid fa-triangle-exclamation text-orange-400 text-xl"></i>
+    <div class="flex items-center gap-4" style="background:rgba(255,184,0,.06);border:1px solid rgba(255,184,0,.18);border-radius:14px;padding:14px 20px;margin-bottom:18px;">
+      <div style="width:42px;height:42px;border-radius:11px;background:rgba(255,184,0,.12);border:1px solid rgba(255,184,0,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fa-solid fa-triangle-exclamation" style="color:#FFB800;font-size:16px;"></i>
       </div>
       <div class="flex-1">
-        <h3 class="font-bold text-orange-300 text-sm">
-          Attention — {{ freezeService.freezeStrikes() }}/3 non-réponse(s)
+        <h3 style="font-size:13px;font-weight:700;color:#FFB800;margin-bottom:2px;">
+          {{ lang.t('expertDashboard.hello') }} — {{ freezeService.freezeStrikes() }}/3 {{ lang.t('expertDashboard.pending') }}
         </h3>
-        <p class="text-orange-200/60 text-xs mt-0.5">
-          Répondez aux propositions dans l'heure. Au bout de 3 non-réponses, votre profil sera gelé pendant 7 jours.
+        <p style="font-size:11px;color:rgba(255,184,0,.5);">
+          {{ lang.t('expertDashboard.warningSubtitle') }}
         </p>
       </div>
-      <div class="flex gap-1 shrink-0">
+      <div class="flex gap-1.5 flex-shrink-0">
         @for (i of [1,2,3]; track i) {
-        <div class="w-4 h-4 rounded-full border-2 transition-all" [class]="i <= freezeService.freezeStrikes()
-                ? 'bg-orange-400 border-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.5)]'
-                : 'bg-transparent border-white/20'">
+        <div style="width:13px;height:13px;border-radius:50%;border:2px solid;transition:all .2s;"
+          [style.background]="i <= freezeService.freezeStrikes() ? '#FFB800' : 'transparent'"
+          [style.border-color]="i <= freezeService.freezeStrikes() ? '#FFB800' : 'rgba(255,255,255,.15)'"
+          [style.box-shadow]="i <= freezeService.freezeStrikes() ? '0 0 7px rgba(255,184,0,.5)' : 'none'">
         </div>
         }
       </div>
     </div>
     }
 
-    <!-- Welcome Card -->
-    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 mb-6 relative overflow-hidden">
-      <div class="relative z-10 flex items-center justify-between flex-wrap gap-4">
+    <!-- ── WELCOME BAR ── -->
+    <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;margin-bottom:18px;position:relative;overflow:hidden;">
+      <div class="flex items-center justify-between flex-wrap gap-4" style="position:relative;z-index:1;">
         <div>
           @if (isUserLoaded()) {
-          <h1 class="text-xl font-bold text-white mb-1">Bienvenue {{ userName() }} ! 👋</h1>
+          <h1 style="font-size:17px;font-weight:700;letter-spacing:-.4px;color:#fff;margin-bottom:3px;">
+            {{ lang.t('expertDashboard.hello') }}, <span style="background:linear-gradient(90deg,#EC4899,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">{{ userName() }}</span> 👋
+          </h1>
           } @else {
-          <div class="h-8 w-56 bg-white/5 rounded animate-pulse mb-1"></div>
+          <div class="animate-pulse" style="height:24px;width:200px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:3px;"></div>
           }
-          <p class="text-subtext text-sm">Votre espace expert — gérez vos missions et propositions</p>
+          <p style="font-size:12px;color:#6B7280;">{{ lang.t('expertDashboard.welcomeSubtitle') }}</p>
         </div>
-        <div class="flex items-center gap-3">
-          <a routerLink="/messages"
-            class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-white hover:border-primary/40 hover:bg-primary/10 transition-all">
-            <i class="fa-regular fa-envelope text-primary"></i>
-            <span class="font-medium">Messages</span>
+        <div class="flex items-center gap-2">
+          <a routerLink="/messages" style="display:flex;align-items:center;gap:7px;padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:99px;font-size:12px;color:#fff;text-decoration:none;transition:all .2s;">
+            <i class="fa-regular fa-envelope" style="color:#EC4899;"></i>
+            <span style="font-weight:500;">{{ lang.t('dashboardLayout.messages') }}</span>
           </a>
-          <a routerLink="/notifications"
-            class="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-white hover:border-primary/40 hover:bg-primary/10 transition-all">
-            <i class="fa-regular fa-bell text-primary"></i>
-            <span class="font-medium">Notifications</span>
+          <a routerLink="/notifications" style="display:flex;align-items:center;gap:7px;padding:6px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:99px;font-size:12px;color:#fff;text-decoration:none;transition:all .2s;">
+            <i class="fa-regular fa-bell" style="color:#EC4899;"></i>
+            <span style="font-weight:500;">{{ lang.t('dashboardLayout.notifications') }}</span>
           </a>
         </div>
       </div>
-
-      <div class="absolute right-6 bottom-0 opacity-5">
-        <i class="fa-solid fa-code text-8xl"></i>
-      </div>
+      <div style="position:absolute;right:22px;bottom:0;opacity:.03;font-size:72px;"><i class="fa-solid fa-code"></i></div>
     </div>
 
-    <!-- Stats rapides -->
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-list text-primary text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().total }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Total</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-clock text-yellow-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().pending }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En attente</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-check text-green-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().accepted }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En cours</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-flag-checkered text-blue-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().completed }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Terminées</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-xmark text-red-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().rejected }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Refusées</p>
-      </div>
-    </div>
+    <!-- ── KPI STRIP ── -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" style="margin-bottom:20px;">
 
-    <!-- Propositions reçues -->
-    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
-      <div class="flex items-center justify-between mb-5">
-        <div>
-          <h3 class="font-bold text-base text-white">Propositions reçues</h3>
-          <p class="text-subtext text-[11px] mt-0.5">Offres envoyées par les recruteurs — <strong class="text-white">1h
-              pour répondre</strong></p>
-        </div>
-        <div class="flex items-center gap-3">
-          @if (stats().pending > 0) {
-          <span
-            class="bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-primary/20">
-            {{ stats().pending }} nouvelle(s)
-          </span>
-          }
-          <a routerLink="/missions"
-            class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout
-            voir</a>
-        </div>
-      </div>
-
-      <div class="space-y-3">
-        @if (isLoading()) {
-        @for (i of [1,2,3]; track i) {
-        <div class="p-4 rounded-xl border border-white/5 bg-white/[0.03] animate-pulse">
-          <div class="flex items-center gap-3 mb-3">
-            <div class="w-9 h-9 rounded-full bg-white/10"></div>
-            <div class="flex-1">
-              <div class="h-3 bg-white/10 rounded w-2/3 mb-2"></div>
-              <div class="h-2 bg-white/5 rounded w-1/3"></div>
-            </div>
+      <!-- Total -->
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.total') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;background:linear-gradient(90deg,#EC4899,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">{{ stats().total }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.22);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-list" style="color:#EC4899;font-size:13px;"></i>
           </div>
         </div>
-        }
-        } @else if (recentProposals().length === 0) {
-        <div class="text-center py-12 text-subtext">
-          <i class="fa-regular fa-envelope-open text-4xl mb-3 opacity-20 block"></i>
-          <p class="text-sm">Aucune proposition pour le moment</p>
-          <p class="text-[11px] text-white/20 mt-1">Complétez votre profil pour attirer des recruteurs</p>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div style="height:100%;width:100%;border-radius:99px;background:linear-gradient(90deg,#EC4899,#8B5CF6);box-shadow:0 0 7px rgba(236,72,153,.45);"></div>
         </div>
-        } @else {
-        @for (proposal of recentProposals(); track proposal.id) {
-        <div class="p-4 rounded-xl border transition-all" [class]="proposal.status === 'expired' ? 'border-orange-500/20 bg-orange-500/5 opacity-70'
-                : proposal.status === 'pending' ? (isExpiringSoon(proposal) ? 'border-red-500/30 bg-red-500/5 shadow-[0_0_20px_-5px_rgba(239,68,68,0.2)]' : 'border-primary/20 bg-primary/5')
-                : 'border-white/5 bg-white/[0.03]'">
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.proposals') }}</span>
+          <span style="font-size:10px;color:#8B5CF6;font-weight:600;">{{ lang.t('expertDashboard.kpiAll') }}</span>
+        </div>
+      </div>
 
-          <!-- ⏰ COMPTE À REBOURS pour les propositions pending -->
-          @if (proposal.status === 'pending') {
-          <div class="mb-3 p-2.5 rounded-lg" [class]="isExpiringSoon(proposal)
-                    ? 'bg-red-500/10 border border-red-500/20'
-                    : 'bg-yellow-500/5 border border-yellow-500/10'">
-            <div class="flex items-center justify-between mb-1.5">
-              <div class="flex items-center gap-2">
-                <i class="fa-solid fa-stopwatch text-sm"
-                  [class]="isExpiringSoon(proposal) ? 'text-red-400 animate-pulse' : 'text-yellow-400'"></i>
-                <span class="text-[10px] font-bold uppercase tracking-widest"
-                  [class]="isExpiringSoon(proposal) ? 'text-red-400' : 'text-yellow-400'">
-                  Temps restant pour répondre
+      <!-- En attente -->
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('expertDashboard.pending') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#FFB800;">{{ stats().pending }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.2);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-clock" style="color:#FFB800;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().total > 0 ? (stats().pending / stats().total * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:#FFB800;box-shadow:0 0 6px rgba(255,184,0,.4);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.kpiToReply') }}</span>
+          <span style="font-size:10px;color:#FFB800;font-weight:600;">{{ lang.t('expertDashboard.kpiTimeLimit') }}</span>
+        </div>
+      </div>
+
+      <!-- En cours -->
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.inProgress') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#00FF94;">{{ stats().accepted }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(0,255,148,.08);border:1px solid rgba(0,255,148,.18);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-check" style="color:#00FF94;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().total > 0 ? (stats().accepted / stats().total * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:#00FF94;box-shadow:0 0 7px rgba(0,255,148,.5);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.kpiActive') }}</span>
+          <span style="font-size:10px;color:#00FF94;font-weight:600;">{{ lang.t('recruiterDashboard.nominal') }}</span>
+        </div>
+      </div>
+
+      <!-- Terminées -->
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('expertDashboard.completed') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#A259FF;">{{ stats().completed }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.2);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-flag-checkered" style="color:#A259FF;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().total > 0 ? (stats().completed / stats().total * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#635BFF,#A259FF);box-shadow:0 0 7px rgba(162,89,255,.45);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.kpiSuccess') }}</span>
+          <span style="font-size:10px;color:#A259FF;font-weight:600;">{{ lang.t('recruiterDashboard.history') }}</span>
+        </div>
+      </div>
+
+      <!-- Refusées -->
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('expertDashboard.rejected') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#FF4D4D;">{{ stats().rejected }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.18);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-xmark" style="color:#FF4D4D;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().total > 0 ? (stats().rejected / stats().total * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:#FF4D4D;box-shadow:0 0 6px rgba(255,77,77,.4);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('recruiterDashboard.declined') }}</span>
+          <span style="font-size:10px;color:#FF4D4D;font-weight:600;">{{ lang.t('expertDashboard.kpiPast') }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── PROPOSALS FEED HEADER ── -->
+    <div class="flex items-center justify-between" style="margin-bottom:12px;">
+      <div>
+        <h2 style="font-size:15px;font-weight:700;color:#fff;">{{ lang.t('expertDashboard.proposals') }}</h2>
+        <p style="font-size:12px;color:#6B7280;margin-top:2px;">{{ lang.t('expertDashboard.feedSubtitle') }}</p>
+      </div>
+      <div class="flex items-center gap-3">
+        @if (stats().pending > 0) {
+        <span style="background:rgba(236,72,153,.1);color:#EC4899;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:99px;border:1px solid rgba(236,72,153,.2);text-transform:uppercase;">
+          {{ stats().pending }} {{ lang.t('expertDashboard.pending') }}
+        </span>
+        }
+        <a routerLink="/missions" style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;text-decoration:none;">{{ lang.t('expertDashboard.viewAll') }}</a>
+      </div>
+    </div>
+
+    <!-- ── PROPOSALS TELEMETRY FEED ── -->
+    <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:32px;">
+
+      @if (isLoading()) {
+      @for (i of [1,2,3]; track i) {
+      <div class="animate-pulse" style="background:#1C1926;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:18px 22px;">
+        <div class="flex items-center gap-4">
+          <div style="width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.06);flex-shrink:0;"></div>
+          <div style="flex:1;">
+            <div style="height:12px;background:rgba(255,255,255,0.06);border-radius:6px;width:55%;margin-bottom:8px;"></div>
+            <div style="height:9px;background:rgba(255,255,255,0.04);border-radius:6px;width:35%;"></div>
+          </div>
+        </div>
+      </div>
+      }
+
+      } @else if (recentProposals().length === 0) {
+      <div style="background:#1C1926;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:48px 22px;text-align:center;">
+        <i class="fa-regular fa-envelope-open" style="font-size:36px;color:#6B7280;opacity:.25;display:block;margin-bottom:12px;"></i>
+        <p style="font-size:14px;color:#6B7280;">{{ lang.t('expertDashboard.noProposals') }}</p>
+        <p style="font-size:11px;color:rgba(255,255,255,.15);margin-top:4px;">{{ lang.t('expertDashboard.noProposalsHint') }}</p>
+      </div>
+
+      } @else {
+      @for (proposal of recentProposals(); track proposal.id) {
+
+      <!-- ── TELEMETRY ROW ── -->
+      <div style="background:#1C1926;border-radius:12px;padding:18px 22px;transition:border-color .2s;"
+        [style.border]="proposal.status === 'expired' ? '1px solid rgba(255,184,0,.18)' :
+                         proposal.status === 'pending' && isExpiringSoon(proposal) ? '1px solid rgba(255,77,77,.28)' :
+                         proposal.status === 'pending' ? '1px solid rgba(236,72,153,.2)' :
+                         proposal.status === 'accepted' ? '1px solid rgba(0,255,148,.15)' :
+                         proposal.status === 'completed' ? '1px solid rgba(162,89,255,.15)' :
+                         '1px solid rgba(255,255,255,0.07)'"
+        [style.opacity]="proposal.status === 'expired' ? '0.75' : '1'"
+        [style.box-shadow]="proposal.status === 'pending' && isExpiringSoon(proposal) ? '0 0 20px -5px rgba(255,77,77,.15)' : 'none'">
+
+        <div class="flex items-start gap-4">
+
+          <!-- Avatar -->
+          <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#EC4899,#8B5CF6);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0;">
+            {{ (proposal.clientName || 'R').charAt(0).toUpperCase() }}
+          </div>
+
+          <!-- Content -->
+          <div style="flex:1;min-width:0;">
+
+            <!-- Title + pills row -->
+            <div class="flex items-center flex-wrap gap-2" style="margin-bottom:5px;">
+              <h4 style="font-size:14px;font-weight:600;color:#fff;">{{ proposal.title }}</h4>
+
+              <!-- Status pill -->
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.4px;flex-shrink:0;"
+                [style.background]="proposal.status === 'expired' ? 'rgba(255,184,0,.1)' :
+                                     proposal.status === 'pending' && isExpiringSoon(proposal) ? 'rgba(255,77,77,.1)' :
+                                     proposal.status === 'pending' ? 'rgba(236,72,153,.1)' :
+                                     proposal.status === 'accepted' ? 'rgba(0,255,148,.1)' :
+                                     proposal.status === 'completed' ? 'rgba(162,89,255,.1)' : 'rgba(255,77,77,.1)'"
+                [style.color]="proposal.status === 'expired' ? '#FFB800' :
+                                proposal.status === 'pending' && isExpiringSoon(proposal) ? '#FF4D4D' :
+                                proposal.status === 'pending' ? '#EC4899' :
+                                proposal.status === 'accepted' ? '#00FF94' :
+                                proposal.status === 'completed' ? '#A259FF' : '#FF4D4D'"
+                [style.border]="proposal.status === 'expired' ? '1px solid rgba(255,184,0,.25)' :
+                                  proposal.status === 'pending' && isExpiringSoon(proposal) ? '1px solid rgba(255,77,77,.25)' :
+                                  proposal.status === 'pending' ? '1px solid rgba(236,72,153,.25)' :
+                                  proposal.status === 'accepted' ? '1px solid rgba(0,255,148,.25)' :
+                                  proposal.status === 'completed' ? '1px solid rgba(162,89,255,.25)' : '1px solid rgba(255,77,77,.25)'">
+                <span style="width:6px;height:6px;border-radius:50%;flex-shrink:0;"
+                  [style.background]="proposal.status === 'expired' ? '#FFB800' :
+                                       proposal.status === 'pending' && isExpiringSoon(proposal) ? '#FF4D4D' :
+                                       proposal.status === 'pending' ? '#EC4899' :
+                                       proposal.status === 'accepted' ? '#00FF94' :
+                                       proposal.status === 'completed' ? '#A259FF' : '#FF4D4D'"
+                  [style.box-shadow]="proposal.status === 'accepted' ? '0 0 5px 1px rgba(0,255,148,.6)' :
+                                       proposal.status === 'pending' && !isExpiringSoon(proposal) ? '0 0 5px 1px rgba(236,72,153,.6)' :
+                                       proposal.status === 'pending' && isExpiringSoon(proposal) ? '0 0 5px 1px rgba(255,77,77,.6)' : 'none'">
                 </span>
-              </div>
-              <span class="font-mono font-black text-sm tracking-wider"
-                [class]="isExpiringSoon(proposal) ? 'text-red-400' : 'text-yellow-300'">
-                {{ getCountdown(proposal) }}
+                {{ getStatusLabel(proposal.status).toUpperCase() }}
               </span>
+
+              <!-- Priority chip -->
+              @if (proposal.priority && proposal.priority !== 'normal') {
+              <span style="font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:5px;"
+                [style.background]="proposal.priority === 'urgent' ? 'rgba(255,77,77,.1)' : proposal.priority === 'high' ? 'rgba(255,184,0,.1)' : 'rgba(0,255,148,.1)'"
+                [style.color]="proposal.priority === 'urgent' ? '#FF4D4D' : proposal.priority === 'high' ? '#FFB800' : '#00FF94'"
+                [style.border]="proposal.priority === 'urgent' ? '1px solid rgba(255,77,77,.2)' : proposal.priority === 'high' ? '1px solid rgba(255,184,0,.2)' : '1px solid rgba(0,255,148,.2)'">
+                {{ proposal.priority === 'urgent' ? lang.t('expertDashboard.priorityUrgent') : proposal.priority === 'high' ? lang.t('expertDashboard.priorityHigh') : lang.t('expertDashboard.priorityLow') }}
+              </span>
+              }
             </div>
-            <!-- Progress bar -->
-            <div class="w-full bg-white/5 rounded-full h-1.5 overflow-hidden">
-              <div class="h-full rounded-full transition-all duration-1000"
-                [class]="isExpiringSoon(proposal) ? 'bg-red-400' : 'bg-yellow-400'"
-                [style.width.%]="getCountdownPercent(proposal)">
+
+            <!-- Meta row -->
+            <div class="flex items-center flex-wrap gap-x-3 gap-y-1" style="margin-bottom:8px;">
+              <span style="font-size:12px;color:#9CA3AF;">{{ proposal.clientName || 'Recruteur' }}</span>
+              @if (proposal.budget) {
+              <span style="color:rgba(255,255,255,.15);font-size:10px;">·</span>
+              <span style="font-size:13px;font-weight:700;color:#EC4899;">{{ proposal.budget }}</span>
+              }
+              @if (proposal.startDate) {
+              <span style="color:rgba(255,255,255,.15);font-size:10px;">·</span>
+              <span style="font-size:11px;color:#6B7280;">{{ lang.t('expertDashboard.startDate') }} : {{ proposal.startDate }}</span>
+              }
+              @if (proposal.createdAt) {
+              <span style="color:rgba(255,255,255,.15);font-size:10px;">·</span>
+              <span style="font-size:11px;color:#6B7280;">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
+              }
+            </div>
+
+            @if (proposal.description) {
+            <p style="font-size:12px;color:#6B7280;margin-bottom:10px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">{{ proposal.description }}</p>
+            }
+
+            <!-- ⏰ EXPIRED notice -->
+            @if (proposal.status === 'expired') {
+            <div style="display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;background:rgba(255,184,0,.07);border:1px solid rgba(255,184,0,.15);margin-bottom:10px;">
+              <i class="fa-solid fa-clock" style="color:#FFB800;font-size:11px;"></i>
+              <span style="color:#FFB800;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">{{ lang.t('expertDashboard.expiredNotice') }}</span>
+            </div>
+            }
+
+            <!-- ⏰ COUNTDOWN BAR for pending -->
+            @if (proposal.status === 'pending') {
+            <div style="padding:8px 12px;border-radius:9px;margin-bottom:10px;"
+              [style.background]="isExpiringSoon(proposal) ? 'rgba(255,77,77,.07)' : 'rgba(255,184,0,.05)'"
+              [style.border]="isExpiringSoon(proposal) ? '1px solid rgba(255,77,77,.18)' : '1px solid rgba(255,184,0,.12)'">
+              <div class="flex items-center justify-between" style="margin-bottom:6px;">
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-stopwatch" style="font-size:11px;"
+                    [style.color]="isExpiringSoon(proposal) ? '#FF4D4D' : '#FFB800'"
+                    [class.animate-pulse]="isExpiringSoon(proposal)"></i>
+                  <span style="font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;"
+                    [style.color]="isExpiringSoon(proposal) ? '#FF4D4D' : '#FFB800'">{{ lang.t('expertDashboard.timeRemaining') }}</span>
+                </div>
+                <span style="font-family:monospace;font-weight:800;font-size:13px;letter-spacing:1px;"
+                  [style.color]="isExpiringSoon(proposal) ? '#FF4D4D' : '#FFB800'">{{ getCountdown(proposal) }}</span>
+              </div>
+              <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+                <div [style.width.%]="getCountdownPercent(proposal)"
+                  [style.background]="isExpiringSoon(proposal) ? '#FF4D4D' : '#FFB800'"
+                  [style.box-shadow]="isExpiringSoon(proposal) ? '0 0 6px rgba(255,77,77,.5)' : '0 0 5px rgba(255,184,0,.4)'"
+                  style="height:100%;border-radius:99px;transition:width 1s linear;"></div>
               </div>
             </div>
-          </div>
-          }
+            }
 
-          <!-- EXPIRED badge -->
-          @if (proposal.status === 'expired') {
-          <div class="mb-3 p-2.5 rounded-lg bg-orange-500/10 border border-orange-500/20 flex items-center gap-2">
-            <i class="fa-solid fa-clock text-orange-400"></i>
-            <span class="text-orange-400 text-[11px] font-bold uppercase tracking-widest">Non répondu — Expiré (strike
-              +1)</span>
-          </div>
-          }
-
-          <div class="flex items-start justify-between gap-2 mb-2">
-            <div class="flex items-center gap-3">
-              <div
-                class="w-9 h-9 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                {{ (proposal.clientName || 'R').charAt(0).toUpperCase() }}
-              </div>
-              <div>
-                <h4 class="font-bold text-white text-sm leading-tight">{{ proposal.title }}</h4>
-                <p class="text-[11px] text-subtext">{{ proposal.clientName || 'Recruteur' }}</p>
-              </div>
+            <!-- ACTIONS -->
+            @if (proposal.status === 'pending' && !isExpired(proposal)) {
+            <div class="flex items-center gap-2 flex-wrap">
+              <button (click)="confirmAccept(proposal)" [disabled]="processingId() === proposal.id"
+                style="display:flex;align-items:center;gap:5px;padding:5px 16px;background:rgba(0,255,148,.08);border:1px solid rgba(0,255,148,.22);color:#00FF94;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .2s;"
+                class="disabled:opacity-50">
+                <i class="fa-solid fa-check" style="font-size:9px;"></i> {{ lang.t('expertDashboard.accept') }}
+              </button>
+              <button (click)="confirmReject(proposal)" [disabled]="processingId() === proposal.id"
+                style="display:flex;align-items:center;gap:5px;padding:5px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#6B7280;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .2s;"
+                class="disabled:opacity-50 hover:bg-red-500/10 hover:border-red-500/25 hover:text-red-400">
+                <i class="fa-solid fa-xmark" style="font-size:9px;"></i> {{ lang.t('expertDashboard.decline') }}
+              </button>
+              <a routerLink="/messages"
+                style="display:flex;align-items:center;gap:5px;padding:5px 16px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#6B7280;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;text-decoration:none;margin-left:auto;transition:all .2s;">
+                <i class="fa-regular fa-envelope" style="font-size:9px;"></i> {{ lang.t('expertDashboard.contact') }}
+              </a>
             </div>
-            <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shrink-0"
-              [class]="proposal.status === 'expired' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : getStatusClass(proposal.status)">
-              {{ proposal.status === 'expired' ? 'Expiré' : getStatusLabel(proposal.status) }}
-            </span>
-          </div>
+            }
 
-          <div class="flex items-center gap-3 mb-2 pl-12">
-            @if (proposal.priority && proposal.priority !== 'normal') {
-            <span class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full border"
-              [class]="proposal.priority === 'urgent' ? 'bg-red-500/10 text-red-400 border-red-500/20' : proposal.priority === 'high' ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' : 'bg-green-500/10 text-green-400 border-green-500/20'">
-              {{ proposal.priority === 'urgent' ? '🔴 Urgent' : proposal.priority === 'high' ? '🟠 Élevé' : '🟢 Faible'
-              }}
-            </span>
-            }
-            @if (proposal.budget) {
-            <span class="text-primary font-bold text-sm">{{ proposal.budget }}</span>
-            }
-            @if (proposal.startDate) {
-            <span class="text-white/20 text-xs">•</span>
-            <span class="text-subtext text-xs">Début : {{ proposal.startDate }}</span>
-            }
-            @if (proposal.createdAt) {
-            <span class="text-white/20 text-xs">•</span>
-            <span class="text-subtext text-xs">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
-            }
           </div>
-
-          @if (proposal.description) {
-          <p class="text-xs text-subtext line-clamp-2 pl-12 mb-3">{{ proposal.description }}</p>
-          }
-
-          @if (proposal.status === 'pending' && !isExpired(proposal)) {
-          <div class="flex items-center gap-2 pl-12">
-            <button (click)="confirmAccept(proposal)" [disabled]="processingId() === proposal.id"
-              class="flex items-center gap-1.5 px-4 py-1.5 bg-green-500/10 border border-green-500/30 text-green-400 rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-green-500/20 transition-all disabled:opacity-50">
-              <i class="fa-solid fa-check text-[10px]"></i>
-              Accepter
-            </button>
-            <button (click)="confirmReject(proposal)" [disabled]="processingId() === proposal.id"
-              class="flex items-center gap-1.5 px-4 py-1.5 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400 transition-all disabled:opacity-50">
-              <i class="fa-solid fa-xmark text-[10px]"></i>
-              Refuser
-            </button>
-            <a routerLink="/messages"
-              class="flex items-center gap-1.5 px-4 py-1.5 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:border-primary/30 hover:text-primary transition-all ml-auto">
-              <i class="fa-regular fa-envelope text-[10px]"></i>
-              Contacter
-            </a>
-          </div>
-          }
         </div>
-        }
-        }
       </div>
-    </div>
+      }
+      }
 
+    </div>
   </div>
 
-  <!-- CONFIRMATION ACCEPTATION -->
+  <!-- ── CONFIRMATION ACCEPTATION ── -->
   @if (pendingAcceptProposal(); as proposal) {
   <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="cancelAccept()"></div>
-    <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-sm relative z-10 p-6 text-center">
-      <div
-        class="w-14 h-14 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fa-solid fa-check text-green-400 text-2xl"></i>
+    <div style="background:#1C1926;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:100%;max-width:360px;position:relative;z-index:10;padding:24px;text-align:center;">
+      <div style="width:54px;height:54px;background:rgba(0,255,148,.08);border:1px solid rgba(0,255,148,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <i class="fa-solid fa-check" style="color:#00FF94;font-size:20px;"></i>
       </div>
-      <h4 class="text-base font-bold text-white mb-2">Accepter cette proposition ?</h4>
-      <p class="text-sm text-subtext mb-1">{{ proposal.title }}</p>
-      <p class="text-xs text-white/30 mb-6">Vous vous engagez à donner suite à cette mission.</p>
+      <h4 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">{{ lang.t('expertDashboard.confirmAcceptTitle') }}</h4>
+      <p style="font-size:13px;color:#9CA3AF;margin-bottom:4px;">{{ proposal.title }}</p>
+      <p style="font-size:11px;color:rgba(255,255,255,.2);margin-bottom:24px;">{{ lang.t('expertDashboard.confirmAcceptMsg') }}</p>
       <div class="flex gap-3">
-        <button (click)="cancelAccept()"
-          class="flex-1 py-2.5 bg-white/5 border border-white/10 text-subtext font-bold rounded-xl hover:bg-white/10 transition text-sm">
-          Annuler
-        </button>
+        <button (click)="cancelAccept()" style="flex:1;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#9CA3AF;font-weight:700;border-radius:12px;cursor:pointer;font-size:13px;">{{ lang.t('expertDashboard.cancel') }}</button>
         <button (click)="acceptProposal(proposal)" [disabled]="processingId() === proposal.id"
-          class="flex-1 py-2.5 bg-green-500/10 border border-green-500/30 text-green-400 font-bold rounded-xl hover:bg-green-500/20 transition text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+          style="flex:1;padding:10px;background:rgba(0,255,148,.08);border:1px solid rgba(0,255,148,.22);color:#00FF94;font-weight:700;border-radius:12px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;"
+          class="disabled:opacity-50">
           @if (processingId() === proposal.id) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
           }
-          Confirmer
+          {{ lang.t('expertDashboard.confirm') }}
         </button>
       </div>
     </div>
   </div>
   }
 
-  <!-- CONFIRMATION REFUS -->
+  <!-- ── CONFIRMATION REFUS ── -->
   @if (pendingRejectProposal(); as proposal) {
   <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="cancelReject()"></div>
-    <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-sm relative z-10 p-6 text-center">
-      <div
-        class="w-14 h-14 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fa-solid fa-xmark text-red-400 text-2xl"></i>
+    <div style="background:#1C1926;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:100%;max-width:360px;position:relative;z-index:10;padding:24px;text-align:center;">
+      <div style="width:54px;height:54px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+        <i class="fa-solid fa-xmark" style="color:#FF4D4D;font-size:20px;"></i>
       </div>
-      <h4 class="text-base font-bold text-white mb-2">Refuser cette proposition ?</h4>
-      <p class="text-sm text-subtext mb-1">{{ proposal.title }}</p>
-      <p class="text-xs text-white/30 mb-6">Cette action est irréversible.</p>
+      <h4 style="font-size:15px;font-weight:700;color:#fff;margin-bottom:8px;">{{ lang.t('expertDashboard.confirmRejectTitle') }}</h4>
+      <p style="font-size:13px;color:#9CA3AF;margin-bottom:4px;">{{ proposal.title }}</p>
+      <p style="font-size:11px;color:rgba(255,255,255,.2);margin-bottom:24px;">{{ lang.t('expertDashboard.confirmRejectMsg') }}</p>
       <div class="flex gap-3">
-        <button (click)="cancelReject()"
-          class="flex-1 py-2.5 bg-white/5 border border-white/10 text-subtext font-bold rounded-xl hover:bg-white/10 transition text-sm">
-          Annuler
-        </button>
+        <button (click)="cancelReject()" style="flex:1;padding:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#9CA3AF;font-weight:700;border-radius:12px;cursor:pointer;font-size:13px;">{{ lang.t('expertDashboard.cancel') }}</button>
         <button (click)="rejectProposal(proposal)" [disabled]="processingId() === proposal.id"
-          class="flex-1 py-2.5 bg-red-500/10 border border-red-500/30 text-red-400 font-bold rounded-xl hover:bg-red-500/20 transition text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+          style="flex:1;padding:10px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.22);color:#FF4D4D;font-weight:700;border-radius:12px;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px;"
+          class="disabled:opacity-50">
           @if (processingId() === proposal.id) {
           <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
           }
-          Confirmer le refus
+          {{ lang.t('expertDashboard.confirmRefusal') }}
         </button>
       </div>
     </div>

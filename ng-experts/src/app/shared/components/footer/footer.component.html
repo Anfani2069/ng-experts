@@ -12,13 +12,13 @@
         <span class="text-white font-bold tracking-tighter text-base">Ng-<span class="text-primary">Expert</span>.</span>
         <span class="text-white ml-4">© {{ currentYear }} </span>
         <span class="text-gray-800 ml-2">//</span>
-        <span class="ml-2">GLOBAL ANGULAR NETWORK</span>
+        <span class="ml-2">{{ lang.t('footer.network') }}</span>
       </div>
 
       <div class="flex gap-8">
-        <a (click)="onNavigate('privacy-policy')" class="hover:text-primary transition cursor-pointer">Privacy</a>
-        <a (click)="onNavigate('terms')" class="hover:text-primary transition cursor-pointer">Terms</a>
-        <a (click)="onNavigate('contact')" class="hover:text-primary transition cursor-pointer">Contact</a>
+        <a (click)="onNavigate('privacy-policy')" class="hover:text-primary transition cursor-pointer">{{ lang.t('footer.privacy') }}</a>
+        <a (click)="onNavigate('terms')" class="hover:text-primary transition cursor-pointer">{{ lang.t('footer.terms') }}</a>
+        <a (click)="onNavigate('contact')" class="hover:text-primary transition cursor-pointer">{{ lang.t('footer.contact') }}</a>
       </div>
 
       <div class="flex gap-6 opacity-40 hover:opacity-100 transition-opacity">

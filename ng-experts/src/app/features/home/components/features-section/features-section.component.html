@@ -4,14 +4,14 @@
     <!-- Section Header -->
     <div class="text-center mb-16" appAnimateOnScroll animClass="anim-fade-up">
       <div class="inline-block mb-4">
-        <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">Fonctionnalités</span>
+        <span class="px-4 py-2 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">{{ lang.t('features.badge') }}</span>
       </div>
       <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
-        Ng-Expert est conçu pour<br>
-        <span class="text-primary italic font-serif font-normal">simplifier le recrutement.</span>
+        {{ lang.t('features.title1') }}<br>
+        <span class="text-primary italic font-serif font-normal">{{ lang.t('features.title2') }}</span>
       </h2>
       <p class="text-lg text-subtext max-w-xl mx-auto font-medium leading-relaxed">
-        Tout ce dont vous avez besoin pour trouver, contacter et collaborer avec les meilleurs experts Angular.
+        {{ lang.t('features.subtitle') }}
       </p>
     </div>
 
@@ -28,14 +28,14 @@
             <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
               <i class="fa-solid fa-magnifying-glass text-primary"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white tracking-tight">Recherchez des experts <span class="text-primary">Angular</span> qualifiés</h3>
-            <p class="text-subtext text-sm leading-relaxed">Filtrez par ville, technologie et disponibilité. Accédez à une base d'experts vérifiés en quelques secondes.</p>
+            <h3 class="text-2xl font-bold text-white tracking-tight">{{ lang.t('features.search.title1') }} <span class="text-primary">{{ lang.t('features.search.title2') }}</span> {{ lang.t('features.search.title3') }}</h3>
+            <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.search.subtitle') }}</p>
             <div class="flex flex-wrap gap-3 pt-1">
               <div class="flex items-center gap-2 text-xs text-subtext">
-                <i class="fa-solid fa-check text-primary text-[10px]"></i> Recherche avancée multi-critères
+                <i class="fa-solid fa-check text-primary text-[10px]"></i> {{ lang.t('features.search.check1') }}
               </div>
               <div class="flex items-center gap-2 text-xs text-subtext">
-                <i class="fa-solid fa-check text-primary text-[10px]"></i> Profils 100% vérifiés
+                <i class="fa-solid fa-check text-primary text-[10px]"></i> {{ lang.t('features.search.check2') }}
               </div>
             </div>
           </div>
@@ -47,7 +47,7 @@
                 <div class="font-bold text-white text-sm truncate">Thomas M.</div>
                 <div class="text-[11px] text-subtext">Lead Angular · 6 ans</div>
               </div>
-              <span class="flex-shrink-0 px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20">Dispo</span>
+              <span class="flex-shrink-0 px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20">{{ lang.t('features.search.available') }}</span>
             </div>
             <div class="flex flex-wrap gap-1.5">
               <span class="px-2.5 py-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-wider rounded-md border border-primary/20">Angular 17</span>
@@ -71,29 +71,29 @@
             <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
               <i class="fa-solid fa-chart-line text-primary"></i>
             </div>
-            <span class="px-2.5 py-1 bg-primary/20 text-primary text-[9px] font-bold uppercase tracking-widest rounded-full border border-primary/30 animate-pulse">● Live</span>
+            <span class="px-2.5 py-1 bg-primary/20 text-primary text-[9px] font-bold uppercase tracking-widest rounded-full border border-primary/30 animate-pulse">● {{ lang.t('features.dashboard.live') }}</span>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Tableau de bord</h3>
-            <p class="text-subtext text-sm leading-relaxed">Suivez vos recherches et statistiques en temps réel.</p>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">{{ lang.t('features.dashboard.title') }}</h3>
+            <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.dashboard.subtitle') }}</p>
           </div>
           <div class="grid grid-cols-3 gap-2">
             <div class="bg-white/[0.03] rounded-xl p-3 text-center border border-white/5">
               <div class="text-xl font-black text-primary">127</div>
-              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">Experts</div>
+              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">{{ lang.t('features.dashboard.experts') }}</div>
             </div>
             <div class="bg-white/[0.03] rounded-xl p-3 text-center border border-white/5">
               <div class="text-xl font-black text-primary">45</div>
-              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">Missions</div>
+              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">{{ lang.t('features.dashboard.missions') }}</div>
             </div>
             <div class="bg-white/[0.03] rounded-xl p-3 text-center border border-white/5">
               <div class="text-xl font-black text-primary">98%</div>
-              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">Satisf.</div>
+              <div class="text-[8px] text-subtext uppercase tracking-widest mt-0.5">{{ lang.t('features.dashboard.satisfaction') }}</div>
             </div>
           </div>
           <div>
             <div class="flex items-center justify-between mb-1.5">
-              <span class="text-[10px] text-subtext uppercase tracking-widest">Taux de matching</span>
+              <span class="text-[10px] text-subtext uppercase tracking-widest">{{ lang.t('features.dashboard.matching') }}</span>
               <span class="text-[10px] font-bold text-white">85%</span>
             </div>
             <div class="w-full bg-white/5 rounded-full h-1.5">
@@ -112,27 +112,27 @@
             <i class="fa-solid fa-shield-halved text-primary"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Profils vérifiés</h3>
-            <p class="text-subtext text-sm leading-relaxed">Chaque expert est validé manuellement par notre équipe avant d'apparaître sur la plateforme.</p>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">{{ lang.t('features.verified.title') }}</h3>
+            <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.verified.subtitle') }}</p>
           </div>
           <div class="space-y-2.5 pt-1">
             <div class="flex items-center gap-3 text-xs">
               <div class="w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-check text-green-400 text-[8px]"></i>
               </div>
-              <span class="text-subtext">Identité confirmée</span>
+              <span class="text-subtext">{{ lang.t('features.verified.identity') }}</span>
             </div>
             <div class="flex items-center gap-3 text-xs">
               <div class="w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-check text-green-400 text-[8px]"></i>
               </div>
-              <span class="text-subtext">Compétences validées</span>
+              <span class="text-subtext">{{ lang.t('features.verified.skills') }}</span>
             </div>
             <div class="flex items-center gap-3 text-xs">
               <div class="w-5 h-5 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center flex-shrink-0">
                 <i class="fa-solid fa-check text-green-400 text-[8px]"></i>
               </div>
-              <span class="text-subtext">Références vérifiées</span>
+              <span class="text-subtext">{{ lang.t('features.verified.refs') }}</span>
             </div>
           </div>
         </div>
@@ -147,20 +147,20 @@
             <i class="fa-solid fa-comments text-primary"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Messagerie intégrée</h3>
-            <p class="text-subtext text-sm leading-relaxed">Contactez les experts en direct, sans intermédiaire.</p>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">{{ lang.t('features.messaging.title') }}</h3>
+            <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.messaging.subtitle') }}</p>
           </div>
           <div class="space-y-2">
             <div class="flex items-end gap-2">
               <img src="https://i.pravatar.cc/150?img=12" class="w-6 h-6 rounded-full object-cover flex-shrink-0" alt="">
               <div class="bg-white/5 border border-white/5 rounded-2xl rounded-bl-sm px-3 py-2 text-[11px] text-subtext max-w-[75%]">
-                Disponible à partir du 1er mars ✅
+                {{ lang.t('features.messaging.msg1') }}
               </div>
             </div>
             <div class="flex items-end gap-2 flex-row-reverse">
               <div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center flex-shrink-0 text-white text-[9px] font-bold">R</div>
               <div class="bg-primary/15 border border-primary/20 rounded-2xl rounded-br-sm px-3 py-2 text-[11px] text-white max-w-[75%]">
-                Parfait, envoyons un contrat 🚀
+                {{ lang.t('features.messaging.msg2') }}
               </div>
             </div>
           </div>
@@ -176,34 +176,34 @@
             <i class="fa-solid fa-briefcase text-primary"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white tracking-tight mb-2">Gérez vos recrutements <span class="text-primary italic font-serif font-normal">efficacement.</span></h3>
-            <p class="text-subtext text-sm leading-relaxed">Suivez l'avancement de vos recherches et gérez vos candidats depuis une interface intuitive.</p>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">{{ lang.t('features.pipeline.title1') }} <span class="text-primary italic font-serif font-normal">{{ lang.t('features.pipeline.title2') }}</span></h3>
+            <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.pipeline.subtitle') }}</p>
           </div>
           <div class="space-y-2">
-            <div class="text-[10px] font-bold text-subtext uppercase tracking-widest mb-1">Pipeline de recrutement</div>
+            <div class="text-[10px] font-bold text-subtext uppercase tracking-widest mb-1">{{ lang.t('features.pipeline.badge') }}</div>
             <div class="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3">
               <img src="https://i.pravatar.cc/150?img=3" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" alt="">
               <div class="flex-1 min-w-0">
                 <div class="text-xs font-bold text-white truncate">Sarah K.</div>
-                <div class="text-[10px] text-subtext">Entretien planifié</div>
+                <div class="text-[10px] text-subtext">{{ lang.t('features.pipeline.candidate1sub') }}</div>
               </div>
-              <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-yellow-500/20 flex-shrink-0">En cours</span>
+              <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-yellow-500/20 flex-shrink-0">{{ lang.t('features.pipeline.status1') }}</span>
             </div>
             <div class="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3">
               <img src="https://i.pravatar.cc/150?img=5" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" alt="">
               <div class="flex-1 min-w-0">
                 <div class="text-xs font-bold text-white truncate">Marc D.</div>
-                <div class="text-[10px] text-subtext">Proposition envoyée</div>
+                <div class="text-[10px] text-subtext">{{ lang.t('features.pipeline.candidate2sub') }}</div>
               </div>
-              <span class="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-blue-500/20 flex-shrink-0">Proposé</span>
+              <span class="px-2 py-0.5 bg-blue-500/10 text-blue-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-blue-500/20 flex-shrink-0">{{ lang.t('features.pipeline.status2') }}</span>
             </div>
             <div class="flex items-center gap-3 bg-white/[0.03] border border-white/5 rounded-xl px-4 py-3">
               <img src="https://i.pravatar.cc/150?img=9" class="w-8 h-8 rounded-lg object-cover flex-shrink-0" alt="">
               <div class="flex-1 min-w-0">
                 <div class="text-xs font-bold text-white truncate">Julie R.</div>
-                <div class="text-[10px] text-subtext">Mission démarrée</div>
+                <div class="text-[10px] text-subtext">{{ lang.t('features.pipeline.candidate3sub') }}</div>
               </div>
-              <span class="px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20 flex-shrink-0">Signé</span>
+              <span class="px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20 flex-shrink-0">{{ lang.t('features.pipeline.status3') }}</span>
             </div>
           </div>
         </div>

@@ -6,8 +6,8 @@
   <div class="w-full lg:w-1/2 flex items-center justify-center px-10 md:px-20 py-12 relative z-10">
     <div class="w-full max-w-md">
       <div class="mb-12">
-        <h1 class="text-5xl font-heading font-bold mb-3 text-white tracking-tight">Sign In</h1>
-        <p class="text-subtext text-base">Connectez-vous à votre compte</p>
+        <h1 class="text-5xl font-heading font-bold mb-3 text-white tracking-tight">{{ lang.t('auth.login.title') }}</h1>
+        <p class="text-subtext text-base">{{ lang.t('auth.login.subtitle') }}</p>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="space-y-6">
@@ -31,7 +31,7 @@
         }
 
         <div>
-          <label class="block text-sm font-semibold text-white mb-2">Email</label>
+          <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.login.email') }}</label>
           <input
             type="email"
             placeholder="votre@email.com"
@@ -43,7 +43,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-white mb-2">Password</label>
+          <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.login.password') }}</label>
           <div class="relative">
             <input
               type="password"
@@ -60,7 +60,7 @@
         </div>
 
         <div class="flex items-center justify-between text-sm">
-          <a (click)="onForgotPassword()" class="text-subtext hover:text-primary font-medium cursor-pointer transition">Forgot Password?</a>
+          <a (click)="onForgotPassword()" class="text-subtext hover:text-primary font-medium cursor-pointer transition">{{ lang.t('auth.login.forgotPassword') }}</a>
         </div>
 
         <button
@@ -70,9 +70,9 @@
         >
           @if (isLoading()) {
             <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-            Connexion en cours...
+            {{ lang.t('auth.login.loading') }}
           } @else {
-            Sign In
+            {{ lang.t('auth.login.signIn') }}
           }
         </button>
 
@@ -81,26 +81,20 @@
             <div class="w-full border-t border-border"></div>
           </div>
           <div class="relative flex justify-center text-xs">
-            <span class="px-4 bg-background text-subtext uppercase tracking-wider font-bold">Powered by Espresso Auth</span>
+            <span class="px-4 bg-background text-subtext uppercase tracking-wider font-bold">{{ lang.t('auth.login.powered') }}</span>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <button type="button" (click)="onGoogleLogin()" class="flex items-center justify-center gap-2 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
-            <i class="fa-brands fa-google text-white"></i>
-            <span class="font-semibold text-white text-sm">Google</span>
-          </button>
-          <button type="button" (click)="onGithubLogin()" class="flex items-center justify-center gap-2 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
-            <i class="fa-brands fa-github text-white"></i>
-            <span class="font-semibold text-white text-sm">GitHub</span>
-          </button>
-        </div>
+        <button type="button" (click)="onGoogleLogin()" class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
+          <i class="fa-brands fa-google text-white"></i>
+          <span class="font-semibold text-white text-sm">{{ lang.t('auth.login.continueGoogle') }}</span>
+        </button>
       </form>
 
       <div class="mt-8 text-center">
         <p class="text-subtext text-sm">
-          Pas encore de compte ?
-          <a (click)="onRegister()" class="text-primary hover:text-primary-hover font-bold cursor-pointer transition">Activate Membership</a>
+          {{ lang.t('auth.login.noAccount') }}
+          <a (click)="onRegister()" class="text-primary hover:text-primary-hover font-bold cursor-pointer transition">{{ lang.t('auth.login.activateMembership') }}</a>
         </p>
       </div>
     </div>
@@ -118,10 +112,7 @@
             <i class="fa-solid fa-quote-left text-3xl opacity-50"></i>
           </div>
           <p class="text-white text-xl leading-relaxed mb-8 font-light">
-            "Ng-Expert est la plateforme de référence pour trouver les meilleurs experts Angular.
-            Avec des professionnels de haut niveau, des cours complets et une interface intuitive,
-            c'est l'outil indispensable pour tout développeur Angular. L'approche interactive,
-            le support communautaire et l'accessibilité en font une plateforme incontournable."
+            "{{ lang.t('auth.login.testimonial') }}"
           </p>
 
           <div class="flex items-center gap-4">
@@ -129,8 +120,8 @@
               TW
             </div>
             <div>
-              <div class="text-white font-bold text-lg">Timothy Wilson</div>
-              <div class="text-subtext text-sm">Founder of UX Design</div>
+              <div class="text-white font-bold text-lg">A. Ounyb</div>
+              <div class="text-subtext text-sm">{{ lang.t('auth.login.testimonialRole') }}</div>
             </div>
           </div>
         </div>

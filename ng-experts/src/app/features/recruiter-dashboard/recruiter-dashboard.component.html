@@ -1,221 +1,304 @@
 <app-dashboard-layout [showSearch]="false">
-  <div class="px-6 md:px-8 py-6 bg-heroBg">
+  <div class="px-6 md:px-8 py-6" style="background:#0F0C15;min-height:100%;">
 
-    <!-- Welcome Card -->
-    <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6 mb-6 relative overflow-hidden">
-      <div class="relative z-10 flex items-center justify-between flex-wrap gap-4">
+    <!-- ── WELCOME BAR ── -->
+    <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;margin-bottom:18px;position:relative;overflow:hidden;">
+      <div class="flex items-center justify-between flex-wrap gap-4" style="position:relative;z-index:1;">
         <div>
           @if (isUserLoaded()) {
-          <h1 class="text-xl font-bold text-white mb-1">Bonjour {{ userName() }} 👋</h1>
+          <h1 style="font-size:17px;font-weight:700;letter-spacing:-.4px;color:#fff;margin-bottom:3px;">
+            {{ lang.t('recruiterDashboard.hello') }}, <span style="background:linear-gradient(90deg,#EC4899,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">{{ userName() }}</span> 👋
+          </h1>
           } @else {
-          <div class="h-8 w-56 bg-white/5 rounded animate-pulse mb-1"></div>
+          <div class="animate-pulse" style="height:24px;width:200px;background:rgba(255,255,255,0.05);border-radius:8px;margin-bottom:3px;"></div>
           }
-          <p class="text-subtext text-sm">Trouvez l'expert Angular idéal pour votre projet</p>
+          <p style="font-size:12px;color:#6B7280;">{{ lang.t('recruiterDashboard.subtitle') }}</p>
         </div>
         <a routerLink="/" fragment="experts"
-          class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-primary/80 transition shadow-[0_0_20px_-5px_rgba(236,72,153,0.4)]">
-          <i class="fa-solid fa-magnifying-glass text-xs"></i>
-          Explorer les experts
+          style="display:inline-flex;align-items:center;gap:8px;padding:8px 18px;background:linear-gradient(135deg,#EC4899,#8B5CF6);color:#fff;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;text-decoration:none;box-shadow:0 0 20px -5px rgba(236,72,153,.4);">
+          <i class="fa-solid fa-magnifying-glass" style="font-size:10px;"></i>
+          {{ lang.t('recruiterDashboard.exploreExperts') }}
         </a>
       </div>
-      <div class="absolute right-6 bottom-0 opacity-5">
-        <i class="fa-solid fa-users text-8xl"></i>
-      </div>
+      <div style="position:absolute;right:22px;bottom:0;opacity:.03;font-size:72px;"><i class="fa-solid fa-users"></i></div>
     </div>
 
-    <!-- Stats rapides -->
-    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-paper-plane text-primary text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().sent }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Envoyées</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-clock text-yellow-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().pending }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">En attente</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-check text-green-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().accepted }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Acceptées</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-flag-checkered text-blue-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().completed }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Terminées</p>
-      </div>
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-4 text-center">
-        <i class="fa-solid fa-xmark text-red-400 text-lg mb-2 block"></i>
-        <p class="text-2xl font-black text-white">{{ stats().rejected }}</p>
-        <p class="text-[10px] text-subtext uppercase tracking-widest mt-1">Refusées</p>
-      </div>
-    </div>
+    <!-- ── KPI STRIP ── -->
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" style="margin-bottom:20px;">
 
-    <!-- 2 colonnes -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-      <!-- EXPERTS DISPONIBLES -->
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-4">
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
           <div>
-            <h3 class="font-bold text-base text-white">Experts disponibles</h3>
-            <p class="text-subtext text-[11px] mt-0.5">Sélectionnez un ou plusieurs experts</p>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.sent') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;background:linear-gradient(90deg,#EC4899,#8B5CF6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">{{ stats().sent }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.22);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-paper-plane" style="color:#EC4899;font-size:12px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div style="height:100%;width:100%;border-radius:99px;background:linear-gradient(90deg,#EC4899,#8B5CF6);box-shadow:0 0 7px rgba(236,72,153,.45);"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.proposals') }}</span>
+          <span style="font-size:10px;color:#8B5CF6;font-weight:600;">{{ lang.t('recruiterDashboard.total') }}</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.pending') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#FFB800;">{{ stats().pending }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,184,0,.1);border:1px solid rgba(255,184,0,.2);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-clock" style="color:#FFB800;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().sent > 0 ? (stats().pending / stats().sent * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:#FFB800;box-shadow:0 0 6px rgba(255,184,0,.4);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('recruiterDashboard.awaitingResponse') }}</span>
+          <span style="font-size:10px;color:#FFB800;font-weight:600;">{{ lang.t('recruiterDashboard.inProgress') }}</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.accepted') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#00FF94;">{{ stats().accepted }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(0,255,148,.08);border:1px solid rgba(0,255,148,.18);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-check" style="color:#00FF94;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().sent > 0 ? (stats().accepted / stats().sent * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:#00FF94;box-shadow:0 0 7px rgba(0,255,148,.5);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.kpiActive') }}</span>
+          <span style="font-size:10px;color:#00FF94;font-weight:600;">{{ lang.t('recruiterDashboard.nominal') }}</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.completed') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#A259FF;">{{ stats().completed }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(162,89,255,.1);border:1px solid rgba(162,89,255,.2);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-flag-checkered" style="color:#A259FF;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().sent > 0 ? (stats().completed / stats().sent * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:linear-gradient(90deg,#635BFF,#A259FF);box-shadow:0 0 7px rgba(162,89,255,.45);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('expertDashboard.kpiSuccess') }}</span>
+          <span style="font-size:10px;color:#A259FF;font-weight:600;">{{ lang.t('recruiterDashboard.history') }}</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);border-radius:14px;padding:16px 18px;">
+        <div class="flex items-start justify-between" style="margin-bottom:10px;">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:5px;">{{ lang.t('recruiterDashboard.rejected') }}</div>
+            <div style="font-size:26px;font-weight:800;letter-spacing:-1px;color:#FF4D4D;">{{ stats().rejected }}</div>
+          </div>
+          <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.18);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-xmark" style="color:#FF4D4D;font-size:13px;"></i>
+          </div>
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,0.06);border-radius:99px;">
+          <div [style.width]="stats().sent > 0 ? (stats().rejected / stats().sent * 100) + '%' : '2%'" style="height:100%;border-radius:99px;background:#FF4D4D;box-shadow:0 0 6px rgba(255,77,77,.4);transition:width .6s ease;"></div>
+        </div>
+        <div class="flex justify-between" style="margin-top:7px;">
+          <span style="font-size:10px;color:#6B7280;">{{ lang.t('recruiterDashboard.declined') }}</span>
+          <span style="font-size:10px;color:#FF4D4D;font-weight:600;">{{ lang.t('expertDashboard.kpiPast') }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── TWO-COLUMN GRID ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" style="padding-bottom:32px;">
+
+      <!-- ══ EXPERTS DISPONIBLES ══ -->
+      <div style="background:rgba(28,25,38,.5);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
+        <div class="flex items-center justify-between" style="margin-bottom:14px;">
+          <div>
+            <h3 style="font-size:14px;font-weight:700;color:#fff;">{{ lang.t('recruiterDashboard.availableExperts') }}</h3>
+            <p style="font-size:11px;color:#6B7280;margin-top:2px;">{{ lang.t('recruiterDashboard.selectExperts') }}</p>
           </div>
           <div class="flex items-center gap-3">
             @if (selectedExperts().length > 0) {
             <button (click)="showProposalModal.set(true); proposalSent.set(false); proposalError.set(null)"
-              class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-primary/80 transition shadow-[0_0_15px_-5px_rgba(236,72,153,0.5)]">
-              <i class="fa-solid fa-paper-plane text-[9px]"></i>
-              Proposer ({{ selectedExperts().length }})
+              style="display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:linear-gradient(135deg,#EC4899,#8B5CF6);color:#fff;border:none;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;box-shadow:0 0 14px -4px rgba(236,72,153,.5);">
+              <i class="fa-solid fa-paper-plane" style="font-size:9px;"></i>
+              {{ lang.t('recruiterDashboard.propose') }} ({{ selectedExperts().length }})
             </button>
             }
-            <a routerLink="/" fragment="experts"
-              class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Voir
-              tout</a>
+            <a routerLink="/" fragment="experts" style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;text-decoration:none;">{{ lang.t('recruiterDashboard.seeAll') }}</a>
           </div>
         </div>
-        <div class="relative mb-4">
-          <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-subtext text-xs"></i>
-          <input type="text" placeholder="Nom, compétence, ville..." [value]="searchQuery()" (input)="onSearch($event)"
-            class="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
+        <div class="relative" style="margin-bottom:12px;">
+          <i class="fa-solid fa-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#6B7280;font-size:11px;"></i>
+          <input type="text" [placeholder]="lang.t('recruiterDashboard.searchPlaceholder')" [value]="searchQuery()" (input)="onSearch($event)"
+            style="width:100%;padding:9px 14px 9px 34px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:13px;color:#fff;outline:none;transition:border-color .2s;"
+            class="placeholder:text-[#6B7280] focus:border-pink-500/40">
         </div>
         @if (isLoading()) {
-        <div class="flex items-center justify-center py-12 text-subtext">
+        <div class="flex items-center justify-center py-12" style="color:#6B7280;">
           <i class="fa-solid fa-circle-notch fa-spin text-2xl"></i>
         </div>
         } @else if (filteredExperts().length === 0) {
-        <div class="text-center py-10 text-subtext">
-          <i class="fa-solid fa-user-slash text-3xl mb-3 opacity-20 block"></i>
-          <p class="text-sm">Aucun expert trouvé</p>
+        <div style="text-align:center;padding:36px 0;color:#6B7280;">
+          <i class="fa-solid fa-user-slash" style="font-size:28px;opacity:.2;display:block;margin-bottom:10px;"></i>
+          <p style="font-size:13px;">{{ lang.t('recruiterDashboard.noExpert') }}</p>
         </div>
         } @else {
-        <div class="space-y-3 max-h-[520px] overflow-y-auto pr-1">
+        <div style="display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding-right:2px;">
           @for (expert of filteredExperts(); track expert.id) {
-          <div
-            class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border transition-all cursor-pointer"
-            [class]="isExpertSelected(expert.id) ? 'bg-primary/5 border-primary/40' : 'bg-white/[0.03] border-white/5 hover:border-primary/20 hover:bg-white/[0.06]'"
+          <div style="border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .2s;"
+            [style.background]="isExpertSelected(expert.id) ? 'rgba(236,72,153,.06)' : 'rgba(255,255,255,0.03)'"
+            [style.border]="isExpertSelected(expert.id) ? '1px solid rgba(236,72,153,.3)' : '1px solid rgba(255,255,255,0.06)'"
             (click)="toggleExpertSelection(expert)">
-
-            <div class="flex items-center gap-3 w-full sm:w-auto">
-              <!-- Checkbox -->
-              <div class="w-5 h-5 rounded border-2 shrink-0 flex items-center justify-center transition-all"
-                [class]="isExpertSelected(expert.id) ? 'bg-primary border-primary' : 'border-white/20'">
+            <div class="flex items-center gap-3">
+              <div style="width:18px;height:18px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;"
+                [style.background]="isExpertSelected(expert.id) ? '#EC4899' : 'transparent'"
+                [style.border]="isExpertSelected(expert.id) ? '2px solid #EC4899' : '2px solid rgba(255,255,255,.2)'">
                 @if (isExpertSelected(expert.id)) {
-                <i class="fa-solid fa-check text-white text-[9px]"></i>
+                <i class="fa-solid fa-check" style="color:#fff;font-size:8px;"></i>
                 }
               </div>
-              <img
-                [src]="expert.avatar || 'https://ui-avatars.com/api/?name=' + expert.firstName + '+' + expert.lastName + '&background=EC4899&color=fff'"
-                class="w-11 h-11 rounded-full object-cover border border-white/10 shrink-0">
-              <div class="flex-1 min-w-0">
-                <div class="flex items-center gap-2 mb-0.5">
-                  <h4 class="font-bold text-white text-sm truncate">{{ expert.firstName }} {{ expert.lastName }}</h4>
+              <img [src]="expert.avatar || 'https://ui-avatars.com/api/?name=' + expert.firstName + '+' + expert.lastName + '&background=EC4899&color=fff'"
+                style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:1px solid rgba(255,255,255,.1);flex-shrink:0;">
+              <div style="flex:1;min-width:0;">
+                <div class="flex items-center gap-2" style="margin-bottom:3px;">
+                  <h4 style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ expert.firstName }} {{ expert.lastName }}</h4>
                   @if (expert.isAvailable) {
-                  <span class="w-1.5 h-1.5 rounded-full bg-green-400 shrink-0"></span>
+                  <span style="width:7px;height:7px;border-radius:50%;background:#00FF94;box-shadow:0 0 5px rgba(0,255,148,.6);flex-shrink:0;"></span>
                   }
                 </div>
-                <p class="text-xs text-subtext truncate">
+                <p style="font-size:11px;color:#6B7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                   {{ expert.city }}
-                  @if (expert.availability.dailyRate) { • {{ expert.availability.dailyRate }}€/j }
-                  @if (expert.yearsOfExperience) { • {{ expert.yearsOfExperience }} }
+                  @if (expert.availability.dailyRate) { · {{ expert.availability.dailyRate }}€/j }
+                  @if (expert.yearsOfExperience) { · {{ expert.yearsOfExperience }} }
                 </p>
               </div>
-            </div>
-
-            <div class="flex-1 min-w-0 w-full sm:w-auto">
-              <div class="flex gap-1 flex-wrap mb-2">
-                @for (t of (expert.availability.types || []); track t) {
-                <span class="px-1.5 py-0.5 text-[9px] font-bold rounded-full border whitespace-nowrap"
-                  [class]="t === 'freelance' ? 'bg-primary/10 text-primary border-primary/20' : t === 'cdi' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-purple-500/10 text-purple-400 border-purple-500/20'">
+              <div class="flex gap-1 flex-wrap justify-end" style="flex-shrink:0;max-width:110px;">
+                @for (t of (expert.availability.types || []).slice(0,2); track t) {
+                <span style="padding:2px 7px;font-size:9px;font-weight:700;border-radius:99px;white-space:nowrap;"
+                  [style.background]="t === 'freelance' ? 'rgba(236,72,153,.1)' : t === 'cdi' ? 'rgba(99,91,255,.1)' : 'rgba(162,89,255,.1)'"
+                  [style.color]="t === 'freelance' ? '#EC4899' : t === 'cdi' ? '#635BFF' : '#A259FF'"
+                  [style.border]="t === 'freelance' ? '1px solid rgba(236,72,153,.2)' : t === 'cdi' ? '1px solid rgba(99,91,255,.2)' : '1px solid rgba(162,89,255,.2)'">
                   {{ t === 'freelance' ? 'Freelance' : t === 'cdi' ? 'CDI' : 'Mentoring' }}
                 </span>
                 }
               </div>
-              <div class="flex gap-1 flex-wrap">
-                @for (skill of (expert.skills || []).slice(0, 3); track skill.id) {
-                <span
-                  class="px-2 py-0.5 bg-white/5 text-subtext text-[10px] font-medium rounded-full border border-white/10 whitespace-nowrap">{{
-                  skill.name }}</span>
-                }
-              </div>
+              <button (click)="viewExpert(expert); $event.stopPropagation()"
+                style="padding:5px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#6B7280;border-radius:7px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;flex-shrink:0;"
+                class="hover:border-pink-500/30 hover:text-pink-400">
+                {{ lang.t('recruiterDashboard.profile') }}
+              </button>
             </div>
-
-            <button (click)="viewExpert(expert); $event.stopPropagation()"
-              class="w-full sm:w-auto px-4 py-2 bg-white/5 border border-white/10 text-subtext text-[10px] font-bold uppercase tracking-widest rounded-full hover:border-primary/30 hover:text-primary transition">
-              Profil
-            </button>
+            @if ((expert.skills || []).length > 0) {
+            <div class="flex gap-1 flex-wrap" style="margin-top:8px;padding-left:56px;">
+              @for (skill of (expert.skills || []).slice(0, 4); track skill.id) {
+              <span style="padding:2px 8px;background:rgba(255,255,255,0.04);color:#9CA3AF;font-size:10px;font-weight:500;border-radius:5px;border:1px solid rgba(255,255,255,0.06);">{{ skill.name }}</span>
+              }
+            </div>
+            }
           </div>
           }
         </div>
         }
       </div>
 
-      <!-- MES PROPOSITIONS -->
-      <div class="bg-[#1a1a1a] border border-white/5 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-5">
+      <!-- ══ MES PROPOSITIONS ══ -->
+      <div style="background:rgba(28,25,38,.5);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:20px;">
+
+        <div class="flex items-center justify-between" style="margin-bottom:14px;">
           <div>
-            <h3 class="font-bold text-base text-white">Mes propositions</h3>
-            <p class="text-subtext text-[11px] mt-0.5">Suivi de vos offres envoyées</p>
+            <h3 style="font-size:14px;font-weight:700;color:#fff;">{{ lang.t('recruiterDashboard.myProposals') }}</h3>
+            <p style="font-size:11px;color:#6B7280;margin-top:2px;">{{ lang.t('recruiterDashboard.trackProposals') }}</p>
           </div>
           <div class="flex items-center gap-3">
             @if (stats().pending > 0) {
-            <span
-              class="bg-yellow-500/10 text-yellow-400 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full border border-yellow-500/20">
-              {{ stats().pending }} en attente
+            <span style="background:rgba(255,184,0,.1);color:#FFB800;font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:99px;border:1px solid rgba(255,184,0,.2);text-transform:uppercase;">
+              {{ stats().pending }} {{ lang.t('recruiterDashboard.pending') }}
             </span>
             }
-            <a routerLink="/recruiter/missions"
-              class="text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-primary transition">Tout
-              voir</a>
+            <a routerLink="/recruiter/missions" style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;text-decoration:none;">{{ lang.t('recruiterDashboard.seeAllMissions') }}</a>
           </div>
         </div>
-        <div class="space-y-3">
+
+        <div style="display:flex;flex-direction:column;gap:8px;">
           @if (myProposals().length === 0) {
-          <div class="text-center py-12 text-subtext">
-            <i class="fa-solid fa-paper-plane text-4xl mb-3 opacity-20 block"></i>
-            <p class="text-sm">Aucune proposition envoyée</p>
-            <p class="text-[11px] text-white/20 mt-1">Trouvez un expert et envoyez votre première offre</p>
+          <div style="text-align:center;padding:48px 0;color:#6B7280;">
+            <i class="fa-solid fa-paper-plane" style="font-size:32px;opacity:.2;display:block;margin-bottom:10px;"></i>
+            <p style="font-size:13px;">{{ lang.t('recruiterDashboard.noProposals') }}</p>
+            <p style="font-size:11px;color:rgba(255,255,255,.15);margin-top:4px;">{{ lang.t('recruiterDashboard.noProposalsHint') }}</p>
           </div>
           }
           @for (proposal of recentProposals(); track proposal.id) {
-          <div class="p-4 rounded-xl border transition-all" [ngClass]="{
-                'border-green-500/20 bg-green-500/5': proposal.status === 'accepted',
-                'border-blue-500/20 bg-blue-500/5': proposal.status === 'completed',
-                'border-white/5 bg-white/[0.03]': proposal.status === 'pending',
-                'border-white/5 bg-white/[0.02] opacity-60': proposal.status === 'rejected'
-              }">
-            <div class="flex items-start justify-between gap-2 mb-2">
-              <h4 class="font-bold text-white text-sm leading-tight">{{ proposal.title }}</h4>
-              <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full shrink-0"
-                [class]="getProposalStatusClass(proposal.status)">
-                {{ getProposalStatusLabel(proposal.status) }}
+          <div style="border-radius:10px;padding:14px 16px;transition:all .2s;"
+            [style.background]="proposal.status === 'accepted' ? 'rgba(0,255,148,.04)' :
+                                 proposal.status === 'completed' ? 'rgba(162,89,255,.04)' :
+                                 proposal.status === 'rejected' ? 'rgba(255,255,255,.02)' : 'rgba(255,255,255,.03)'"
+            [style.border]="proposal.status === 'accepted' ? '1px solid rgba(0,255,148,.15)' :
+                             proposal.status === 'completed' ? '1px solid rgba(162,89,255,.15)' :
+                             proposal.status === 'rejected' ? '1px solid rgba(255,255,255,.05)' : '1px solid rgba(255,255,255,.07)'"
+            [style.opacity]="proposal.status === 'rejected' ? '0.6' : '1'">
+            <div class="flex items-start justify-between gap-3" style="margin-bottom:7px;">
+              <h4 style="font-size:13px;font-weight:600;color:#fff;line-height:1.3;">{{ proposal.title }}</h4>
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:.4px;flex-shrink:0;"
+                [style.background]="proposal.status === 'accepted' ? 'rgba(0,255,148,.1)' :
+                                     proposal.status === 'completed' ? 'rgba(162,89,255,.1)' :
+                                     proposal.status === 'pending' ? 'rgba(255,184,0,.1)' : 'rgba(255,77,77,.1)'"
+                [style.color]="proposal.status === 'accepted' ? '#00FF94' :
+                                proposal.status === 'completed' ? '#A259FF' :
+                                proposal.status === 'pending' ? '#FFB800' : '#FF4D4D'"
+                [style.border]="proposal.status === 'accepted' ? '1px solid rgba(0,255,148,.25)' :
+                                  proposal.status === 'completed' ? '1px solid rgba(162,89,255,.25)' :
+                                  proposal.status === 'pending' ? '1px solid rgba(255,184,0,.25)' : '1px solid rgba(255,77,77,.25)'">
+                <span style="width:6px;height:6px;border-radius:50%;flex-shrink:0;"
+                  [style.background]="proposal.status === 'accepted' ? '#00FF94' :
+                                       proposal.status === 'completed' ? '#A259FF' :
+                                       proposal.status === 'pending' ? '#FFB800' : '#FF4D4D'"
+                  [style.box-shadow]="proposal.status === 'accepted' ? '0 0 5px 1px rgba(0,255,148,.6)' :
+                                       proposal.status === 'pending' ? '0 0 5px 1px rgba(255,184,0,.5)' : 'none'">
+                </span>
+                {{ getProposalStatusLabel(proposal.status).toUpperCase() }}
               </span>
             </div>
-            <div class="flex items-center gap-3 mb-2">
+            <div class="flex items-center flex-wrap gap-x-3 gap-y-1" style="margin-bottom:6px;">
               @if (proposal.budget) {
-              <span class="text-primary font-bold text-sm">{{ proposal.budget }}</span>
-              <span class="text-white/20 text-xs">•</span>
+              <span style="font-size:13px;font-weight:700;color:#EC4899;">{{ proposal.budget }}</span>
+              <span style="color:rgba(255,255,255,.15);font-size:10px;">·</span>
               }
-              <span class="text-subtext text-xs">{{ proposal.startDate }}</span>
+              <span style="font-size:11px;color:#6B7280;">{{ proposal.startDate }}</span>
               @if (toDate(proposal.createdAt)) {
-              <span class="text-white/20 text-xs">•</span>
-              <span class="text-subtext text-xs">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
+              <span style="color:rgba(255,255,255,.15);font-size:10px;">·</span>
+              <span style="font-size:11px;color:#6B7280;">{{ toDate(proposal.createdAt) | date:'dd MMM' }}</span>
               }
             </div>
-            <p class="text-xs text-subtext line-clamp-1">{{ proposal.description }}</p>
+            <p style="font-size:11px;color:#6B7280;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{ proposal.description }}</p>
             @if (proposal.status === 'accepted') {
-            <div class="mt-3 pt-3 border-t border-green-500/20">
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(0,255,148,.12);">
               <button (click)="contactExpertFromProposal(proposal)"
-                class="flex items-center gap-1.5 text-green-400 text-[11px] font-bold uppercase tracking-widest hover:text-green-300 transition">
-                <i class="fa-regular fa-envelope text-[10px]"></i> Contacter l'expert
+                style="display:inline-flex;align-items:center;gap:6px;color:#00FF94;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:none;border:none;cursor:pointer;">
+                <i class="fa-regular fa-envelope" style="font-size:9px;"></i> {{ lang.t('recruiterDashboard.contactExpert') }}
               </button>
             </div>
             }
             @if (proposal.status === 'completed') {
-            <div class="mt-3 pt-3 border-t border-blue-500/20">
-              <span class="flex items-center gap-1.5 text-blue-400 text-[11px] font-bold uppercase tracking-widest">
-                <i class="fa-solid fa-check-double text-[10px]"></i> Mission terminée
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(162,89,255,.12);">
+              <span style="display:inline-flex;align-items:center;gap:6px;color:#A259FF;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;">
+                <i class="fa-solid fa-check-double" style="font-size:9px;"></i> {{ lang.t('recruiterDashboard.missionCompleted') }}
               </span>
             </div>
             }
@@ -227,38 +310,36 @@
     </div>
   </div>
 
-  <!-- MODAL PROPOSITION -->
+  <!-- ── MODAL PROPOSITION ── -->
   @if (showProposalModal()) {
   <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" (click)="closeProposalModal()"></div>
-    <div class="bg-[#1a1a1a] border border-white/10 rounded-2xl w-full max-w-lg relative z-10 overflow-hidden">
-      <!-- Header -->
-      <div class="flex items-center justify-between p-5 border-b border-white/5">
+    <div style="background:#1C1926;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:100%;max-width:520px;position:relative;z-index:10;overflow:hidden;">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid rgba(255,255,255,0.07);">
         <div>
-          <h3 class="font-bold text-white">Envoyer une proposition</h3>
-          <p class="text-xs text-subtext mt-0.5">
+          <h3 style="font-size:15px;font-weight:700;color:#fff;">{{ lang.t('recruiterDashboard.sendProposal') }}</h3>
+          <p style="font-size:11px;color:#6B7280;margin-top:2px;">
             @if (selectedExperts().length === 1) {
-            À {{ selectedExperts()[0].firstName }} {{ selectedExperts()[0].lastName }}
+            {{ lang.t('recruiterDashboard.to') }} {{ selectedExperts()[0].firstName }} {{ selectedExperts()[0].lastName }}
             } @else {
-            À {{ selectedExperts().length }} experts sélectionnés
+            {{ lang.t('recruiterDashboard.to') }} {{ selectedExperts().length }} {{ lang.t('recruiterDashboard.expertsSelected') }}
             }
           </p>
         </div>
         <button (click)="closeProposalModal()"
-          class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center transition">
-          <i class="fa-solid fa-xmark text-subtext"></i>
+          style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#6B7280;">
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Experts sélectionnés (pills) -->
       @if (selectedExperts().length > 1) {
-      <div class="px-5 pt-4 flex flex-wrap gap-2">
+      <div style="padding:14px 20px 0;display:flex;flex-wrap:wrap;gap:6px;">
         @for (e of selectedExperts(); track e.id) {
-        <span
-          class="flex items-center gap-1.5 px-2.5 py-1 bg-primary/10 border border-primary/20 rounded-full text-[11px] text-primary font-medium">
+        <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.2);border-radius:99px;font-size:11px;color:#EC4899;font-weight:500;">
           {{ e.firstName }} {{ e.lastName }}
-          <button (click)="toggleExpertSelection(e)" class="text-primary/60 hover:text-primary">
-            <i class="fa-solid fa-xmark text-[9px]"></i>
+          <button (click)="toggleExpertSelection(e)" style="color:rgba(236,72,153,.6);background:none;border:none;cursor:pointer;padding:0;line-height:1;">
+            <i class="fa-solid fa-xmark" style="font-size:9px;"></i>
           </button>
         </span>
         }
@@ -266,89 +347,84 @@
       }
 
       @if (proposalSent()) {
-      <div class="p-8 text-center">
-        <div
-          class="w-16 h-16 bg-green-500/10 border border-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="fa-solid fa-check text-green-400 text-2xl"></i>
+      <div style="padding:40px 20px;text-align:center;">
+        <div style="width:60px;height:60px;background:rgba(0,255,148,.08);border:1px solid rgba(0,255,148,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <i class="fa-solid fa-check" style="color:#00FF94;font-size:22px;"></i>
         </div>
-        <h4 class="text-lg font-bold text-white mb-2">
+        <h4 style="font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;">
           @if (proposalSentCount() > 1) {
-          {{ proposalSentCount() }} propositions envoyées !
+          {{ proposalSentCount() }} {{ lang.t('recruiterDashboard.proposalSentMulti') }}
           } @else {
-          Proposition envoyée !
+          {{ lang.t('recruiterDashboard.proposalSent1') }}
           }
         </h4>
-        <p class="text-subtext text-sm">Les experts recevront votre offre et pourront l'accepter ou la refuser.</p>
+        <p style="font-size:13px;color:#9CA3AF;">{{ lang.t('recruiterDashboard.proposalSentHint') }}</p>
       </div>
       } @else {
-      <div class="p-5 space-y-4">
+      <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
         @if (proposalError()) {
-        <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+        <div style="padding:12px 14px;background:rgba(255,77,77,.08);border:1px solid rgba(255,77,77,.2);border-radius:10px;color:#FF4D4D;font-size:13px;">
           <i class="fa-solid fa-exclamation-circle mr-2"></i>{{ proposalError() }}
         </div>
         }
-
-        <!-- Titre -->
         <div>
-          <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Titre *</label>
+          <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:8px;">{{ lang.t('recruiterDashboard.titleField') }}</label>
           <input type="text" placeholder="Ex: Développement application Angular" [value]="proposalForm().title"
             (input)="updateForm('title', $any($event.target).value)"
-            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
+            style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:13px;color:#fff;outline:none;transition:border-color .2s;"
+            class="placeholder:text-[#6B7280] focus:border-pink-500/40">
         </div>
-
-        <!-- Urgence -->
         <div>
-          <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Urgence</label>
+          <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:8px;">{{ lang.t('recruiterDashboard.urgency') }}</label>
           <div class="grid grid-cols-4 gap-2">
             @for (opt of priorityOptions; track opt.value) {
             <button type="button" (click)="updateForm('priority', opt.value)"
-              class="py-2 px-2 rounded-lg border text-[10px] font-bold text-center transition-all"
-              [class]="proposalForm().priority === opt.value ? 'border-primary bg-primary/10 text-white' : 'border-white/10 bg-white/5 text-subtext hover:border-white/20'">
+              style="padding:8px 6px;border-radius:9px;font-size:10px;font-weight:700;text-align:center;cursor:pointer;transition:all .2s;"
+              [style.background]="proposalForm().priority === opt.value ? 'rgba(236,72,153,.12)' : 'rgba(255,255,255,.04)'"
+              [style.border]="proposalForm().priority === opt.value ? '1px solid rgba(236,72,153,.3)' : '1px solid rgba(255,255,255,.08)'"
+              [style.color]="proposalForm().priority === opt.value ? '#fff' : '#6B7280'">
               <div>{{ opt.label }}</div>
-              <div class="text-[9px] font-normal opacity-70">{{ opt.desc }}</div>
+              <div style="font-size:9px;font-weight:400;opacity:.6;margin-top:2px;">{{ opt.desc }}</div>
             </button>
             }
           </div>
         </div>
-
-        <!-- Budget + Date -->
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Budget <span
-                class="text-white/30">(optionnel)</span></label>
+            <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:8px;">{{ lang.t('recruiterDashboard.budget') }} <span style="color:rgba(255,255,255,.2);">{{ lang.t('recruiterDashboard.optional') }}</span></label>
             <input type="text" placeholder="Ex: 500€/jour ou CDI" [value]="proposalForm().budget"
               (input)="updateForm('budget', $any($event.target).value)"
-              class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition">
+              style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:13px;color:#fff;outline:none;transition:border-color .2s;"
+              class="placeholder:text-[#6B7280] focus:border-pink-500/40">
           </div>
           <div>
-            <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Date de début</label>
+            <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:8px;">{{ lang.t('recruiterDashboard.startDate') }}</label>
             <input type="date" [value]="proposalForm().startDate"
               (input)="updateForm('startDate', $any($event.target).value)"
-              class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:outline-none focus:border-primary/50 transition">
+              style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:13px;color:#fff;outline:none;transition:border-color .2s;"
+              class="focus:border-pink-500/40">
           </div>
         </div>
-
-        <!-- Description -->
         <div>
-          <label class="block text-xs font-bold uppercase tracking-widest text-subtext mb-2">Description *</label>
-          <textarea rows="3" placeholder="Décrivez votre projet, les technologies, le contexte..."
+          <label style="display:block;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;margin-bottom:8px;">{{ lang.t('recruiterDashboard.description') }}</label>
+          <textarea rows="3" [placeholder]="lang.t('recruiterDashboard.descPlaceholder')"
             [value]="proposalForm().description" (input)="updateForm('description', $any($event.target).value)"
-            class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-sm text-white placeholder:text-subtext focus:outline-none focus:border-primary/50 transition resize-none"></textarea>
+            style="width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;font-size:13px;color:#fff;outline:none;resize:none;transition:border-color .2s;"
+            class="placeholder:text-[#6B7280] focus:border-pink-500/40"></textarea>
         </div>
-
-        <!-- Actions -->
-        <div class="flex gap-3 pt-1">
+        <div class="flex gap-3">
           <button (click)="closeProposalModal()"
-            class="flex-1 py-3 bg-white/5 border border-white/10 text-subtext rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-white/10 transition">
-            Annuler
+            style="flex:1;padding:12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#9CA3AF;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;">
+            {{ lang.t('recruiterDashboard.cancel') }}
           </button>
           <button (click)="sendProposal()" [disabled]="isSending() || selectedExperts().length === 0"
-            class="flex-1 py-3 bg-primary text-white rounded-full text-[11px] font-bold uppercase tracking-widest hover:bg-primary/80 transition shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] disabled:opacity-50 flex items-center justify-center gap-2">
+            style="flex:1;padding:12px;background:linear-gradient(135deg,#EC4899,#8B5CF6);color:#fff;border:none;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 0 20px -5px rgba(236,72,153,.5);"
+            class="disabled:opacity-50">
             @if (isSending()) {
-            <i class="fa-solid fa-circle-notch fa-spin text-xs"></i> Envoi...
+            <i class="fa-solid fa-circle-notch fa-spin text-xs"></i> {{ lang.t('recruiterDashboard.sending') }}
             } @else {
             <i class="fa-solid fa-paper-plane text-xs"></i>
-            Envoyer @if (selectedExperts().length > 1) { ({{ selectedExperts().length }}) }
+            {{ lang.t('recruiterDashboard.send') }} @if (selectedExperts().length > 1) { ({{ selectedExperts().length }}) }
             }
           </button>
         </div>

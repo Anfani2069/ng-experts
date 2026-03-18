@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { Auth } from '@core/services/auth.service';
 export class Login {
   private auth = inject(Auth);
   private route = inject(ActivatedRoute);
+  protected readonly lang = inject(LanguageService);
 
   protected readonly email = signal('');
   protected readonly password = signal('');

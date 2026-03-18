@@ -21,12 +21,21 @@
       </a>
     </div>
 
+    <!-- Language switcher -->
+    <div class="px-4 pb-3 flex-shrink-0">
+      <button (click)="lang.toggleLang()"
+        class="w-full flex items-center justify-center gap-2 py-2 text-[10px] font-bold uppercase tracking-widest text-subtext border border-white/10 hover:border-white/30 hover:text-white rounded-full transition-all">
+        <i class="fa-solid fa-globe text-[9px]"></i>
+        {{ lang.currentLang() === 'fr' ? 'Switch to English' : 'Passer en Français' }}
+      </button>
+    </div>
+
     <!-- Navigation -->
     <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-      <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext mb-3 px-3">Menu</div>
+      <div class="text-[10px] font-bold uppercase tracking-[0.3em] text-subtext mb-3 px-3">{{ lang.t('dashboardLayout.menu') }}</div>
 
-      @for (item of navItems(); track item.label) {
-      <a (click)="navigateToSection(item.label)"
+      @for (item of navItems(); track item.key) {
+      <a (click)="navigateToSection(item.key)"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition cursor-pointer"
         [class]="item.isActive ? 'bg-primary/10 text-primary font-medium border border-primary/20' : 'text-subtext hover:bg-white/5 hover:text-white'">
         <i [class]="item.icon + ' w-5'"></i>
@@ -38,8 +47,8 @@
       </a>
       }
 
-      @for (item of settingsItems(); track item.label) {
-      <a (click)="navigateToSection(item.label)"
+      @for (item of settingsItems(); track item.key) {
+      <a (click)="navigateToSection(item.key)"
         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-subtext hover:bg-white/5 hover:text-white transition cursor-pointer">
         <i [class]="item.icon + ' w-5'"></i>
         <span class="text-sm">{{ item.label }}</span>
@@ -68,7 +77,7 @@
           @if (showSearch()) {
           <div class="relative">
             <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-subtext"></i>
-            <input type="text" placeholder="Rechercher..."
+            <input type="text" [placeholder]="lang.t('dashboardLayout.search')"
               class="pl-11 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 w-96 text-sm text-white placeholder:text-subtext transition">
           </div>
           } @else if (pageTitle()) {
@@ -141,7 +150,7 @@
       class="fixed top-0 right-0 h-full w-80 bg-[#1a1a1a] border-l border-white/5 shadow-2xl z-50 overflow-y-auto transform transition-transform duration-300">
       <div class="p-6">
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-xl font-bold text-white">Profil Utilisateur</h2>
+          <h2 class="text-xl font-bold text-white">{{ lang.t('dashboardLayout.viewProfile') }}</h2>
           <button (click)="closeProfilePanel()"
             class="w-8 h-8 rounded-lg hover:bg-white/5 flex items-center justify-center transition">
             <i class="fa-solid fa-times text-subtext"></i>
@@ -169,7 +178,7 @@
               <i class="fa-solid fa-user text-primary"></i>
             </div>
             <div class="flex-1">
-              <p class="font-semibold text-sm text-white">Editer mon profil</p>
+              <p class="font-semibold text-sm text-white">{{ lang.t('dashboardLayout.editProfile') }}</p>
               <p class="text-xs text-subtext">Modifier mes informations</p>
             </div>
           </a>
@@ -181,7 +190,7 @@
               <i class="fa-regular fa-envelope text-primary"></i>
             </div>
             <div class="flex-1">
-              <p class="font-semibold text-sm text-white">Messages</p>
+              <p class="font-semibold text-sm text-white">{{ lang.t('dashboardLayout.messages') }}</p>
               <p class="text-xs text-subtext">Vos conversations</p>
             </div>
           </a>
@@ -193,7 +202,7 @@
               <i class="fa-solid fa-bell text-primary"></i>
             </div>
             <div class="flex-1">
-              <p class="font-semibold text-sm text-white">Notifications</p>
+              <p class="font-semibold text-sm text-white">{{ lang.t('dashboardLayout.notifications') }}</p>
               <p class="text-xs text-subtext">Vos alertes</p>
             </div>
           </a>
@@ -203,7 +212,7 @@
         <button (click)="logout()"
           class="w-full mt-6 bg-primary hover:bg-primary/80 text-white font-bold uppercase tracking-widest text-[10px] py-3 rounded-full transition shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)]">
           <i class="fa-solid fa-sign-out-alt mr-2"></i>
-          Déconnexion
+          {{ lang.t('dashboardLayout.logout') }}
         </button>
       </div>
     </div>

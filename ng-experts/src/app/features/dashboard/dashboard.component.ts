@@ -6,6 +6,7 @@ import { Auth } from '@core/services/auth.service';
 import { ExpertService } from '@core/services/expert.service';
 import { FreezeService } from '@core/services/freeze.service';
 import { Proposal, Expert } from '@core/models/user.model';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,6 +19,7 @@ export class Dashboard implements OnInit, OnDestroy {
   private auth = inject(Auth);
   private expertService = inject(ExpertService);
   protected readonly freezeService = inject(FreezeService);
+  protected readonly lang = inject(LanguageService);
 
   protected readonly currentUser = this.auth.getCurrentUser();
   protected readonly userName = computed(() => this.currentUser()?.firstName || '');
@@ -167,11 +169,11 @@ export class Dashboard implements OnInit, OnDestroy {
 
   protected getStatusLabel(status: Proposal['status']): string {
     switch (status) {
-      case 'pending':   return 'En attente';
-      case 'accepted':  return 'Acceptée';
-      case 'completed': return 'Terminée';
-      case 'rejected':  return 'Refusée';
-      case 'expired':   return 'Expirée';
+      case 'pending':   return this.lang.t('expertDashboard.pending');
+      case 'accepted':  return this.lang.t('expertDashboard.accepted');
+      case 'completed': return this.lang.t('expertDashboard.completed');
+      case 'rejected':  return this.lang.t('expertDashboard.rejected');
+      case 'expired':   return this.lang.t('expertDashboard.expired');
       default:          return status;
     }
   }

@@ -16,34 +16,41 @@
 
     <!-- Desktop nav links -->
     <div class="hidden lg:flex space-x-10 text-[10px] font-bold uppercase tracking-widest text-subtext">
-      <a (click)="onNavigateHome()" class="cursor-pointer hover:text-white transition-colors">Home</a>
-      <a (click)="onNavigate('experts')" class="cursor-pointer hover:text-white transition-colors">Experts</a>
-      <a (click)="onNavigate('features')" class="cursor-pointer hover:text-white transition-colors">Features</a>
+      <a (click)="onNavigateHome()" class="cursor-pointer hover:text-white transition-colors">{{ lang.t('nav.home') }}</a>
+      <a (click)="onNavigate('experts')" class="cursor-pointer hover:text-white transition-colors">{{ lang.t('nav.experts') }}</a>
+      <a (click)="onNavigate('features')" class="cursor-pointer hover:text-white transition-colors">{{ lang.t('nav.features') }}</a>
       @if (currentUser()) {
       <a (click)="onNavigateDashboard()"
-        class="cursor-pointer text-primary hover:text-primary/80 transition-colors">Dashboard</a>
+        class="cursor-pointer text-primary hover:text-primary/80 transition-colors">{{ lang.t('nav.dashboard') }}</a>
       } @else {
-      <a (click)="onApplyAsExpert()" class="cursor-pointer hover:text-white transition-colors">Apply as Expert</a>
+      <a (click)="onApplyAsExpert()" class="cursor-pointer hover:text-white transition-colors">{{ lang.t('nav.applyExpert') }}</a>
       }
     </div>
 
     <!-- Desktop CTA buttons -->
     <div class="flex items-center gap-4">
+      <!-- Language switcher -->
+      <button (click)="lang.toggleLang()"
+        class="hidden lg:flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-subtext hover:text-white border border-white/10 hover:border-white/30 px-3 h-[30px] rounded-full transition-all">
+        <i class="fa-solid fa-globe text-[9px]"></i>
+        {{ lang.currentLang() === 'fr' ? 'EN' : 'FR' }}
+      </button>
+
       @if (currentUser()) {
       <button (click)="onNavigateDashboard()"
         class="hidden lg:flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary px-5 h-[36px] rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border border-primary/20 shadow-lg">
         <i class="fa-solid fa-gauge-high"></i>
-        Mon Dashboard
+        {{ lang.t('nav.myDashboard') }}
       </button>
       } @else {
       <button (click)="onLogin()"
         class="hidden lg:flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#252525] text-white px-5 h-[36px] rounded-full text-[11px] font-bold uppercase tracking-widest transition-all border border-white/5 shadow-lg">
         <i class="fa-solid fa-right-to-bracket opacity-70"></i>
-        Login
+        {{ lang.t('nav.login') }}
       </button>
       <button (click)="onHireExpert()"
-        class="hidden lg:flex btn-fixed bg-primary text-white shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] uppercase tracking-widest">
-        Hire an Expert
+        class="hidden lg:flex items-center justify-center bg-primary hover:bg-primary-hover text-white h-[36px] px-5 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-colors whitespace-nowrap">
+        {{ lang.t('nav.hireExpert') }}
       </button>
       }
 
@@ -79,43 +86,50 @@
   <nav class="drawer-nav">
     <a (click)="onNavigateHome(); toggleMobileMenu()" class="drawer-link">
       <i class="fa-solid fa-house"></i>
-      Home
+      {{ lang.t('nav.home') }}
     </a>
     <a (click)="onNavigate('experts'); toggleMobileMenu()" class="drawer-link">
       <i class="fa-solid fa-users"></i>
-      Experts
+      {{ lang.t('nav.experts') }}
     </a>
     <a (click)="onNavigate('features'); toggleMobileMenu()" class="drawer-link">
       <i class="fa-solid fa-star"></i>
-      Features
+      {{ lang.t('nav.features') }}
     </a>
     @if (currentUser()) {
     <a (click)="onNavigateDashboard()" class="drawer-link text-primary">
       <i class="fa-solid fa-gauge-high"></i>
-      Dashboard
+      {{ lang.t('nav.dashboard') }}
     </a>
     } @else {
     <a (click)="onApplyAsExpert(); toggleMobileMenu()" class="drawer-link">
       <i class="fa-solid fa-pen-to-square"></i>
-      Apply as Expert
+      {{ lang.t('nav.applyExpert') }}
     </a>
     }
   </nav>
 
   <!-- CTA buttons -->
   <div class="drawer-footer">
+    <!-- Mobile language switcher -->
+    <button (click)="lang.toggleLang()"
+      class="flex items-center justify-center gap-2 w-full py-2 mb-2 text-[10px] font-bold uppercase tracking-widest text-subtext border border-white/10 rounded-full hover:border-white/30 hover:text-white transition-all">
+      <i class="fa-solid fa-globe"></i>
+      {{ lang.currentLang() === 'fr' ? 'Switch to English' : 'Passer en Français' }}
+    </button>
+
     @if (currentUser()) {
     <button (click)="onNavigateDashboard()" class="drawer-btn-hire w-full">
       <i class="fa-solid fa-gauge-high mr-2"></i>
-      Accéder au Dashboard
+      {{ lang.t('nav.accessDashboard') }}
     </button>
     } @else {
     <button (click)="onLogin(); toggleMobileMenu()" class="drawer-btn-login">
       <i class="fa-solid fa-right-to-bracket"></i>
-      Login
+      {{ lang.t('nav.login') }}
     </button>
     <button (click)="onHireExpert(); toggleMobileMenu()" class="drawer-btn-hire">
-      Hire an Expert
+      {{ lang.t('nav.hireExpert') }}
     </button>
     }
   </div>

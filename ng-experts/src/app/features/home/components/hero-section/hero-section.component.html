@@ -14,17 +14,17 @@
 
       <!-- Titre -->
       <h1 class="hero-title mb-6 md:mb-10 text-center">
-        <span class="text-white">Recrutez votre Développeur Angular</span><br>
-        <span class="text-white/40">en
-          <span class="text-highlight">60 minutes</span>
-          chrono.
+        <span class="text-white">{{ lang.t('hero.title1') }}</span><br>
+        <span class="text-white/40">{{ lang.t('hero.title2') }}
+          <span class="text-highlight">{{ lang.t('hero.title3') }}</span>
+          {{ lang.t('hero.title4') }}
         </span>
       </h1>
 
       <!-- Sous-titre -->
       <p
         class="text-sm md:text-base text-subtext max-w-md leading-relaxed font-medium mb-8 md:mb-10 text-center mx-auto">
-        Pour maintenir une qualité irréprochable, tout profil sans réponse est automatiquement mis en pause.
+        {{ lang.t('hero.subtitle') }}
       </p>
 
       <!-- CTA Boutons -->
@@ -33,13 +33,13 @@
           class="bg-primary hover:bg-primary-hover text-white px-7 py-3 rounded-full font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-colors duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
           aria-label="Explorer les experts">
           <i class="fa-solid fa-magnifying-glass text-xs"></i>
-          Explorer les Experts
+          {{ lang.t('hero.exploreBtn') }}
         </button>
         <button (click)="scrollToExperts()"
           class="border border-white/20 hover:border-white/40 text-white/70 hover:text-white px-7 py-3 rounded-full font-bold uppercase tracking-widest text-[10px] transition-colors duration-300 flex items-center justify-center gap-2 w-full sm:w-auto"
           aria-label="Voir comment ça marche">
           <i class="fa-solid fa-play text-xs"></i>
-          Comment ça marche
+          {{ lang.t('hero.howItWorksBtn') }}
         </button>
       </div>
 
@@ -54,8 +54,7 @@
           }
         </div>
         <p class="text-xs text-white/50 leading-snug">
-          Rejoignez <span class="text-white font-bold">les devs</span><br class="sm:hidden"> déjà sur la
-          plateforme
+          {{ lang.t('hero.socialProof') }}
         </p>
       </div>
 
@@ -73,7 +72,6 @@
   <!-- Decorative Mono-spaced text vertical -->
   <div
     class="absolute right-10 top-1/2 -translate-y-1/2 rotate-90 origin-right pointer-events-none hidden xl:block opacity-20">
-    <span class="text-[10px] font-bold uppercase tracking-[1.5em] text-white">ANGULAR EXPERT NETWORK // REPONSE EN 60
-      MIN</span>
+    <span class="text-[10px] font-bold uppercase tracking-[1.5em] text-white">{{ lang.t('hero.decor') }}</span>
   </div>
 </section>

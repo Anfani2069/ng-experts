@@ -6,8 +6,8 @@
   <div class="w-full lg:w-1/2 flex items-center justify-center px-10 md:px-20 py-12 relative z-10 overflow-y-auto">
     <div class="w-full max-w-md">
       <div class="mb-12">
-        <h1 class="text-5xl font-heading font-bold mb-3 text-white tracking-tight">Create Account</h1>
-        <p class="text-subtext text-base">Rejoignez notre réseau d'experts Angular</p>
+        <h1 class="text-5xl font-heading font-bold mb-3 text-white tracking-tight">{{ lang.t('auth.register.title') }}</h1>
+        <p class="text-subtext text-base">{{ lang.t('auth.register.subtitle') }}</p>
       </div>
 
       <form (ngSubmit)="onSubmit()" class="space-y-6">
@@ -23,13 +23,13 @@
               }
             </div>
             <div>
-              <p class="font-bold text-white text-sm">{{ accountType() === 'developer' ? 'Compte Développeur' : 'Compte Recruteur' }}</p>
-              <p class="text-subtext text-xs">{{ accountType() === 'developer' ? 'Proposez vos services en tant qu\'expert' : 'Trouvez et recrutez les meilleurs experts' }}</p>
+              <p class="font-bold text-white text-sm">{{ accountType() === 'developer' ? lang.t('auth.register.developerAccount') : lang.t('auth.register.recruiterAccount') }}</p>
+              <p class="text-subtext text-xs">{{ accountType() === 'developer' ? lang.t('auth.register.developerDesc') : lang.t('auth.register.recruiterDesc') }}</p>
             </div>
           </div>
         } @else {
         <div>
-          <label class="block text-sm font-semibold text-white mb-3">Type de compte</label>
+          <label class="block text-sm font-semibold text-white mb-3">{{ lang.t('auth.register.accountType') }}</label>
           <div class="grid grid-cols-2 gap-3">
             <label class="relative cursor-pointer">
               <input
@@ -46,7 +46,7 @@
                     <i class="fa-solid fa-code text-primary"></i>
                   </div>
                   <div>
-                    <p class="font-bold text-white text-sm">Développeur</p>
+                    <p class="font-bold text-white text-sm">{{ lang.t('auth.register.developer') }}</p>
                   </div>
                 </div>
               </div>
@@ -67,7 +67,7 @@
                     <i class="fa-solid fa-briefcase text-primary"></i>
                   </div>
                   <div>
-                    <p class="font-bold text-white text-sm">Recruteur</p>
+                    <p class="font-bold text-white text-sm">{{ lang.t('auth.register.recruiter') }}</p>
                   </div>
                 </div>
               </div>
@@ -97,7 +97,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">Prénom</label>
+            <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.register.firstName') }}</label>
             <input
               type="text"
               placeholder="Jean"
@@ -108,12 +108,12 @@
               required
             >
             @if (firstName().length > 0 && firstName().length < 2) {
-              <p class="text-red-400 text-xs mt-1">Le prénom doit contenir au moins 2 caractères</p>
+              <p class="text-red-400 text-xs mt-1">{{ lang.t('auth.register.firstNameMin') }}</p>
             }
           </div>
 
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">Nom</label>
+            <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.register.lastName') }}</label>
             <input
               type="text"
               placeholder="Dupont"
@@ -126,7 +126,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-white mb-2">Email</label>
+          <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.login.email') }}</label>
           <input
             type="email"
             placeholder="votre@email.com"
@@ -138,7 +138,7 @@
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-white mb-2">Mot de passe</label>
+          <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.register.password') }}</label>
           <input
             type="password"
             placeholder="••••••••"
@@ -147,11 +147,11 @@
             class="w-full px-4 py-3 bg-surface border border-border rounded-xl focus:outline-none focus:border-primary transition text-white placeholder:text-subtext"
             required
           >
-          <p class="text-xs text-subtext mt-2">Minimum 8 caractères avec au moins une majuscule et un chiffre</p>
+          <p class="text-xs text-subtext mt-2">{{ lang.t('auth.register.passwordHint') }}</p>
         </div>
 
         <div>
-          <label class="block text-sm font-semibold text-white mb-2">Confirmer le mot de passe</label>
+          <label class="block text-sm font-semibold text-white mb-2">{{ lang.t('auth.register.confirmPassword') }}</label>
           <input
             type="password"
             placeholder="••••••••"
@@ -171,8 +171,8 @@
             required
           >
           <label class="ml-3 text-sm text-subtext">
-            J'accepte les <a href="#" class="text-primary hover:text-primary-hover font-semibold">Conditions d'utilisation</a>
-            et la <a href="#" class="text-primary hover:text-primary-hover font-semibold">Politique de confidentialité</a>
+            {{ lang.t('auth.register.acceptTerms') }} <a href="#" class="text-primary hover:text-primary-hover font-semibold">{{ lang.t('auth.register.termsLink') }}</a>
+            {{ lang.t('auth.register.andThe') }} <a href="#" class="text-primary hover:text-primary-hover font-semibold">{{ lang.t('auth.register.privacyLink') }}</a>
           </label>
         </div>
 
@@ -183,9 +183,9 @@
         >
           @if (isLoading()) {
             <i class="fa-solid fa-spinner fa-spin mr-2"></i>
-            Création du compte...
+            {{ lang.t('auth.register.createAccountLoading') }}
           } @else {
-            Create Account
+            {{ lang.t('auth.register.createAccountBtn') }}
           }
         </button>
 
@@ -198,22 +198,16 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <button type="button" (click)="onGoogleRegister()" class="flex items-center justify-center gap-2 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
-            <i class="fa-brands fa-google text-white"></i>
-            <span class="font-semibold text-white text-sm">Google</span>
-          </button>
-          <button type="button" (click)="onGithubRegister()" class="flex items-center justify-center gap-2 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
-            <i class="fa-brands fa-github text-white"></i>
-            <span class="font-semibold text-white text-sm">GitHub</span>
-          </button>
-        </div>
+        <button type="button" (click)="onGoogleRegister()" class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-surface border border-border rounded-xl hover:border-primary transition">
+          <i class="fa-brands fa-google text-white"></i>
+          <span class="font-semibold text-white text-sm">{{ lang.t('auth.login.continueGoogle') }}</span>
+        </button>
       </form>
 
       <div class="mt-8 text-center">
         <p class="text-subtext text-sm">
-          Vous avez déjà un compte ?
-          <a (click)="onLogin()" class="text-primary hover:text-primary-hover font-bold cursor-pointer transition">Sign In</a>
+          {{ lang.t('auth.register.alreadyAccount') }}
+          <a (click)="onLogin()" class="text-primary hover:text-primary-hover font-bold cursor-pointer transition">{{ lang.t('auth.login.signIn') }}</a>
         </p>
       </div>
     </div>
@@ -227,7 +221,7 @@
         <div class="absolute -bottom-3 -right-3 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
 
         <div class="relative">
-          <h2 class="text-3xl font-heading font-bold text-white mb-8">Rejoignez les experts Angular</h2>
+          <h2 class="text-3xl font-heading font-bold text-white mb-8">{{ lang.t('auth.register.benefitsHeading') }}</h2>
 
           <div class="space-y-6">
             <div class="flex items-start gap-4">
@@ -235,8 +229,8 @@
                 <i class="fa-solid fa-rocket text-primary text-xl"></i>
               </div>
               <div>
-                <h3 class="text-white font-bold text-lg mb-2">Trouvez des missions</h3>
-                <p class="text-subtext text-sm">Accédez à des centaines d'opportunités de mission avec les meilleures entreprises</p>
+                <h3 class="text-white font-bold text-lg mb-2">{{ lang.t('auth.register.benefit1Title') }}</h3>
+                <p class="text-subtext text-sm">{{ lang.t('auth.register.benefit1Desc') }}</p>
               </div>
             </div>
 
@@ -245,8 +239,8 @@
                 <i class="fa-solid fa-users text-primary text-xl"></i>
               </div>
               <div>
-                <h3 class="text-white font-bold text-lg mb-2">Réseau d'experts</h3>
-                <p class="text-subtext text-sm">Connectez-vous avec plus de 150+ experts Angular vérifiés et certifiés</p>
+                <h3 class="text-white font-bold text-lg mb-2">{{ lang.t('auth.register.benefit2Title') }}</h3>
+                <p class="text-subtext text-sm">{{ lang.t('auth.register.benefit2Desc') }}</p>
               </div>
             </div>
 
@@ -255,8 +249,8 @@
                 <i class="fa-solid fa-chart-line text-primary text-xl"></i>
               </div>
               <div>
-                <h3 class="text-white font-bold text-lg mb-2">Développez votre carrière</h3>
-                <p class="text-subtext text-sm">Profitez de formations, workshops et événements exclusifs pour progresser</p>
+                <h3 class="text-white font-bold text-lg mb-2">{{ lang.t('auth.register.benefit3Title') }}</h3>
+                <p class="text-subtext text-sm">{{ lang.t('auth.register.benefit3Desc') }}</p>
               </div>
             </div>
 
@@ -265,8 +259,8 @@
                 <i class="fa-solid fa-shield-halved text-primary text-xl"></i>
               </div>
               <div>
-                <h3 class="text-white font-bold text-lg mb-2">Plateforme sécurisée</h3>
-                <p class="text-subtext text-sm">Vos données sont protégées avec les meilleurs standards de sécurité</p>
+                <h3 class="text-white font-bold text-lg mb-2">{{ lang.t('auth.register.benefit4Title') }}</h3>
+                <p class="text-subtext text-sm">{{ lang.t('auth.register.benefit4Desc') }}</p>
               </div>
             </div>
           </div>
@@ -275,15 +269,15 @@
             <div class="flex items-center justify-between">
               <div class="text-center">
                 <div class="text-3xl font-black text-white mb-1">150+</div>
-                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">Experts</div>
+                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">{{ lang.t('auth.register.statsExperts') }}</div>
               </div>
               <div class="text-center">
                 <div class="text-3xl font-black text-white mb-1">450+</div>
-                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">Missions</div>
+                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">{{ lang.t('auth.register.statsMissions') }}</div>
               </div>
               <div class="text-center">
                 <div class="text-3xl font-black text-white mb-1">24h</div>
-                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">Réponse</div>
+                <div class="text-[10px] text-subtext font-bold uppercase tracking-wider">{{ lang.t('auth.register.statsResponse') }}</div>
               </div>
             </div>
           </div>

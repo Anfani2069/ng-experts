@@ -2,6 +2,7 @@ import { Component, signal, inject, ChangeDetectorRef, afterNextRender, DestroyR
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Auth } from '@core/services/auth.service';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,6 +15,7 @@ export class Navbar {
   private auth = inject(Auth);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
+  protected readonly lang = inject(LanguageService);
 
   protected readonly currentUser = this.auth.getCurrentUser();
   protected readonly isLoggedIn = signal(false); // Will be updated by effect/init if needed, but currentUser is reactive
