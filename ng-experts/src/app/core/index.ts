@@ -8,3 +8,4 @@ export * from './config/firebase.config';
 export * from './guards/admin.guard';
 export * from './guards/auth.guard';
 export * from './guards/recruiter.guard';
+export * from './services/storage.service';

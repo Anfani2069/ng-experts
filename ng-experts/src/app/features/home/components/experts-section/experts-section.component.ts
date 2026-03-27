@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Expert } from '@core/models/user.model';
 import { ExpertService } from '@core/services/expert.service';
+import { LanguageService } from '@core/services/language.service';
+import { Auth } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-experts-section',
@@ -14,6 +16,11 @@ import { ExpertService } from '@core/services/expert.service';
 export class ExpertsSection implements OnInit {
   private readonly expertService = inject(ExpertService);
   private readonly router = inject(Router);
+  private readonly auth = inject(Auth);
+  protected readonly lang = inject(LanguageService);
+
+  protected readonly savedExpertIds = signal<string[]>([]);
+  protected readonly isRecruiter = computed(() => this.auth.getCurrentUser()()?.role === 'recruiter');
 
   // Filtres
   protected readonly cityFilter = signal('');
@@ -32,6 +39,9 @@ export class ExpertsSection implements OnInit {
   protected readonly experts = this.expertService.expertsData;
   protected readonly isLoading = this.expertService.loading;
   protected readonly error = this.expertService.errorMessage;
+
+  // Pagination
+  protected readonly displayCount = signal(12);
 
   // Experts filtrés (computed signal)
   protected readonly filteredExperts = computed(() => {
@@ -52,8 +62,8 @@ export class ExpertsSection implements OnInit {
         }
       }
 
-      // Filtre par ville
-      if (city && !expert.city.toLowerCase().includes(city)) {
+      // Filtre par ville ou pays
+      if (city && !expert.city.toLowerCase().includes(city) && !expert.location.toLowerCase().includes(city)) {
         return false;
       }
 
@@ -88,30 +98,47 @@ export class ExpertsSection implements OnInit {
     });
   });
 
+  protected readonly visibleExperts = computed(() =>
+    this.filteredExperts().slice(0, this.displayCount())
+  );
+
+  protected readonly hasMore = computed(() =>
+    this.filteredExperts().length > this.displayCount()
+  );
+
+  protected readonly remainingCount = computed(() =>
+    Math.min(12, this.filteredExperts().length - this.displayCount())
+  );
+
   async ngOnInit() {
-    // Charger les experts depuis Firebase au démarrage
     await this.expertService.getAllExperts();
+    const user = this.auth.getCurrentUser()();
+    if (user?.role === 'recruiter') {
+      const ids = await this.expertService.getSavedExpertIds(user.id);
+      this.savedExpertIds.set(ids);
+    }
   }
 
   protected onCityFilterChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.cityFilter.set(target.value);
+    this.displayCount.set(12);
   }
 
   protected onTechFilterChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.techFilter.set(target.value);
+    this.displayCount.set(12);
   }
 
   protected toggleAvailabilityType(type: string): void {
     const current = this.selectedAvailabilityTypes();
     if (current.includes(type)) {
-      // Retirer le type
       this.selectedAvailabilityTypes.set(current.filter(t => t !== type));
     } else {
-      // Ajouter le type
       this.selectedAvailabilityTypes.set([...current, type]);
     }
+    this.displayCount.set(12);
   }
 
   protected getAvailabilityButtonClass(type: string): string {
@@ -135,18 +162,43 @@ export class ExpertsSection implements OnInit {
     this.router.navigate(['/expert', expertId]);
   }
 
-  protected toggleFavorite(expertId: string, event: Event): void {
-    // Empêcher la propagation du clic vers la card
+  protected async toggleFavorite(expertId: string, event: Event): Promise<void> {
     event.stopPropagation();
-    // TODO: Implémenter la logique pour ajouter/retirer des favoris
-    console.log('Toggle favorite for expert:', expertId);
+    const user = this.auth.getCurrentUser()();
+    if (!user || user.role !== 'recruiter') return;
+    const isSaved = await this.expertService.toggleSavedExpert(user.id, expertId);
+    if (isSaved) {
+      this.savedExpertIds.update(ids => [...ids, expertId]);
+    } else {
+      this.savedExpertIds.update(ids => ids.filter(id => id !== expertId));
+    }
   }
 
-  protected onShowAllExperts(): void {
-    // Remonter en haut de la page
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  protected isFavorited(expertId: string): boolean {
+    return this.savedExpertIds().includes(expertId);
+  }
 
-    this.router.navigate(['/experts']);
+  protected onLoadMore(): void {
+    this.displayCount.update(n => n + 12);
+  }
+
+  protected getAvailabilityTypeStyle(type: string): { label: string; classes: string } {
+    const map: Record<string, { label: string; classes: string }> = {
+      freelance:  { label: 'Freelance',  classes: 'bg-primary/15 text-primary border-primary/30' },
+      consulting: { label: 'Consulting', classes: 'bg-purple-500/15 text-purple-400 border-purple-500/30' },
+      mentoring:  { label: 'Mentoring',  classes: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
+      cdi:        { label: 'CDI',        classes: 'bg-green-500/15 text-green-400 border-green-500/30' },
+      cdd:        { label: 'CDD',        classes: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' },
+    };
+    return map[type] ?? { label: type, classes: 'bg-white/5 text-subtext border-white/10' };
+  }
+
+  protected getLoadMoreLabel(): string {
+    const count = this.remainingCount();
+    const plural = count > 1 ? 's' : '';
+    return this.lang.t('features.loadMore')
+      .replace('{{count}}', String(count))
+      .replace('{{plural}}', plural);
   }
 
   // Helper pour obtenir le nom complet au format "Prénom N."

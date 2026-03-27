@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal, inject, computed, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DashboardLayout, RichTextEditorComponent } from '@shared/components';
 import { Auth } from '@core/services/auth.service';
+import { StorageService } from '@core/services/storage.service';
 import { Expert, Skill, Experience, Certification, Availability, Education } from '@core/models/user.model';
 import { Timestamp } from 'firebase/firestore';
 
@@ -16,11 +17,19 @@ import { Timestamp } from 'firebase/firestore';
 })
 export class ProfileEdit implements OnInit {
   private auth = inject(Auth);
+  private storage = inject(StorageService);
   private fb = inject(FormBuilder);
+
+  @ViewChild('avatarInput') avatarInput!: ElementRef<HTMLInputElement>;
 
   // Formulaires — initialisé dans ngOnInit (même pattern que RecruiterProfileEdit)
   protected profileForm!: FormGroup;
   protected passwordForm!: FormGroup;
+
+  // Upload avatar signals
+  protected readonly isUploadingAvatar = signal(false);
+  protected readonly uploadProgress = signal(0);
+  protected readonly avatarPreview = signal<string | null>(null);
 
   // Signals for add forms management selon bonnes pratiques
   protected readonly isAddingSkill = signal(false);
@@ -82,10 +91,12 @@ export class ProfileEdit implements OnInit {
     return user as Expert;
   });
 
-  // Avatar de l'utilisateur pour l'affichage
+  // Avatar de l'utilisateur pour l'affichage (preview locale en priorité)
   protected readonly userAvatar = computed(() => {
+    const preview = this.avatarPreview();
+    if (preview) return preview;
     const user = this.currentUser();
-    return user?.avatar || 'https://randomuser.me/api/portraits/men/32.jpg';
+    return user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent((user?.firstName || 'U'))}&background=EC4899&color=fff&size=200`;
   });
 
   // Skills depuis le profil expert ou valeurs par défaut
@@ -143,7 +154,40 @@ export class ProfileEdit implements OnInit {
   }
 
 
-  protected readonly countries = signal(['France', 'Belgique', 'Suisse', 'Canada']);
+  protected readonly countries = signal([
+    'Afghanistan', 'Afrique du Sud', 'Albanie', 'Algérie', 'Allemagne', 'Andorre', 'Angola', 'Antigua-et-Barbuda',
+    'Arabie Saoudite', 'Argentine', 'Arménie', 'Australie', 'Autriche', 'Azerbaïdjan',
+    'Bahamas', 'Bahreïn', 'Bangladesh', 'Barbade', 'Bélarus', 'Belgique', 'Belize', 'Bénin',
+    'Bhoutan', 'Bolivie', 'Bosnie-Herzégovine', 'Botswana', 'Brésil', 'Brunei', 'Bulgarie', 'Burkina Faso', 'Burundi',
+    'Cambodge', 'Cameroun', 'Canada', 'Cap-Vert', 'Centrafrique', 'Chili', 'Chine', 'Chypre', 'Colombie',
+    'Comores', 'Congo', 'Corée du Nord', 'Corée du Sud', 'Costa Rica', 'Côte d\'Ivoire', 'Croatie', 'Cuba',
+    'Danemark', 'Djibouti', 'Dominique',
+    'Égypte', 'El Salvador', 'Émirats Arabes Unis', 'Équateur', 'Érythrée', 'Espagne', 'Estonie', 'Eswatini', 'États-Unis', 'Éthiopie',
+    'Fidji', 'Finlande', 'France',
+    'Gabon', 'Gambie', 'Géorgie', 'Ghana', 'Grèce', 'Grenade', 'Guatemala', 'Guinée', 'Guinée-Bissau', 'Guinée équatoriale', 'Guyana',
+    'Haïti', 'Honduras', 'Hongrie',
+    'Îles Marshall', 'Îles Salomon', 'Inde', 'Indonésie', 'Irak', 'Iran', 'Irlande', 'Islande', 'Israël', 'Italie',
+    'Jamaïque', 'Japon', 'Jordanie',
+    'Kazakhstan', 'Kenya', 'Kirghizstan', 'Kiribati', 'Kosovo', 'Koweït',
+    'Laos', 'Lesotho', 'Lettonie', 'Liban', 'Liberia', 'Libye', 'Liechtenstein', 'Lituanie', 'Luxembourg',
+    'Macédoine du Nord', 'Madagascar', 'Malaisie', 'Malawi', 'Maldives', 'Mali', 'Malte', 'Maroc', 'Maurice', 'Mauritanie',
+    'Mexique', 'Micronésie', 'Moldavie', 'Monaco', 'Mongolie', 'Monténégro', 'Mozambique', 'Myanmar',
+    'Namibie', 'Nauru', 'Népal', 'Nicaragua', 'Niger', 'Nigéria', 'Norvège', 'Nouvelle-Zélande',
+    'Oman', 'Ouganda', 'Ouzbékistan',
+    'Pakistan', 'Palaos', 'Palestine', 'Panama', 'Papouasie-Nouvelle-Guinée', 'Paraguay', 'Pays-Bas', 'Pérou', 'Philippines', 'Pologne',
+    'Portugal',
+    'Qatar',
+    'République démocratique du Congo', 'République dominicaine', 'République tchèque', 'Roumanie', 'Royaume-Uni', 'Russie', 'Rwanda',
+    'Saint-Kitts-et-Nevis', 'Saint-Marin', 'Saint-Vincent-et-les-Grenadines', 'Sainte-Lucie', 'Salvador', 'Samoa',
+    'São Tomé-et-Príncipe', 'Sénégal', 'Serbie', 'Seychelles', 'Sierra Leone', 'Singapour', 'Slovaquie', 'Slovénie',
+    'Somalie', 'Soudan', 'Soudan du Sud', 'Sri Lanka', 'Suède', 'Suisse', 'Suriname', 'Syrie',
+    'Tadjikistan', 'Tanzanie', 'Tchad', 'Thaïlande', 'Timor oriental', 'Togo', 'Tonga', 'Trinité-et-Tobago', 'Tunisie',
+    'Turkménistan', 'Turquie', 'Tuvalu',
+    'Ukraine', 'Uruguay',
+    'Vanuatu', 'Vatican', 'Venezuela', 'Vietnam',
+    'Yémen',
+    'Zambie', 'Zimbabwe'
+  ]);
   protected readonly workPreferences = signal([
     'Remote uniquement',
     'Hybride (2-3 jours/semaine)',
@@ -552,14 +596,87 @@ export class ProfileEdit implements OnInit {
 
   // Avatar management
   protected onAvatarUpload(): void {
-    // TODO: Implement avatar upload
-    console.log('Upload avatar');
+    this.avatarInput?.nativeElement?.click();
+  }
+
+  protected async onAvatarFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    // Valider le type et la taille
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      this.error.set('Format non autorisé. Utilisez JPG, PNG, GIF ou WebP.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.error.set('La taille du fichier dépasse la limite de 5 MB.');
+      return;
+    }
+
+    // Afficher une preview locale immédiatement
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      this.avatarPreview.set(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Récupérer l'utilisateur
+    const user = this.auth.getCurrentUser()();
+    if (!user) {
+      this.error.set('Utilisateur non connecté.');
+      return;
+    }
+
+    this.isUploadingAvatar.set(true);
+    this.uploadProgress.set(0);
+    this.error.set(null);
+    this.success.set(null);
+
+    try {
+      // Supprimer l'ancien avatar si c'est une URL Firebase Storage
+      const currentAvatar = user.avatar;
+      if (currentAvatar && currentAvatar.includes('firebasestorage')) {
+        await this.storage.deleteFileByURL(currentAvatar);
+      }
+
+      // Uploader le nouveau fichier
+      const downloadURL = await this.storage.uploadAvatar(
+        file,
+        user.id,
+        (progress) => this.uploadProgress.set(progress)
+      );
+
+      // Sauvegarder l'URL dans Firestore
+      await this.auth.updateExpertProfile({ avatar: downloadURL });
+      this.avatarPreview.set(null);
+      this.success.set('Photo de profil mise à jour avec succès !');
+
+    } catch (err: any) {
+      this.error.set(err.message || 'Erreur lors de l\'upload.');
+      this.avatarPreview.set(null);
+    } finally {
+      this.isUploadingAvatar.set(false);
+      this.uploadProgress.set(0);
+      input.value = '';
+    }
   }
 
   protected async onAvatarReset(): Promise<void> {
-    const defaultAvatar = 'https://randomuser.me/api/portraits/men/32.jpg';
+    const user = this.auth.getCurrentUser()();
+    const name = user?.firstName || 'U';
+    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=EC4899&color=fff&size=200`;
 
+    // Supprimer l'ancien avatar Firebase Storage si existant
+    const currentAvatar = user?.avatar;
+    if (currentAvatar && currentAvatar.includes('firebasestorage')) {
+      await this.storage.deleteFileByURL(currentAvatar);
+    }
+
+    this.avatarPreview.set(null);
     await this.auth.updateExpertProfile({ avatar: defaultAvatar });
+    this.success.set('Photo de profil réinitialisée.');
   }
 
   // Form submissions

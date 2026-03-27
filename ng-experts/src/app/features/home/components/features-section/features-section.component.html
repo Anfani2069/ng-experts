@@ -1,5 +1,5 @@
 <section id="features" class="py-20 bg-expertSectionBg border-b border-white/5 overflow-hidden">
-  <div class="container mx-auto px-10 md:px-20 max-w-7xl">
+  <div class="container mx-auto px-4 md:px-20 max-w-7xl">
 
     <!-- Section Header -->
     <div class="text-center mb-16" appAnimateOnScroll animClass="anim-fade-up">
@@ -8,7 +8,7 @@
       </div>
       <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
         {{ lang.t('features.title1') }}<br>
-        <span class="text-primary italic font-serif font-normal">{{ lang.t('features.title2') }}</span>
+        <span class="text-primary">{{ lang.t('features.title2') }}</span>
       </h2>
       <p class="text-lg text-subtext max-w-xl mx-auto font-medium leading-relaxed">
         {{ lang.t('features.subtitle') }}
@@ -176,7 +176,7 @@
             <i class="fa-solid fa-briefcase text-primary"></i>
           </div>
           <div>
-            <h3 class="text-xl font-bold text-white tracking-tight mb-2">{{ lang.t('features.pipeline.title1') }} <span class="text-primary italic font-serif font-normal">{{ lang.t('features.pipeline.title2') }}</span></h3>
+            <h3 class="text-xl font-bold text-white tracking-tight mb-2">{{ lang.t('features.pipeline.title1') }} <span class="text-primary">{{ lang.t('features.pipeline.title2') }}</span></h3>
             <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.pipeline.subtitle') }}</p>
           </div>
           <div class="space-y-2">
@@ -206,6 +206,119 @@
               <span class="px-2 py-0.5 bg-green-500/10 text-green-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-green-500/20 flex-shrink-0">{{ lang.t('features.pipeline.status3') }}</span>
             </div>
           </div>
+        </div>
+      </div>
+
+
+      <!-- ROW 4 — Full width: Countdown 1h -->
+      <div class="feature-card group relative lg:col-span-2 p-8 rounded-3xl border border-white/5 bg-white/[0.02] hover:border-primary/20 transition-all duration-500 overflow-hidden" appAnimateOnScroll animClass="anim-fade-up" [animDelay]="300">
+        <div class="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+             style="background: radial-gradient(ellipse at 50% 110%, rgba(236,72,153,0.07) 0%, transparent 65%)"></div>
+        <div class="relative z-10 flex flex-col lg:flex-row gap-10 items-center">
+
+          <!-- Text side -->
+          <div class="flex-1 space-y-5">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                <i class="fa-solid fa-stopwatch text-primary"></i>
+              </div>
+              <span class="px-3 py-1 bg-primary/10 text-primary text-[9px] font-bold uppercase tracking-widest rounded-full border border-primary/20 animate-pulse">⏱ {{ lang.t('features.countdown.badge') }}</span>
+            </div>
+            <h3 class="text-2xl font-bold text-white tracking-tight">
+              {{ lang.t('features.countdown.title1') }}
+              <span class="text-primary font-black font-mono"> {{ lang.t('features.countdown.title2') }} </span>
+              {{ lang.t('features.countdown.title3') }}
+            </h3>
+            <p class="text-subtext text-sm leading-relaxed">{{ lang.t('features.countdown.subtitle') }}</p>
+            <div class="flex flex-wrap gap-4 pt-1">
+              <div class="flex items-center gap-2 text-xs text-subtext">
+                <i class="fa-solid fa-check text-primary text-[10px]"></i> {{ lang.t('features.countdown.check1') }}
+              </div>
+              <div class="flex items-center gap-2 text-xs text-subtext">
+                <i class="fa-solid fa-check text-primary text-[10px]"></i> {{ lang.t('features.countdown.check2') }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Mock offer card with live countdown -->
+          <div class="w-full lg:w-80 flex-shrink-0 space-y-2">
+
+            <!-- Header row -->
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold text-subtext uppercase tracking-widest">{{ lang.t('features.countdown.offerReceived') }}</span>
+              <span class="flex items-center gap-1.5 px-2.5 py-1 bg-yellow-500/10 text-yellow-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-yellow-500/20 animate-pulse">
+                <i class="fa-solid fa-circle" style="font-size:5px;"></i>{{ lang.t('features.countdown.urgentBadge') }}
+              </span>
+            </div>
+
+            <!-- Offer card body -->
+            <div class="bg-white/[0.03] border border-white/5 rounded-2xl p-4 space-y-3">
+
+              <!-- Dev avatar + info -->
+              <div class="flex items-center gap-3">
+                <img src="https://i.pravatar.cc/150?img=7" class="w-10 h-10 rounded-xl object-cover border border-white/10" alt="Dev">
+                <div class="flex-1 min-w-0">
+                  <div class="font-bold text-white text-sm truncate">Thomas M.</div>
+                  <div class="text-[11px] text-subtext">Lead Angular · 6 ans exp.</div>
+                </div>
+                <span class="px-2 py-0.5 bg-yellow-500/10 text-yellow-400 text-[9px] font-bold uppercase tracking-widest rounded-full border border-yellow-500/20 flex-shrink-0">{{ lang.t('expertDashboard.pending') }}</span>
+              </div>
+
+              <!-- Mission brief -->
+              <div class="bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5">
+                <div class="text-[11px] text-white font-semibold">Refonte frontend Angular 17</div>
+                <div class="text-[10px] text-subtext mt-1 flex items-center gap-2">
+                  <span><i class="fa-solid fa-euro-sign text-yellow-400 text-[9px] mr-0.5"></i>650€/j</span>
+                  <span class="text-white/20">·</span>
+                  <span><i class="fa-solid fa-location-dot text-primary text-[9px] mr-0.5"></i>Paris</span>
+                  <span class="text-white/20">·</span>
+                  <span>Dès mars</span>
+                </div>
+              </div>
+
+              <!-- LIVE COUNTDOWN BAR -->
+              <div [style.background]="isDemoExpiringSoon() ? 'rgba(255,77,77,.07)' : 'rgba(255,184,0,.05)'"
+                   [style.border]="isDemoExpiringSoon() ? '1px solid rgba(255,77,77,.18)' : '1px solid rgba(255,184,0,.12)'"
+                   style="padding:8px 12px;border-radius:9px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                  <div style="display:flex;align-items:center;gap:6px;">
+                    <i class="fa-solid fa-stopwatch"
+                       [style.color]="isDemoExpiringSoon() ? '#FF4D4D' : '#FFB800'"
+                       [class.animate-pulse]="isDemoExpiringSoon()"
+                       style="font-size:11px;"></i>
+                    <span style="font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;"
+                          [style.color]="isDemoExpiringSoon() ? '#FF4D4D' : '#FFB800'">
+                      {{ lang.t('features.countdown.timeLimit') }}
+                    </span>
+                  </div>
+                  <span style="font-family:monospace;font-weight:800;font-size:14px;letter-spacing:1.5px;"
+                        [style.color]="isDemoExpiringSoon() ? '#FF4D4D' : '#FFB800'">
+                    {{ getDemoCountdown() }}
+                  </span>
+                </div>
+                <div style="height:4px;background:rgba(255,255,255,0.06);border-radius:99px;">
+                  <div [style.width.%]="getDemoPercent()"
+                       [style.background]="isDemoExpiringSoon() ? '#FF4D4D' : '#FFB800'"
+                       [style.box-shadow]="isDemoExpiringSoon() ? '0 0 8px rgba(255,77,77,.6)' : '0 0 6px rgba(255,184,0,.5)'"
+                       style="height:100%;border-radius:99px;transition:width 1s linear;"></div>
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex gap-2 pt-0.5">
+                <button class="flex-1 py-2 rounded-xl text-[11px] font-bold text-white transition-all duration-200 cursor-default"
+                        style="background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.2);">
+                  <i class="fa-solid fa-check mr-1.5 text-green-400 text-[10px]"></i>{{ lang.t('features.countdown.accept') }}
+                </button>
+                <button class="flex-1 py-2 rounded-xl text-[11px] font-bold text-subtext transition-all duration-200 cursor-default"
+                        style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);">
+                  <i class="fa-solid fa-xmark mr-1.5 text-[10px]"></i>{{ lang.t('features.countdown.decline') }}
+                </button>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </div>
 

@@ -207,6 +207,37 @@ export class ExpertService {
   }
 
   /**
+   * Récupère les IDs des experts sauvegardés par un recruteur
+   */
+  async getSavedExpertIds(recruiterId: string): Promise<string[]> {
+    try {
+      const recruiterRef = doc(firebase.firestore, 'users', recruiterId);
+      const recruiterSnap = await getDoc(recruiterRef);
+      if (recruiterSnap.exists()) {
+        return (recruiterSnap.data()['savedExperts'] as string[]) || [];
+      }
+      return [];
+    } catch (error) {
+      console.error('Erreur getSavedExpertIds:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Ajoute ou retire un expert des favoris d'un recruteur.
+   * Retourne true si ajouté, false si retiré.
+   */
+  async toggleSavedExpert(recruiterId: string, expertId: string): Promise<boolean> {
+    const recruiterRef = doc(firebase.firestore, 'users', recruiterId);
+    const snap = await getDoc(recruiterRef);
+    const current: string[] = snap.exists() ? (snap.data()['savedExperts'] as string[]) || [] : [];
+    const isSaved = current.includes(expertId);
+    const updated = isSaved ? current.filter(id => id !== expertId) : [...current, expertId];
+    await updateDoc(recruiterRef, { savedExperts: updated });
+    return !isSaved;
+  }
+
+  /**
    * Récupère les propositions reçues pour un expert donné
    */
   async getProposalsForExpert(expertId: string): Promise<import('@core/models/user.model').Proposal[]> {

@@ -1,5 +1,5 @@
 <app-dashboard-layout [showSearch]="false">
-  <div class="px-6 md:px-8 py-6" style="background:#0F0C15;min-height:100%;">
+  <div class="px-4 md:px-8 py-6" style="background:#0F0C15;min-height:100%;">
 
     <!-- ── WELCOME BAR ── -->
     <div style="background:rgba(28,25,38,.7);border:1px solid rgba(255,255,255,0.07);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:14px;padding:18px 22px;margin-bottom:18px;position:relative;overflow:hidden;">
@@ -123,6 +123,53 @@
 
     </div>
 
+    <!-- ── FAVORIS ── -->
+    @if (savedExperts().length > 0) {
+    <div style="background:rgba(28,25,38,.5);border:1px solid rgba(236,72,153,.15);border-radius:14px;padding:20px;margin-bottom:20px;">
+      <div class="flex items-center justify-between" style="margin-bottom:14px;">
+        <div class="flex items-center gap-2">
+          <div style="width:30px;height:30px;border-radius:8px;background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.25);display:flex;align-items:center;justify-content:center;">
+            <i class="fa-solid fa-bookmark" style="color:#EC4899;font-size:11px;"></i>
+          </div>
+          <div>
+            <h3 style="font-size:14px;font-weight:700;color:#fff;">Profils sauvegardés</h3>
+            <p style="font-size:11px;color:#6B7280;margin-top:1px;">{{ savedExperts().length }} expert{{ savedExperts().length > 1 ? 's' : '' }} en favoris</p>
+          </div>
+        </div>
+        <a routerLink="/" fragment="experts" style="font-size:10px;font-weight:700;letter-spacing:1.5px;color:#6B7280;text-transform:uppercase;text-decoration:none;">Voir tous</a>
+      </div>
+      <div class="flex gap-3 overflow-x-auto pb-2" style="scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;">
+        @for (expert of savedExperts(); track expert.id) {
+        <div style="flex-shrink:0;width:180px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;transition:border-color .2s;"
+          class="hover:border-primary/30">
+          <div class="flex items-start justify-between mb-3">
+            <img [src]="expert.avatar || 'https://ui-avatars.com/api/?name=' + expert.firstName + '+' + expert.lastName + '&background=EC4899&color=fff'"
+              style="width:44px;height:44px;border-radius:10px;object-fit:cover;border:1px solid rgba(255,255,255,.1);">
+            <button (click)="toggleFavorite(expert.id)"
+              style="width:26px;height:26px;border-radius:6px;background:rgba(236,72,153,.15);border:1px solid rgba(236,72,153,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;"
+              class="hover:bg-primary/30">
+              <i class="fa-solid fa-bookmark" style="color:#EC4899;font-size:10px;"></i>
+            </button>
+          </div>
+          <h4 style="font-size:12px;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ expert.firstName }} {{ expert.lastName }}</h4>
+          <p style="font-size:11px;color:#6B7280;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ expert.city }}</p>
+          <div class="flex gap-1.5">
+            <button (click)="viewExpert(expert)"
+              style="flex:1;padding:5px 0;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#9CA3AF;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .2s;"
+              class="hover:border-pink-500/30 hover:text-pink-400">
+              Profil
+            </button>
+            <button (click)="openProposalModal(expert)"
+              style="flex:1;padding:5px 0;background:linear-gradient(135deg,rgba(236,72,153,.15),rgba(139,92,246,.15));border:1px solid rgba(236,72,153,.25);color:#EC4899;border-radius:6px;font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;transition:all .2s;">
+              Proposer
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+    }
+
     <!-- ── TWO-COLUMN GRID ── -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5" style="padding-bottom:32px;">
 
@@ -199,11 +246,21 @@
                 </span>
                 }
               </div>
-              <button (click)="viewExpert(expert); $event.stopPropagation()"
-                style="padding:5px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#6B7280;border-radius:7px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;flex-shrink:0;"
-                class="hover:border-pink-500/30 hover:text-pink-400">
-                {{ lang.t('recruiterDashboard.profile') }}
-              </button>
+              <div class="flex gap-1.5 flex-shrink-0" (click)="$event.stopPropagation()">
+                <button (click)="toggleFavorite(expert.id)"
+                  [style.background]="isFavorited(expert.id) ? 'rgba(236,72,153,.15)' : 'rgba(255,255,255,0.04)'"
+                  [style.border]="isFavorited(expert.id) ? '1px solid rgba(236,72,153,.35)' : '1px solid rgba(255,255,255,0.08)'"
+                  [style.color]="isFavorited(expert.id) ? '#EC4899' : '#6B7280'"
+                  style="width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;"
+                  [title]="isFavorited(expert.id) ? 'Retirer des favoris' : 'Sauvegarder'">
+                  <i [class]="isFavorited(expert.id) ? 'fa-solid fa-bookmark' : 'fa-regular fa-bookmark'" style="font-size:10px;"></i>
+                </button>
+                <button (click)="viewExpert(expert)"
+                  style="padding:5px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);color:#6B7280;border-radius:7px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;"
+                  class="hover:border-pink-500/30 hover:text-pink-400">
+                  {{ lang.t('recruiterDashboard.profile') }}
+                </button>
+              </div>
             </div>
             @if ((expert.skills || []).length > 0) {
             <div class="flex gap-1 flex-wrap" style="margin-top:8px;padding-left:56px;">

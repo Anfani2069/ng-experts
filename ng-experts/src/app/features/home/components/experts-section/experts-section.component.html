@@ -3,7 +3,7 @@
   <!-- Noise overlay -->
   <div class="noise-overlay opacity-20"></div>
 
-  <div class="container mx-auto px-10 md:px-20 max-w-7xl text-center relative z-10">
+  <div class="container mx-auto px-4 md:px-20 max-w-7xl text-center relative z-10">
     <div class="mb-8 flex flex-col items-center">
       <div class="flex items-center gap-2 text-subtext text-[10px] font-bold uppercase tracking-widest mb-4">
         <i class="fa-solid fa-star text-primary"></i> Best Angular Experts
@@ -13,10 +13,10 @@
         <!-- Champs de recherche -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-white mb-2">Ville</label>
+            <label class="block text-sm font-semibold text-white mb-2">Ville ou pays</label>
             <div class="relative">
               <i class="fa-solid fa-location-dot absolute left-5 top-1/2 -translate-y-1/2 text-subtext text-sm"></i>
-              <input type="text" placeholder="Paris, Lyon..." [value]="cityFilter()" (input)="onCityFilterChange($event)"
+              <input type="text" placeholder="Paris, France..." [value]="cityFilter()" (input)="onCityFilterChange($event)"
                 class="w-full bg-transparent border border-border rounded-full pl-12 pr-4 py-3 text-sm focus:outline-none focus:border-white/20 transition text-white placeholder:text-subtext">
             </div>
           </div>
@@ -83,7 +83,7 @@
     <!-- LISTE DES CARTES (DESIGN RECTANGULAIRE HORIZONTAL) -->
     @if (!isLoading() && !error()) {
     <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-      @for (expert of filteredExperts(); track expert.id) {
+      @for (expert of visibleExperts(); track expert.id) {
       <div (click)="onHireExpert(expert.id)"
         class="expert-card p-5 rounded-2xl group cursor-pointer border border-white/5 transition-all hover:border-primary/30 relative overflow-hidden"
         style="background-color: #222222;">
@@ -150,6 +150,15 @@
           </div>
         </div>
 
+        <!-- Types de disponibilité -->
+        <div class="relative z-10 flex flex-wrap gap-1.5 mb-3">
+          @for (type of expert.availability.types; track type) {
+          <span [class]="'px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full border ' + getAvailabilityTypeStyle(type).classes">
+            {{ getAvailabilityTypeStyle(type).label }}
+          </span>
+          }
+        </div>
+
         <!-- Séparateur -->
         <div class="relative z-10 w-full h-px bg-white/5 mb-3"></div>
 
@@ -169,15 +178,19 @@
             </div>
           </div>
 
-          <!-- Bouton bookmark -->
+          <!-- Bouton bookmark (recruteurs uniquement) -->
+          @if (isRecruiter()) {
           <button
             type="button"
             (click)="toggleFavorite(expert.id, $event)"
-            class="relative z-20 w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/30 text-subtext hover:text-primary transition-all"
-            title="Ajouter aux favoris"
+            [class]="isFavorited(expert.id)
+              ? 'relative z-20 w-7 h-7 flex items-center justify-center rounded-lg bg-primary/20 border border-primary/40 text-primary transition-all'
+              : 'relative z-20 w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/30 text-subtext hover:text-primary transition-all'"
+            [title]="isFavorited(expert.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'"
           >
-            <i class="fa-regular fa-bookmark text-xs"></i>
+            <i [class]="isFavorited(expert.id) ? 'fa-solid fa-bookmark text-xs' : 'fa-regular fa-bookmark text-xs'"></i>
           </button>
+          }
         </div>
       </div>
       }
@@ -195,12 +208,15 @@
       }
     </div>
 
-    <div class="mt-16 text-center">
-      <button (click)="onShowAllExperts()"
-        class="px-8 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-full font-semibold uppercase tracking-widest text-[11px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] transition-all">
-        Show all Experts
+    @if (hasMore()) {
+    <div class="mt-12 text-center">
+      <button (click)="onLoadMore()"
+        class="inline-flex items-center gap-2 px-8 py-3 bg-primary hover:bg-primary-hover text-white rounded-full font-semibold uppercase tracking-widest text-[11px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] hover:shadow-[0_0_28px_-4px_rgba(236,72,153,0.7)] transition-all duration-300">
+        <i class="fa-solid fa-chevron-down text-[10px]"></i>
+        {{ getLoadMoreLabel() }}
       </button>
     </div>
+    }
     }
   </div>
 </section>

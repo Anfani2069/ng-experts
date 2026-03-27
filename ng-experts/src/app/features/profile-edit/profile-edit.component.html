@@ -1,7 +1,7 @@
 <app-dashboard-layout [showSearch]="false" [pageTitle]="'Paramètres du Profil'" [pageSubtitle]="'Gérez vos informations personnelles'">
 
   <!-- Content Area -->
-  <div class="p-8 bg-heroBg">
+  <div class="px-4 py-6 md:p-8 bg-heroBg">
     @if (isLoading()) {
       <div class="flex flex-col items-center justify-center py-20">
         <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primary mb-4"></i>
@@ -18,24 +18,91 @@
             <h2 class="text-lg font-heading font-bold text-white mb-2">Change Profile</h2>
             <p class="text-sm text-subtext mb-6">Change your profile picture from here</p>
 
+            <!-- Input file caché -->
+            <input
+              #avatarInput
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+              class="hidden"
+              (change)="onAvatarFileSelected($event)"
+            >
+
             <div class="flex flex-col items-center">
               <div class="relative mb-4">
-                <img [src]="userAvatar()" alt="Profile picture" class="w-32 h-32 rounded-full border-4 border-white/5 object-cover">
-                <button (click)="onAvatarUpload()" class="absolute bottom-0 right-0 w-10 h-10 bg-primary text-white rounded-full hover:bg-primary/80 transition shadow-md">
+                <!-- Avatar avec indicateur de chargement -->
+                <div class="relative">
+                  <img
+                    [src]="userAvatar()"
+                    alt="Profile picture"
+                    class="w-32 h-32 rounded-full border-4 border-white/5 object-cover transition-opacity"
+                    [class.opacity-50]="isUploadingAvatar()"
+                  >
+                  @if (isUploadingAvatar()) {
+                    <div class="absolute inset-0 flex items-center justify-center rounded-full bg-black/40">
+                      <i class="fa-solid fa-circle-notch fa-spin text-primary text-2xl"></i>
+                    </div>
+                  }
+                </div>
+                <button
+                  (click)="onAvatarUpload()"
+                  [disabled]="isUploadingAvatar()"
+                  class="absolute bottom-0 right-0 w-10 h-10 bg-primary text-white rounded-full hover:bg-primary/80 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   <i class="fa-solid fa-camera text-sm"></i>
                 </button>
               </div>
 
+              <!-- Barre de progression -->
+              @if (isUploadingAvatar()) {
+                <div class="w-full mb-4">
+                  <div class="flex justify-between text-xs text-subtext mb-1">
+                    <span>Upload en cours...</span>
+                    <span>{{ uploadProgress() }}%</span>
+                  </div>
+                  <div class="w-full bg-white/10 rounded-full h-2">
+                    <div
+                      class="bg-primary h-2 rounded-full transition-all duration-300"
+                      [style.width.%]="uploadProgress()"
+                    ></div>
+                  </div>
+                </div>
+              }
+
               <div class="flex gap-3 mb-4">
-                <button (click)="onAvatarUpload()" class="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/80 transition font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)]">
+                <button
+                  (click)="onAvatarUpload()"
+                  [disabled]="isUploadingAvatar()"
+                  class="px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/80 transition font-bold uppercase tracking-widest text-[10px] shadow-[0_0_20px_-5px_rgba(236,72,153,0.5)] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  @if (isUploadingAvatar()) {
+                    <i class="fa-solid fa-circle-notch fa-spin mr-1"></i>
+                  }
                   Upload
                 </button>
-                <button (click)="onAvatarReset()" class="px-6 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition font-medium text-sm">
+                <button
+                  (click)="onAvatarReset()"
+                  [disabled]="isUploadingAvatar()"
+                  class="px-6 py-2 border border-white/10 text-subtext rounded-lg hover:bg-white/5 transition font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
                   Reset
                 </button>
               </div>
 
-              <p class="text-xs text-subtext text-center">Allowed JPG, GIF or PNG. Max size of 800K</p>
+              <p class="text-xs text-subtext text-center">Allowed JPG, GIF, PNG or WebP. Max size of 5 MB</p>
+
+              <!-- Messages de feedback upload avatar -->
+              @if (error() && !isUploadingAvatar()) {
+                <div class="mt-3 w-full p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2">
+                  <i class="fa-solid fa-exclamation-circle text-red-500 text-sm"></i>
+                  <span class="text-red-400 text-xs">{{ error() }}</span>
+                </div>
+              }
+              @if (success() && !isUploadingAvatar()) {
+                <div class="mt-3 w-full p-3 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-2">
+                  <i class="fa-solid fa-check-circle text-green-500 text-sm"></i>
+                  <span class="text-green-400 text-xs">{{ success() }}</span>
+                </div>
+              }
             </div>
           </div>
 

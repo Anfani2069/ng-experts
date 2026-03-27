@@ -33,6 +33,11 @@ export class RecruiterDashboard implements OnInit {
   protected readonly experts = signal<Expert[]>([]);
   protected readonly myProposals = signal<Proposal[]>([]);
   protected readonly searchQuery = signal('');
+  protected readonly savedExpertIds = signal<string[]>([]);
+
+  protected readonly savedExperts = computed(() =>
+    this.experts().filter(e => this.savedExpertIds().includes(e.id))
+  );
 
   protected readonly showProposalModal = signal(false);
   protected readonly selectedExpert = signal<Expert | null>(null);
@@ -100,6 +105,11 @@ export class RecruiterDashboard implements OnInit {
       const experts = await this.expertService.getAllExperts();
       this.experts.set(experts);
       await this.loadMyProposals();
+      const user = this.currentUser();
+      if (user) {
+        const ids = await this.expertService.getSavedExpertIds(user.id);
+        this.savedExpertIds.set(ids);
+      }
     } finally {
       this.isLoading.set(false);
     }
@@ -219,6 +229,21 @@ export class RecruiterDashboard implements OnInit {
 
   protected viewExpert(expert: Expert): void {
     this.router.navigate(['/expert', expert.id]);
+  }
+
+  protected isFavorited(expertId: string): boolean {
+    return this.savedExpertIds().includes(expertId);
+  }
+
+  protected async toggleFavorite(expertId: string): Promise<void> {
+    const user = this.currentUser();
+    if (!user) return;
+    const isSaved = await this.expertService.toggleSavedExpert(user.id, expertId);
+    if (isSaved) {
+      this.savedExpertIds.update(ids => [...ids, expertId]);
+    } else {
+      this.savedExpertIds.update(ids => ids.filter(id => id !== expertId));
+    }
   }
 
   protected async contactExpertFromProposal(proposal: Proposal): Promise<void> {

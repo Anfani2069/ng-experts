@@ -1,6 +1,7 @@
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 import { getAnalytics, Analytics } from 'firebase/analytics';
 import { environment } from '../../../environments/environment';
 
@@ -17,16 +18,18 @@ class FirebaseService {
   private app: FirebaseApp;
   public auth: Auth;
   public firestore: Firestore;
+  public storage: FirebaseStorage;
   public analytics: Analytics | null = null;
 
   constructor() {
     // Initialiser Firebase App
     this.app = initializeApp(firebaseConfig);
-    
+
     // Initialiser les services
     this.auth = getAuth(this.app);
     this.firestore = getFirestore(this.app);
-    
+    this.storage = getStorage(this.app);
+
     // Analytics seulement côté client
     if (typeof window !== 'undefined') {
       this.analytics = getAnalytics(this.app);

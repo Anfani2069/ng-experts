@@ -15,7 +15,7 @@
       <a routerLink="/" class="flex items-center gap-2">
         <img src="/img/ng-expert-logo.png" alt="Ng-Expert Logo" class="w-8 h-8 rounded-full object-cover">
         <span class="text-[14px] font-bold uppercase tracking-widest">
-          <span class="text-white">Ng-</span><span style="color: #EC4899 !important;">Expert</span><span
+          <span class="text-white">Ng-</span><span style="color: #EC4899 !important;">Experts</span><span
             class="text-white">.</span>
         </span>
       </a>
@@ -82,9 +82,9 @@
           </div>
           } @else if (pageTitle()) {
           <div>
-            <h1 class="text-xl font-bold text-white">{{ pageTitle() }}</h1>
+            <h1 class="text-sm sm:text-xl font-bold text-white">{{ pageTitle() }}</h1>
             @if (pageSubtitle()) {
-            <p class="text-sm text-subtext">{{ pageSubtitle() }}</p>
+            <p class="hidden sm:block text-sm text-subtext">{{ pageSubtitle() }}</p>
             }
           </div>
           }
